@@ -175,6 +175,23 @@ class FoldersFrame extends JWindowFrame {
 	    }
 			       );
 
+	JMenuItem mDelete = new JMenuItem("Remove deleted");
+	mPath.add(mDelete);
+	mDelete.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    int rows = delete.getRowCount();
+		    for (int i = rows - 1; i >= 0; i--) {
+			String fileName = (String)delete.getValueAt(i, 3);
+			File file = new File(delete.getDir(), fileName);
+			boolean done = file.delete();
+			if (done) 
+			    delete.removeRow(i);
+		    }
+		}
+	    }
+			       );
+
+
 	JMenu mQueue = new JMenu("Queue");
 	jmb.add(mQueue);
 
