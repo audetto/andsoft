@@ -74,8 +74,10 @@ class Composer extends JWindowFrame {
 		    String str;
 		    do {
 			str = lnr.readLine();
-			StringBuffer sb = new StringBuffer("> ").append(str).append("\n");
-			text.append(sb.toString());
+			if (str != null) {
+			    StringBuffer sb = new StringBuffer("> ").append(str).append("\n");
+			    text.append(sb.toString());
+			}
 		    } while (str != null);
 		}
 	    } catch(Exception ex) {
