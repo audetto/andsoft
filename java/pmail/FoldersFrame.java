@@ -66,7 +66,7 @@ class FoldersFrame extends JWindowFrame {
 	if (one == null) {
 	    one = new FoldersFrame(windowMenu);
 	    one.pack();
-	    one.show();
+	    one.setVisible(true);
 	    desktop.add(one);
 	}
 
@@ -77,7 +77,6 @@ class FoldersFrame extends JWindowFrame {
 	}
 	
     }
-
     public static void addIfExists(Vector dati) {
 	if (one != null) {
 	    one.inbox.addRow(dati);
@@ -198,7 +197,7 @@ class FoldersFrame extends JWindowFrame {
 		    jd.setSize(400, jd.getHeight());
 		    SendMail sm = new SendMail(sent, queue, jpb, jl, jd);
 		    sm.start();
-		    jd.show();
+		    jd.setVisible(true);
 		}
 	    }
 			       );
