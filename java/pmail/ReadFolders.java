@@ -13,7 +13,7 @@ import javax.swing.table.*;
 
 class ReadFolders extends SwingWorker {
     DefaultTableModel tablemodel;
-    Component frame;
+    JInternalFrame frame;
     JLabel progress;
     File dir;
     MyTreeNode[] nodes;
@@ -23,7 +23,7 @@ class ReadFolders extends SwingWorker {
 
     Session session = Session.getInstance(new Properties());
 
-    public ReadFolders(MyTreeNode[] nodes, JLabel progress, Component frame) {
+    public ReadFolders(MyTreeNode[] nodes, JLabel progress, JInternalFrame frame) {
 	this.frame = frame;
 	this.progress = progress;
 	this.dir = dir;
@@ -89,6 +89,10 @@ class ReadFolders extends SwingWorker {
 	    processDirectory(nodes[i]);
 	}
 	return null;
+    }
+
+    public void finished() {
+	frame.setClosable(true);
     }
 
 }
