@@ -25,9 +25,7 @@ namespace AndSoft {
   private:
     const unsigned int myDim;
     std::vector<double> myMeans;
-    std::vector<double> myMeansKahan;
     Matrix myCovs;
-    Matrix myCovsKahan;
     unsigned int myCount;
   };
 

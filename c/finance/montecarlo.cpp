@@ -8,7 +8,7 @@ using namespace std;
 namespace AndSoft {
 
   MonteCarlo::MonteCarlo(const unsigned int dim) : 
-    myDim(dim), myMeans(dim, 0.0), myMeansKahan(dim, 0.0), myCovs(dim, dim), myCovsKahan(dim, dim), myCount(0) {
+    myDim(dim), myMeans(dim, 0.0), myCovs(dim, dim), myCount(0) {
   }
 
   void MonteCarlo::addVector(const vector<double> &val) {
