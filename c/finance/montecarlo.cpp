@@ -11,7 +11,7 @@ namespace AndSoft {
     myDim(dim), myMeans(dim, 0.0), myCovs(dim, dim), myCount(0) {
   }
 
-  void MonteCarlo::addVector(const vector<double> &val) {
+  void MonteCarlo::addVector(const Array &val) {
     myCount++;
     for (unsigned int i = 0; i < myDim; ++i)
       myMeans[i] += val[i];

@@ -1,9 +1,12 @@
 #ifndef UTILS_H
-#define UTIlS_H
+#define UTILS_H
 
 #include <string>
+#include <vector>
 
 namespace AndSoft {
+
+  typedef std::vector<double> Array;
 
   template<typename T> inline T SQR(const T a) {
     return a * a;
@@ -13,6 +16,10 @@ namespace AndSoft {
     throw msg;
   }
 
+  inline void check_gsl_error(const int result) {
+    if (result)
+      throw result;
+  }
 }
 
 #endif

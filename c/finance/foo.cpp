@@ -9,19 +9,18 @@ using namespace AndSoft;
 using namespace std;
 
 int main() {
-  MersenneTwister mt(0);
 
   const unsigned int N = 1000000;
-  const unsigned int DIM = 3;
+  const unsigned int DIM = 4;
+
+  MersenneTwister mt(DIM, 0);
 
   MonteCarlo mc(DIM);
-  vector<double> v(DIM);
+  const vector<double>& v = mt.normal();
 
   const Timer timer;
   for (unsigned int i = 0; i < N; ++i) {
-    for (unsigned int j = 0; j < DIM; ++j)
-      v[j] = mt.normal_deviate();
-
+    mt.nextNormal();
     mc.addVector(v);
   }
   const double el = timer.elapsed();

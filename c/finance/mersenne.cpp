@@ -44,7 +44,6 @@
 #include "mersenne.h"
 
 #include <string.h>
-#include <gsl/gsl_cdf.h>
 
 namespace AndSoft {
 
@@ -55,11 +54,11 @@ namespace AndSoft {
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
   
-  MersenneTwister::MersenneTwister(unsigned long s) : mt(new unsigned long [N]), mti(N + 1) {
+  MersenneTwister::MersenneTwister(const unsigned dim, const unsigned long s) : RandomNumber(dim), mt(new unsigned long [N]), mti(N + 1) {
     init_genrand(s);
   }
   
-  MersenneTwister::MersenneTwister(const MersenneTwister& rhs) : mt(new unsigned long [N]), mti(rhs.mti) {
+  MersenneTwister::MersenneTwister(const MersenneTwister& rhs) : RandomNumber(rhs.myDim), mt(new unsigned long [N]), mti(rhs.mti) {
     memcpy(mt, rhs.mt, N * sizeof(double));
   }
   
@@ -185,10 +184,10 @@ namespace AndSoft {
   } 
   /* These real versions are due to Isaku Wada, 2002/01/09 added */
   
-  /* generates a normal random number */
-  double MersenneTwister::normal_deviate() {
-    const double uniform_deviate = genrand_real3();
-    return gsl_cdf_ugaussian_Pinv(uniform_deviate);
+  void MersenneTwister::nextUniform() {
+    for (unsigned int i = 0; i < myDim; ++i) {
+      myUniform[i] = genrand_real3();
+    }
   }
-  
+    
 };

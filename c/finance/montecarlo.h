@@ -11,7 +11,7 @@ namespace AndSoft {
   public:
     MonteCarlo(const unsigned int dim);
 
-    void addVector(const std::vector<double> &val);
+    void addVector(const Array &val);
     double getMean(const unsigned int dim) const;
     double getVar(const unsigned int dim) const;
     double getCov(const unsigned int i, const unsigned int j) const;
@@ -24,7 +24,7 @@ namespace AndSoft {
 
   private:
     const unsigned int myDim;
-    std::vector<double> myMeans;
+    Array myMeans;
     Matrix myCovs;
     unsigned int myCount;
   };
