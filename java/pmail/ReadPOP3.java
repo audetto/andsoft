@@ -38,8 +38,12 @@ class ReadPOP3 extends SwingWorker {
 	try {
 
 	    Properties props = new Properties();
-	    //	    props.setProperty("mail.debug", "true");
+	    props.setProperty("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+	    props.setProperty("mail.pop3.socketFactory.port", "995");
+	    props.setProperty("mail.pop3.socketFactory.fallback", "true");
+
 	    Session session = Session.getInstance(props);
+	    //	    session.setDebug(true);
 	    store = session.getStore("pop3");
 	    store.connect(hostname, username, password);
 
