@@ -3,11 +3,11 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-class Eccezione {
+class MessageException {
     private String message;
     private String stack;
 
-    public Eccezione(String message, String stack) {
+    public MessageException(String message, String stack) {
 	if (message == null)
 	    message = "<NONE>";
 	this.message = message;
@@ -44,7 +44,7 @@ class LogFrame extends JWindowFrame {
 		    boolean adj = e.getValueIsAdjusting();
 		    int idx = jl.getSelectedIndex();
 		    if (adj == false && idx != -1) {
-			Eccezione ecc = (Eccezione)dlm.elementAt(idx);
+			MessageException ecc = (MessageException)dlm.elementAt(idx);
 			String stack = ecc.getStack();
 			jta.setText(stack);
 		    }
@@ -63,7 +63,7 @@ class LogFrame extends JWindowFrame {
 	final String stack = sw.toString();
 	SwingUtilities.invokeLater(new Runnable() {
 		public void run() {
-		    Eccezione ecc = new Eccezione(message, stack);
+		    MessageException ecc = new MessageException(message, stack);
 		    one.dlm.addElement(ecc);
 		}
 	    }
