@@ -24,7 +24,7 @@ class SourceTransferHandler extends TransferHandler {
 	return TransferHandler.MOVE;
     }
     public void exportDone(JComponent source, Transferable data, int action) {
-	if (data != null) {
+	if (data != null && action == MOVE) {
 	    try {
 		MsgSelection msgsel = (MsgSelection)data.getTransferData(MsgTransferable.MSG_FLAVOR);
 		FilesTableModel ftm = (FilesTableModel)msgsel.tm;
