@@ -13,6 +13,17 @@ import javax.mail.internet.*;
 
 import javax.activation.*;
 
+class MyMimeMessage extends MimeMessage {
+    public MyMimeMessage(Session session) {
+	super(session);
+    }
+    protected void updateHeaders() throws MessagingException {
+	super.updateHeaders();
+	if (!(Options.messageID == null))
+	    setHeader("Message-ID", Options.messageID);
+    }
+}
+
 class Composer extends JWindowFrame {
     public Composer(Message msg, JMenu windowMenu) {
 	super(windowMenu, "New Message", true, true, true, true);
@@ -140,7 +151,7 @@ class Composer extends JWindowFrame {
 	mSend.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			MimeMessage message = new MimeMessage(Options.session);
+			MimeMessage message = new MyMimeMessage(Options.session);
 			int not = to.getModel().getSize();
 			for (int i = 0; i < not; i++) {
 			    String tos = (String)to.getModel().getElementAt(i);
