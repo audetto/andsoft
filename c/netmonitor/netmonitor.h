@@ -4,13 +4,15 @@
 #include <qlistview.h>
 #include <qmainwindow.h>
 #include <qstring.h>
+#include <qprogressbar.h>
+#include <qcombobox.h>
 
 #include <map>
 #include <string>
 
 using namespace std;
 
-struct Dati {
+struct InterfaceData {
   int rstart;
   int tstart;
   int rlast;
@@ -23,7 +25,7 @@ struct Dati {
   bool active;
 };
 
-typedef map<QString, Dati*> Tabella;
+typedef map<QString, InterfaceData*> Table;
 
 class NetMonitor: public QMainWindow {
 
@@ -35,13 +37,16 @@ public:
 public slots:
   void update();
 private:
-  void extract(string &riga, QString &name, int &rbytes, int &tbytes);
-  int getInt(string &riga);
+  void extract(string &line, QString &name, int &rbytes, int &tbytes) const;
+  int getInt(string &line) const;
 
   double lasttime;
-  Tabella tabella;
+  Table table;
   QListView *rec;
   QListView *tra;
+  QProgressBar *rdial;
+  QProgressBar *tdial;
+  QComboBox *combo;
 };
 
 #endif
