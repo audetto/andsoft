@@ -8,19 +8,26 @@ import javax.swing.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import com.sun.mail.pop3.*;
+
 class GetPOP3 extends SwingWorker {
     Message[] messages;
     boolean[] gets;
     boolean[] dels;
     JInternalFrame frame;
     JProgressBar progress;
+    POP3Folder inbox;
+    HashSet newUids = new HashSet();
+    HashSet delUids = new HashSet();
     
-    public GetPOP3(Message[] messages, boolean[] gets, boolean[] dels, JProgressBar progress, JInternalFrame frame) {
+    
+    public GetPOP3(Message[] messages, boolean[] gets, boolean[] dels, JProgressBar progress, JInternalFrame frame, Folder inbox) {
 	this.messages = messages;
 	this.gets = gets;
 	this.dels = dels;
 	this.frame = frame;
 	this.progress = progress;
+	this.inbox = (POP3Folder)inbox;
     }
 
     public Object construct() {
@@ -44,9 +51,13 @@ class GetPOP3 extends SwingWorker {
 		    from = msg2.getFrom();
 		    to = msg2.getAllRecipients();
 		    data = FilesTableModel.processMessage(msg2, tmpFile.getName());
+		    
+		    newUids.add(inbox.getUID(messages[i]));
 		}
+
 		if (dels[i]) {
 		    messages[i].setFlag(Flags.Flag.DELETED, true);
+		    newUids.add(inbox.getUID(messages[i]));
 		}
 
 		final int i2 = i + 1;
@@ -72,7 +83,8 @@ class GetPOP3 extends SwingWorker {
 	    }
 	}
 
-	return null;
+	Object[] res = {newUids, delUids};
+	return res;
     }
         
     public void finished() {
