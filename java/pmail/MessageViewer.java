@@ -15,7 +15,7 @@ class MessageViewer extends JWindowFrame {
     private String STD_VIEWER = "Standard Viewer";
     private String RAW_VIEWER = "Raw Viewer";
 
-    public MessageViewer(final Message msg, final JMenu windowMenu) {
+    public MessageViewer(final MimeMessage msg, final JMenu windowMenu) {
 	super(windowMenu, "<NONE>", true, true, true, true);
 
 	final CardLayout cards = new CardLayout();
@@ -29,9 +29,8 @@ class MessageViewer extends JWindowFrame {
 	}
 
 	try {
-	    MimeMessage mm = (MimeMessage)msg;
 	    String raw;
-	    if (mm.getSize() > 1024 * 1024) {
+	    if (msg.getSize() > 1024 * 1024) {
 		raw = "Message is too big!";
 	    } else {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -69,8 +68,23 @@ class MessageViewer extends JWindowFrame {
 	mReply.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    JInternalFrame jif = new Composer(msg, windowMenu);
-		    //		    jif.pack();
 		    jif.setSize(640, 480);
+		    jif.show();
+		    getDesktopPane().add(jif);
+		    try {
+			jif.setSelected(true);
+		    } catch(Exception ex) {
+			LogFrame.log(ex);
+		    }
+		}
+	    }
+			       );
+	JMenuItem mForward = new JMenuItem("Forward");
+	mMessage.add(mForward);
+	mForward.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    JInternalFrame jif = new Forward(msg, windowMenu);
+		    jif.pack();
 		    jif.show();
 		    getDesktopPane().add(jif);
 		    try {
