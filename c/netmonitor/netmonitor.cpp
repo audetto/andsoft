@@ -1,6 +1,7 @@
 #include <qapplication.h>
 #include <qtabwidget.h>
 #include <qtimer.h>
+#include <qvbox.h>
 
 #include <fstream>
 
@@ -31,7 +32,6 @@ NetMonitor::NetMonitor()
   rec->addColumn("Maximum");
   rec->setColumnAlignment(4, Qt::AlignRight);
 
-  //  connect(rec, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(showgauge(QListViewItem *)));
   qt->addTab(rec, "Receive");
 
   tra = new QListView(qt);
@@ -47,6 +47,14 @@ NetMonitor::NetMonitor()
 
   qt->addTab(tra, "Transmit");
 
+  QVBox *vbox = new QVBox(qt);
+
+  combo = new QComboBox(false, vbox);
+  rdial = new QProgressBar(vbox);
+  tdial = new QProgressBar(vbox);
+  
+  qt->addTab(vbox, "Dial");
+
   setCentralWidget(qt);
 
   QTimer *timer = new QTimer(this);
@@ -55,36 +63,37 @@ NetMonitor::NetMonitor()
 }
 
 NetMonitor::~NetMonitor() {
-  for (Tabella::iterator it = tabella.begin(); it != tabella.end(); it++) {
-    Dati* dato = (*it).second;
-    delete dato;  
-    // non li tolgo dal "map" perche' tanto lo fa il distruttore e nessuno usera' piu' il puntatore
+  for (Table::iterator it = table.begin(); it != table.end(); table.erase(it++)) {
+    InterfaceData* interface = (*it).second;
+    delete interface->ritem;
+    delete interface->titem;
+    delete interface;
   }
 }
 
-int NetMonitor::getInt(string &riga) {
+int NetMonitor::getInt(string &line) const {
   static const string CIFRE("0123456789");
-  riga.erase(0, riga.find_first_of(CIFRE));
-  int a = riga.find_first_not_of(CIFRE);
-  string temp = riga.substr(0, a);
-  riga.erase(0, a);
+  line.erase(0, line.find_first_of(CIFRE));
+  const int a = line.find_first_not_of(CIFRE);
+  string temp = line.substr(0, a);
+  line.erase(0, a);
   return atoi(temp.c_str());
 }
 
-void NetMonitor::extract(string &riga, QString &name, int &rbytes, int &tbytes) {
-  QString value = riga.substr(0, 6).c_str();
+void NetMonitor::extract(string &line, QString &name, int &rbytes, int &tbytes) const {
+  const QString value = line.substr(0, 6).c_str();
   name = value.simplifyWhiteSpace();
-  riga.erase(0, 7);
+  line.erase(0, 7);
 
-  rbytes = getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  getInt(riga);
-  tbytes = getInt(riga);
+  rbytes = getInt(line);
+  getInt(line);
+  getInt(line);
+  getInt(line);
+  getInt(line);
+  getInt(line);
+  getInt(line);
+  getInt(line);
+  tbytes = getInt(line);
 }
 
 void NetMonitor::update() {
@@ -94,12 +103,11 @@ void NetMonitor::update() {
   timeval tv;
   gettimeofday(&tv, NULL);
   
-  double actualtime = tv.tv_sec + tv.tv_usec / 1000000.0;
+  const double actualtime = tv.tv_sec + tv.tv_usec / 1000000.0;
   
-  Tabella::iterator it;
-  for (it = tabella.begin(); it != tabella.end(); it++) {
-    Dati* dato = (*it).second;
-    dato->active = false;
+  for (Table::iterator it = table.begin(); it != table.end(); it++) {
+    InterfaceData* interface = (*it).second;
+    interface->active = false;
   }
 
   dev.getline(buf, 250);
@@ -107,63 +115,72 @@ void NetMonitor::update() {
 
   while (dev.good() && !dev.eof()) {
     dev.getline(buf, 250);
-    string riga(buf);
-    if (riga.length() > 50) {
+    string line(buf);
+    QString selezionato = combo->currentText();
+    if (line.length() > 50) {
       QString name;
       int rbytes, tbytes;
-      extract(riga, name, rbytes, tbytes);
-      it = tabella.find(name);
-      Dati *dato;
-      if (it != tabella.end()) {
-	dato = (*it).second;
-	double et = actualtime - dato->timestart;
-	if (et > 0) {
-	  int rspeed = int((rbytes - dato->rstart) / et);
-	  int tspeed = int((tbytes - dato->tstart) / et);
-	  dato->ritem->setText(2, QString::number(rspeed)); 
-	  dato->titem->setText(2, QString::number(tspeed));
+      extract(line, name, rbytes, tbytes);
+      Table::iterator it = table.find(name);
+      InterfaceData *interface;
+      if (it != table.end()) {
+	interface = (*it).second;
+	const double ett = actualtime - interface->timestart;
+	if (ett > 0) {
+	  const int rspeed = int((rbytes - interface->rstart) / ett);
+	  const int tspeed = int((tbytes - interface->tstart) / ett);
+	  interface->ritem->setText(2, QString::number(rspeed)); 
+	  interface->titem->setText(2, QString::number(tspeed));
 	}
-	et = actualtime - lasttime;
-	if (et > 0) {
-	  int rspeed = int((rbytes - dato->rlast) / et);
-	  int tspeed = int((tbytes - dato->tlast) / et);
-	  dato->ritem->setText(3, QString::number(rspeed)); 
-	  dato->titem->setText(3, QString::number(tspeed));
-	  if (rspeed > dato->rmaximum) {
-	    dato->ritem->setText(4, QString::number(rspeed));
-	    dato->rmaximum = rspeed;
+	const double elt = actualtime - lasttime;
+	if (elt > 0) {
+	  const int rspeed = int((rbytes - interface->rlast) / elt);
+	  const int tspeed = int((tbytes - interface->tlast) / elt);
+	  interface->ritem->setText(3, QString::number(rspeed)); 
+	  interface->titem->setText(3, QString::number(tspeed));
+	  if (rspeed > interface->rmaximum) {
+	    interface->ritem->setText(4, QString::number(rspeed));
+	    interface->rmaximum = rspeed;
 	  }
-	  if (tspeed > dato->tmaximum) {
-	    dato->titem->setText(4, QString::number(tspeed));
-	    dato->tmaximum = tspeed;
+	  if (tspeed > interface->tmaximum) {
+	    interface->titem->setText(4, QString::number(tspeed));
+	    interface->tmaximum = tspeed;
+	  }
+	  if (name == selezionato) {
+	    rdial->setProgress(rspeed, interface->rmaximum);
+	    tdial->setProgress(tspeed, interface->tmaximum);
 	  }
 	}
       } else {
-	dato = new Dati;
+	combo->insertItem(name);
 
-	dato->ritem = new QListViewItem(rec, name);
-	dato->titem = new QListViewItem(tra, name);
+	interface = new InterfaceData;
 
-	dato->rstart = rbytes;
-	dato->tstart = tbytes;
-	dato->rmaximum = 0;
-	dato->tmaximum = 0;
-	dato->timestart = actualtime;
-	tabella[name] = dato;
+	interface->ritem = new QListViewItem(rec, name);
+	interface->titem = new QListViewItem(tra, name);
+
+	interface->rstart = rbytes;
+	interface->tstart = tbytes;
+	interface->rmaximum = 0;
+	interface->tmaximum = 0;
+	interface->timestart = actualtime;
+	table[name] = interface;
       }
-      dato->rlast = rbytes;
-      dato->tlast = tbytes;
-      dato->active = true;
-      dato->ritem->setText(1, QString::number(rbytes)); 
-      dato->titem->setText(1, QString::number(tbytes)); 
+      interface->rlast = rbytes;
+      interface->tlast = tbytes;
+      interface->active = true;
+      interface->ritem->setText(1, QString::number(rbytes)); 
+      interface->titem->setText(1, QString::number(tbytes)); 
     }
   }
 
-  for (it = tabella.begin(); it != tabella.end(); it++) {
-    Dati* dato = (*it).second;
-    if (!dato->active) {
-      delete dato;
-      tabella.erase(it); // forse il iterator non e' piu' valido dopo questa chiamata...
+  for (Table::iterator it = table.begin(); it != table.end(); it++) {
+    InterfaceData* interface = (*it).second;
+    if (!interface->active) {
+      delete interface->ritem;
+      delete interface->titem;
+      delete interface;
+      table.erase(it);
     }
   }
 
