@@ -18,12 +18,13 @@ class ReadPOP3 extends SwingWorker {
     String username;
     String password;
     boolean ssl;
+    HashSet uids;
     JInternalFrame frame;
     JProgressBar progress;
 
     String finalmessage = null;
 
-    public ReadPOP3(String hostname, String username, String password, boolean ssl, DefaultTableModel tablemodel, JProgressBar progress, JInternalFrame frame) {
+    public ReadPOP3(String hostname, String username, String password, boolean ssl, HashSet uids, DefaultTableModel tablemodel, JProgressBar progress, JInternalFrame frame) {
 	this.tablemodel = tablemodel;
 	this.hostname = hostname;
 	this.username = username;
@@ -31,6 +32,7 @@ class ReadPOP3 extends SwingWorker {
 	this.frame = frame;
 	this.progress = progress;
 	this.ssl = ssl;
+	this.uids = uids;
     }
 
     public Object construct() {
@@ -68,7 +70,7 @@ class ReadPOP3 extends SwingWorker {
 
 		try {
 
-		    final Object[] dati = new Object[8];
+		    final Object[] dati = new Object[9];
 
 		    Address[] from = messages[i].getFrom();
 		    if (from != null && from.length > 0) {
@@ -81,14 +83,18 @@ class ReadPOP3 extends SwingWorker {
 		    MimeMessage mimemsg = (MimeMessage)messages[i];
 		    dati[2] = new Integer(mimemsg.getSize());
 	    
-		    dati[3] = popfld.getUID(messages[i]);
+		    String uid = popfld.getUID(messages[i]);
+		    dati[3] = uid;
 
 		    dati[4] = messages[i].getSentDate();
 
 		    dati[5] = Boolean.FALSE;
 		    dati[6] = Boolean.FALSE;
 
-		    dati[7] = messages[i];
+		    Boolean present = Boolean.valueOf(uids.contains(uid));
+		    dati[7] = present;
+
+		    dati[8] = messages[i];
 
 		    final int i2 = msgs - i;
 		    SwingUtilities.invokeLater(new Runnable() {
@@ -112,7 +118,8 @@ class ReadPOP3 extends SwingWorker {
     }
 
     public void finished() {
-	JOptionPane.showInternalMessageDialog(frame, finalmessage);
+	if (finalmessage != null)
+	    JOptionPane.showInternalMessageDialog(frame, finalmessage);
 	frame.setClosable(true);
     }
 
