@@ -44,6 +44,7 @@ class AccountEditor extends JWindowFrame {
 	final JPasswordField password = new JPasswordField();
 	final JTextField address = new JTextField();
 	final JCheckBox ssl = new JCheckBox();
+	final JTextField uids = new JTextField();
 
 	accountsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	accountsList.addListSelectionListener(new ListSelectionListener() {
@@ -58,6 +59,7 @@ class AccountEditor extends JWindowFrame {
 			password.setText(account.password);
 			address.setText(account.address);
 			ssl.setSelected(account.ssl);
+			uids.setText(String.valueOf(account.uids.size()));
 		    }
 		}
 	    }
@@ -67,7 +69,7 @@ class AccountEditor extends JWindowFrame {
 
 	add(new JScrollPane(accountsList));
 
-	JPanel jp = new JPanel(new GridLayout(5, 2));
+	JPanel jp = new JPanel(new GridLayout(6, 2));
 
 	jp.add(new JLabel("Server:"));
 	jp.add(server);
@@ -79,10 +81,13 @@ class AccountEditor extends JWindowFrame {
 	jp.add(address);
 	jp.add(new JLabel("SSL:"));
 	jp.add(ssl);
+	jp.add(new JLabel("UIDs:"));
+	uids.setEditable(false);
+	jp.add(uids);
 
 	add(jp);
 
-	jp = new JPanel(new GridLayout(3, 1));
+	jp = new JPanel(new GridLayout(4, 1));
 	JButton jb = new JButton("Add");
 	jb.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -126,6 +131,21 @@ class AccountEditor extends JWindowFrame {
 			String name = (String)dlm.elementAt(idx);
 			Options.accounts.remove(name);
 			refresh();
+		    }
+		}
+	    }
+			     );
+
+	jp.add(jb);
+	jb = new JButton("Clear UIDs");
+	jb.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    int idx = accountsList.getSelectedIndex();
+		    if (idx != -1) {
+			String name = (String)dlm.elementAt(idx);
+			Account account = (Account)Options.accounts.get(name);
+			account.uids.clear();
+			uids.setText(String.valueOf(account.uids.size()));
 		    }
 		}
 	    }
