@@ -4,6 +4,10 @@
 
 #include <math.h>
 
+#include <iostream>
+
+using namespace std;
+
 WAV_Encoder::WAV_Encoder(short int channels, int bytes, int window, int points) :
   channels_(channels), bytes_(bytes), window_(window), points_(points), err_up(0), err_down(0) {
   
@@ -27,7 +31,7 @@ void WAV_Encoder::encode(char p[]) {
     bool res = encode_single();
     if (res) {
       for (i = 0; i < window_; i++) {
-	int tmp = wave_[i] * 32767;
+	int tmp = wave_[i] * 32767.0;
 	if (tmp > 32767) {
 	  tmp = 32767;
 	  err_up++;
@@ -46,7 +50,7 @@ void WAV_Encoder::encode(char p[]) {
     res = encode_single();
     if (res) {
       for (i = 0; i < window_; i++) {
-	int tmp = wave_[i] * 32767;
+	int tmp = wave_[i] * 32767.0;
 	if (tmp > 32767) {
 	  tmp = 32767;
 	  err_up++;
@@ -102,7 +106,7 @@ bool FFT_Encoder::encode_single() {
   if (window_ & 1 == 0)
     power_[window_ / 2] = fft_[window_ / 2] * fft_[window_ / 2];
 
-  bool res = indexx<float>(n_, power_.begin(), indx_.begin());
+  bool res = indexx<float>(n_, &(power_[0]), &(indx_[0]));
 
   if (res) {
     if (indx_[0] <= residui_)
@@ -147,7 +151,7 @@ bool DWT_Encoder::encode_single() {
   for (i = 0; i < window_; i++)
     power_[i] = fabsf(wave_[i]);
 
-  bool res = indexx<float>(window_, power_.begin(), indx_.begin());
+  bool res = indexx<float>(window_, &(power_[0]), &(indx_[0]));
 
   if (res)
     for (i = 0; i < window_; i++)

@@ -4,6 +4,8 @@
 #include <fftw3.h>
 #include <vector>
 
+using namespace std;
+
 class WAV_Encoder {
 protected:
   short int channels_;

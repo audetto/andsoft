@@ -7,25 +7,27 @@
 
 #include "stuff.hpp"
 
-char *input_name = NULL;
-char *output_name = NULL;
-int window = -1;
-int points = -1;
-int method = 0;
+using namespace std;
 
-struct poptOption optionsTable[] = {
+static char *input_name = NULL;
+static char *output_name = NULL;
+static int window = -1;
+static int points = -1;
+static int method = 0;
+
+static struct poptOption optionsTable[] = {
   {"input", 'i', POPT_ARG_STRING, &input_name, 0, "Input .WAV (stdin)", "wav"},
   {"output", 'o', POPT_ARG_STRING, &output_name, 0, "Output .WAV (stdout)", "wav"},
   {"window", 'w', POPT_ARG_INT, &window, 0, "Window size (should be 2^n)", "window"},
   {"points", 'p', POPT_ARG_INT, &points, 0, "Points used (less than half window for FFT)", "points"},
   {"method", 'm', POPT_ARG_NONE, &method, 0, "force DWT (instead of FFT)", "method"},
   POPT_AUTOHELP
-  {NULL, 0, 0, NULL, 0}
+  {NULL, 0, 0, NULL, 0, NULL, NULL}
 }; 
 
-void print_copyright() {
+static void print_copyright() {
   cerr << "Wav FFT Encoder" << endl;
-  cerr << "(C)opyRight AndSoft Inc., 2003" << endl;
+  cerr << "(C)opyRight AndSoft Inc., 2003-04" << endl;
   cerr << "Compiled: " << __DATE__ << ", " << __TIME__ << endl << endl;
 }
 
@@ -65,5 +67,4 @@ int main(int argc, const char *argv[]) {
   poptFreeContext(optCon);
 
   return 0;
-
 }

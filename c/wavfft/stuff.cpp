@@ -4,6 +4,9 @@
 #include "cycle.h"
 
 #include <iomanip>
+#include <iostream>
+
+using namespace std;
 
 struct WAV {
   char riff[4];  // "RIFF"
