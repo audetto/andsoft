@@ -126,12 +126,12 @@ public class ReaderX extends JFrame {
 	    }
 				    );
 
-	JMenu mAccounts = new JMenu("Accounts");
-	jmb.add(mAccounts);
+	JMenu mOptions = new JMenu("Options");
+	jmb.add(mOptions);
 
-	JMenuItem mEdit = new JMenuItem("Edit");
-	mAccounts.add(mEdit);
-	mEdit.addActionListener(new ActionListener() {
+	JMenuItem mAccounts = new JMenuItem("Accounts");
+	mOptions.add(mAccounts);
+	mAccounts.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    AccountEditor.showUnique(desktop, mWindow);
 		}
@@ -139,7 +139,7 @@ public class ReaderX extends JFrame {
 				);
 
 	JMenuItem mSMTP = new JMenuItem("SMTP...");
-	mAccounts.add(mSMTP);
+	mOptions.add(mSMTP);
 	mSMTP.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    JPanel jp = new JPanel(new GridLayout(5, 2));
@@ -183,8 +183,8 @@ public class ReaderX extends JFrame {
 	    }
 				);
 
-	JMenuItem mMessageID = new JMenuItem("Message ID");
-	mAccounts.add(mMessageID);
+	JMenuItem mMessageID = new JMenuItem("Message ID...");
+	mOptions.add(mMessageID);
 	mMessageID.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    String mID = JOptionPane.showInputDialog(ReaderX.this, "Message ID", Options.messageID);
