@@ -17,18 +17,20 @@ class ReadPOP3 extends SwingWorker {
     String hostname;
     String username;
     String password;
+    boolean ssl;
     JInternalFrame frame;
     JProgressBar progress;
 
     String finalmessage = null;
 
-    public ReadPOP3(String hostname, String username, String password, DefaultTableModel tablemodel, JProgressBar progress, JInternalFrame frame) {
+    public ReadPOP3(String hostname, String username, String password, boolean ssl, DefaultTableModel tablemodel, JProgressBar progress, JInternalFrame frame) {
 	this.tablemodel = tablemodel;
 	this.hostname = hostname;
 	this.username = username;
 	this.password = password;
 	this.frame = frame;
 	this.progress = progress;
+	this.ssl = ssl;
     }
 
     public Object construct() {
@@ -38,9 +40,11 @@ class ReadPOP3 extends SwingWorker {
 	try {
 
 	    Properties props = new Properties();
-	    props.setProperty("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-	    props.setProperty("mail.pop3.socketFactory.port", "995");
-	    props.setProperty("mail.pop3.socketFactory.fallback", "true");
+	    if (ssl) {
+		props.setProperty("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		props.setProperty("mail.pop3.socketFactory.port", "995");
+		props.setProperty("mail.pop3.socketFactory.fallback", "true");
+	    }
 
 	    Session session = Session.getInstance(props);
 	    //	    session.setDebug(true);

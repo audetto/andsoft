@@ -43,6 +43,7 @@ class AccountEditor extends JWindowFrame {
 	final JTextField username = new JTextField();
 	final JPasswordField password = new JPasswordField();
 	final JTextField address = new JTextField();
+	final JCheckBox ssl = new JCheckBox();
 
 	accountsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	accountsList.addListSelectionListener(new ListSelectionListener() {
@@ -56,6 +57,7 @@ class AccountEditor extends JWindowFrame {
 			username.setText(account.username);
 			password.setText(account.password);
 			address.setText(account.address);
+			ssl.setSelected(account.ssl);
 		    }
 		}
 	    }
@@ -65,7 +67,7 @@ class AccountEditor extends JWindowFrame {
 
 	add(new JScrollPane(accountsList));
 
-	JPanel jp = new JPanel(new GridLayout(4, 2));
+	JPanel jp = new JPanel(new GridLayout(5, 2));
 
 	jp.add(new JLabel("Server:"));
 	jp.add(server);
@@ -75,6 +77,8 @@ class AccountEditor extends JWindowFrame {
 	jp.add(password);
 	jp.add(new JLabel("Address:"));
 	jp.add(address);
+	jp.add(new JLabel("SSL:"));
+	jp.add(ssl);
 
 	add(jp);
 
@@ -107,6 +111,7 @@ class AccountEditor extends JWindowFrame {
 			account.username = username.getText();
 			account.password = new String(password.getPassword());
 			account.address = address.getText();
+			account.ssl = ssl.isSelected();
 		    }
 		}
 	    }

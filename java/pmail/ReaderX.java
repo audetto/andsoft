@@ -47,7 +47,7 @@ public class ReaderX extends JFrame {
 		    if (result == JOptionPane.OK_OPTION) {
 			String name = (String)accountsBox.getSelectedItem();
 			Account account = (Account)Options.accounts.get(name);
-			POP3Frame jif = new POP3Frame(mWindow, name, account.server, account.username, account.password);
+			POP3Frame jif = new POP3Frame(mWindow, name, account.server, account.username, account.password, account.ssl);
 			jif.pack();
 			jif.setVisible(true);
 			desktop.add(jif);

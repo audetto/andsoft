@@ -34,7 +34,7 @@ class POP3Frame extends JWindowFrame {
 
     SwingWorker sw;
 
-    public POP3Frame(JMenu windowMenu, String account, String hostname, String username, String password) {
+    public POP3Frame(JMenu windowMenu, String account, String hostname, String username, String password, boolean ssl) {
 	super(windowMenu, account, true, false, true, true);
 
 	addInternalFrameListener(new InternalFrameAdapter() {
@@ -68,7 +68,7 @@ class POP3Frame extends JWindowFrame {
 	jpb_size.setString("0 Kbytes");
 	add(jpb_size, BorderLayout.SOUTH);
 
-	sw = new ReadPOP3(hostname, username, password, dtm, jpb_count, this);
+	sw = new ReadPOP3(hostname, username, password, ssl, dtm, jpb_count, this);
 	sw.start();
 
 	final NumberFormat format = NumberFormat.getIntegerInstance();
