@@ -7,37 +7,45 @@ import javax.swing.*;
 import javax.mail.*;
 
 class Options {
-    static File inboxDir = new File("/home/andrea/asi/mail/inbox");
-    static File deleteDir = new File("/home/andrea/asi/mail/delete");
-    static File queueDir = new File("/home/andrea/asi/mail/queue");
-    static File sentDir = new File("/home/andrea/asi/mail/sent");
+    static final String baseDir = "/home/andrea";
+
+    static final File inboxDir = new File(baseDir + "/asi/mail/inbox");
+    static final File deleteDir = new File(baseDir + "/asi/mail/delete");
+    static final File queueDir = new File(baseDir + "/asi/mail/queue");
+    static final File sentDir = new File(baseDir + "/asi/mail/sent");
     static Properties addressBook = new Properties();
     static String smtpServer = "pentium";
     static String smtpUserID = null;
     static String smtpPasswd = null;
+    static String messageID = null;
     static Hashtable accounts = new Hashtable();
-    static JFileChooser saveFileChooser = new JFileChooser();
-    static JFileChooser openFileChooser = new JFileChooser();
-    static Font monoFont = new Font("Monospaced", Font.PLAIN, 12);
-    static Session session = Session.getInstance(new Properties());
+    static final JFileChooser saveFileChooser = new JFileChooser();
+    static final JFileChooser openFileChooser = new JFileChooser();
+    static final Font monoFont = new Font("Monospaced", Font.PLAIN, 12);
+    static final Session session = Session.getInstance(new Properties());
+
+    static final String accountsFileName = baseDir + "/asi/mail/accounts.conf";
+    static final String addressBookFileName = baseDir + "/asi/mail/book.conf";
+    static final String optionsFileName = baseDir + "/asi/mail/options.conf";
 
     public static void init()  {
 	try {
-	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("/home/andrea/asi/mail/accounts.conf")));
+	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(accountsFileName)));
 	    accounts = (Hashtable)ois.readObject();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    addressBook.load(new FileInputStream(new File("/home/andrea/asi/mail/book.conf")));
+	    addressBook.load(new FileInputStream(new File(addressBookFileName)));
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("/home/andrea/asi/mail/options.conf")));
+	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(optionsFileName)));
 	    smtpServer = (String)ois.readObject();
 	    smtpUserID = (String)ois.readObject();
 	    smtpPasswd = (String)ois.readObject();
+	    messageID = (String)ois.readObject();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
@@ -48,21 +56,22 @@ class Options {
     }
     public static void close() {
 	try {
-	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/home/andrea/asi/mail/accounts.conf")));
+	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(accountsFileName)));
 	    oos.writeObject(accounts);
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    addressBook.store(new FileOutputStream(new File("/home/andrea/asi/mail/book.conf")), "POP3 mail AddressBook");
+	    addressBook.store(new FileOutputStream(new File(addressBookFileName)), "POP3 mail AddressBook");
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/home/andrea/asi/mail/options.conf")));
+	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(optionsFileName)));
 	    oos.writeObject(smtpServer);
 	    oos.writeObject(smtpUserID);
 	    oos.writeObject(smtpPasswd);
+	    oos.writeObject(messageID);
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
