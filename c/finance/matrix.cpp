@@ -37,7 +37,7 @@ namespace AndSoft {
       runtime_error("Matrix::operator() Out of Bounds!");
   }
 
-  const gsl_matrix* Matrix::gsl_const() const {
+  const gsl_matrix* Matrix::gsl() const {
     return myData;
   }
 

@@ -9,23 +9,25 @@ namespace AndSoft {
 
   class MonteCarlo {
   public:
-    MonteCarlo(unsigned int dim);
+    MonteCarlo(const unsigned int dim);
 
     void addVector(const std::vector<double> &val);
-    double getMean(unsigned int dim) const;
-    double getVar(unsigned int dim) const;
-    double getCov(unsigned int i, unsigned int j) const;
-    double getCorr(unsigned int i, unsigned int j) const;
+    double getMean(const unsigned int dim) const;
+    double getVar(const unsigned int dim) const;
+    double getCov(const unsigned int i, const unsigned int j) const;
+    double getCorr(const unsigned int i, const unsigned int j) const;
     
     // to be used for control variates:
     // i product
     // j control variate
-    double getBeta(unsigned int i, unsigned int j) const;
+    double getBeta(const unsigned int i, const unsigned int j) const;
 
   private:
     const unsigned int myDim;
     std::vector<double> myMeans;
+    std::vector<double> myMeansKahan;
     Matrix myCovs;
+    Matrix myCovsKahan;
     unsigned int myCount;
   };
 

@@ -20,7 +20,7 @@ namespace AndSoft {
     unsigned int rows() const;
     unsigned int cols() const;
 
-    const gsl_matrix* gsl_const() const;
+    const gsl_matrix* gsl() const;
     gsl_matrix* gsl();
 
   private:

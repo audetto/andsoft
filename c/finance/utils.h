@@ -5,7 +5,7 @@
 
 namespace AndSoft {
 
-  template<typename T> inline T SQR(T a) {
+  template<typename T> inline T SQR(const T a) {
     return a * a;
   }
 
