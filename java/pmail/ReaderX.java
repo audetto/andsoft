@@ -49,7 +49,7 @@ public class ReaderX extends JFrame {
 			Account account = (Account)Options.accounts.get(name);
 			POP3Frame jif = new POP3Frame(mWindow, name, account.server, account.username, account.password);
 			jif.pack();
-			jif.show();
+			jif.setVisible(true);
 			desktop.add(jif);
 		    }
 		}
@@ -81,7 +81,7 @@ public class ReaderX extends JFrame {
 		    JInternalFrame jif = new Composer(null, mWindow);
 		    jif.setSize(640, 480);
 		    //		    jif.pack();
-		    jif.show();
+		    jif.setVisible(true);
 		    desktop.add(jif);
 		    try {
 			jif.setSelected(true);
@@ -116,7 +116,7 @@ public class ReaderX extends JFrame {
 			    InputStream is = new BufferedInputStream(new FileInputStream(file));
 			    MimeViewer jif = new MimeViewer(mWindow, is, file.getName());
 			    jif.setSize(320, 240);
-			    jif.show();
+			    jif.setVisible(true);
 			    desktop.add(jif);
 			} catch(Exception ex) {
 			    LogFrame.log(ex);
@@ -183,6 +183,19 @@ public class ReaderX extends JFrame {
 	    }
 				);
 
+	JMenuItem mMessageID = new JMenuItem("Message ID");
+	mAccounts.add(mMessageID);
+	mMessageID.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    String mID = JOptionPane.showInputDialog(ReaderX.this, "Message ID", Options.messageID);
+		    if (mID != null) {
+			Options.messageID = mID;
+		    }
+		    
+		}
+	    }
+				     );
+
 	jmb.add(mWindow);
 
 	JMenu mHelp = new JMenu("Help");
@@ -200,11 +213,11 @@ public class ReaderX extends JFrame {
 
 	LogFrame lf = new LogFrame(mWindow);
 	lf.setSize(320, 240);
-	lf.show();
+	lf.setVisible(true);
 	desktop.add(lf);
 
 	setSize(800, 600);
-	show();
+	setVisible(true);
     }
 
     public static void main(String args[]) {
