@@ -17,12 +17,12 @@ class ReadPOP3 extends SwingWorker {
     String hostname;
     String username;
     String password;
-    Component frame;
+    JInternalFrame frame;
     JProgressBar progress;
 
     String finalmessage = null;
 
-    public ReadPOP3(String hostname, String username, String password, DefaultTableModel tablemodel, JProgressBar progress, Component frame) {
+    public ReadPOP3(String hostname, String username, String password, DefaultTableModel tablemodel, JProgressBar progress, JInternalFrame frame) {
 	this.tablemodel = tablemodel;
 	this.hostname = hostname;
 	this.username = username;
@@ -105,6 +105,7 @@ class ReadPOP3 extends SwingWorker {
 
     public void finished() {
 	JOptionPane.showInternalMessageDialog(frame, finalmessage);
+	frame.setClosable(true);
     }
 
 }
