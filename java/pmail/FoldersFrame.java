@@ -97,7 +97,7 @@ class FoldersFrame extends JWindowFrame {
     private FilesTableModel sent = new FilesTableModel(Options.sentDir);
 
     public FoldersFrame(final JMenu windowMenu) {
-	super(windowMenu, "Folders", true, true, true, true);
+	super(windowMenu, "Folders", true, false, true, true);
 
 	addInternalFrameListener(new InternalFrameAdapter() {
 		public void internalFrameClosed(InternalFrameEvent e) {
@@ -203,7 +203,8 @@ class FoldersFrame extends JWindowFrame {
 			       );
 
 	MyTreeNode[] nodes = {inboxNode, deleteNode, queueNode, sentNode};
-	ReadFolders rf = new ReadFolders(nodes, progress, null);
+	setClosable(false);
+	ReadFolders rf = new ReadFolders(nodes, progress, this);
 	rf.start();
     }
 
