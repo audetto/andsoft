@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import com.sun.mail.smtp.*;
+
 class SendMail extends SwingWorker {
     FilesTableModel sent;
     FilesTableModel queue;
@@ -25,15 +27,19 @@ class SendMail extends SwingWorker {
 
     public Object construct() {
 
-	Properties prop = new Properties();
-	if (Options.smtpUserID != null)
-	    prop.put("mail.smtp.auth", "true");
-	Session session = Session.getInstance(prop, null);
+	Properties props = new Properties();
+	if (Options.smtpUserID != null) {
+	    props.setProperty("mail.smtp.auth", "true");
+	}
+
+	Session session = Session.getInstance(props);
+	//	session.setDebug(true);
 	File destDir = sent.getDir();
 	final int rows = queue.getRowCount();
 
 	try {
-	    Transport trans = session.getTransport("smtp");
+	    SMTPTransport trans = (SMTPTransport)session.getTransport("smtp");
+	    trans.setStartTLS(true);
 	    trans.connect(Options.smtpServer, Options.smtpUserID, Options.smtpPasswd);
 
 	    for (int i = rows - 1; i >= 0; i--) {
