@@ -36,7 +36,7 @@ class AccountEditor extends JWindowFrame {
 	    }
 				 );
 
-	getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+	setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 
 	final JList accountsList = new JList(dlm);
 	final JTextField server = new JTextField();
@@ -63,7 +63,7 @@ class AccountEditor extends JWindowFrame {
 
 	refresh();
 
-	getContentPane().add(new JScrollPane(accountsList));
+	add(new JScrollPane(accountsList));
 
 	JPanel jp = new JPanel(new GridLayout(4, 2));
 
@@ -76,7 +76,7 @@ class AccountEditor extends JWindowFrame {
 	jp.add(new JLabel("Address:"));
 	jp.add(address);
 
-	getContentPane().add(jp);
+	add(jp);
 
 	jp = new JPanel(new GridLayout(3, 1));
 	JButton jb = new JButton("Add");
@@ -127,7 +127,7 @@ class AccountEditor extends JWindowFrame {
 			     );
 	jp.add(jb);
 
-	getContentPane().add(jp);
+	add(jp);
 	
     }
 

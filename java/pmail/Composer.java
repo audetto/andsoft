@@ -60,7 +60,7 @@ class Composer extends JWindowFrame {
 	jp.add(subject);
 
 	final JTextArea text = new JTextArea();
-	getContentPane().add(new JScrollPane(text));
+	add(new JScrollPane(text));
 
 	if (msg != null) {
 	    try {
@@ -128,7 +128,7 @@ class Composer extends JWindowFrame {
 	jtp.setSelectedIndex(0);
 
 	JSplitPane jsp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jp, jtp);
-	getContentPane().add(jsp);
+	add(jsp);
 
 	JMenuBar jmb = new JMenuBar();
 	setJMenuBar(jmb);

@@ -18,7 +18,7 @@ class MimeViewer extends JWindowFrame {
 	    MimeBodyPart mbp = new MimeBodyPart(input);
 
 	    JTabbedPane jtp = new JTabbedPane();
-	    getContentPane().add(jtp, BorderLayout.CENTER);
+	    add(jtp, BorderLayout.CENTER);
 
 	    String fileName = mbp.getFileName();
 	

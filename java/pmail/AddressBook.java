@@ -1,5 +1,4 @@
 import java.util.*;
-
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -40,7 +39,7 @@ class AddressBook extends JWindowFrame {
 	refresh();
 
 	JScrollPane jsp = new JScrollPane(jt);
-	getContentPane().add(jsp);
+	add(jsp);
     }
 
     public void refresh() {

@@ -137,10 +137,10 @@ class FoldersFrame extends JWindowFrame {
 	jtre.setTransferHandler(new DestTransferHandler());
 
       	JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(jtre), new JScrollPane(jtab));
-	getContentPane().add(jsp, BorderLayout.CENTER);
+	add(jsp, BorderLayout.CENTER);
 
 	JLabel progress = new JLabel();
-	getContentPane().add(progress, BorderLayout.NORTH);
+	add(progress, BorderLayout.NORTH);
 
 	JMenuBar jmb = new JMenuBar();
 	setJMenuBar(jmb);

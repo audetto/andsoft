@@ -15,11 +15,11 @@ class Forward extends JWindowFrame {
     public Forward(final MimeMessage msg, JMenu windowMenu) {
 	super(windowMenu, "<NONE>", true, true, true, true);
 
-	getContentPane().setLayout(new GridLayout(3, 2));
+	setLayout(new GridLayout(3, 2));
 
 	JButton jb = new JButton("To:");
 	jb.setHorizontalAlignment(SwingConstants.LEFT);
-	getContentPane().add(jb);
+	add(jb);
 	final JList to = new JList(new DefaultComboBoxModel());
 	to.addKeyListener(new KeyAdapter() {
 		public void keyTyped(KeyEvent e) {
@@ -44,16 +44,16 @@ class Forward extends JWindowFrame {
 		}
 	    }
 			    );
-	getContentPane().add(new JScrollPane(to));
+	add(new JScrollPane(to));
 
-	getContentPane().add(new JLabel("From:"));
+	add(new JLabel("From:"));
 	final JComboBox from = new JComboBox();
 	for (Enumeration en = Options.accounts.keys(); en.hasMoreElements(); ) {
 	    from.addItem(en.nextElement());
 	}
-	getContentPane().add(from);
+	add(from);
 
-	getContentPane().add(new JLabel("Subject:"));
+	add(new JLabel("Subject:"));
 	final JTextField subject = new JTextField();
 	try {
 	    String sbj = "FWD: " + msg.getSubject();
@@ -62,7 +62,7 @@ class Forward extends JWindowFrame {
 	} catch(Exception ex) {
 	    LogFrame.log(ex);
 	}
-	getContentPane().add(subject);
+	add(subject);
 
 	JMenuBar jmb = new JMenuBar();
 	setJMenuBar(jmb);

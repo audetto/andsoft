@@ -53,7 +53,7 @@ class LogFrame extends JWindowFrame {
 				    );
 
 	JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(jl), new JScrollPane(jta));
-	getContentPane().add(jsp);
+	add(jsp);
     }
 
     public static void log(Exception e) {

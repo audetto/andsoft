@@ -58,15 +58,15 @@ class POP3Frame extends JWindowFrame {
 	final JTable jt = new JTable(dtm);
 
 	JScrollPane jsp = new JScrollPane(jt);
-	getContentPane().add(jsp, BorderLayout.CENTER);
+	add(jsp, BorderLayout.CENTER);
 
 	final JProgressBar jpb_count = new JProgressBar();
-	getContentPane().add(jpb_count, BorderLayout.NORTH);
+	add(jpb_count, BorderLayout.NORTH);
 
 	final JProgressBar jpb_size = new JProgressBar();
 	jpb_size.setStringPainted(true);
 	jpb_size.setString("0 Kbytes");
-	getContentPane().add(jpb_size, BorderLayout.SOUTH);
+	add(jpb_size, BorderLayout.SOUTH);
 
 	sw = new ReadPOP3(hostname, username, password, dtm, jpb_count, this);
 	sw.start();

@@ -19,11 +19,11 @@ class MessageViewer extends JWindowFrame {
 	super(windowMenu, "<NONE>", true, true, true, true);
 
 	final CardLayout cards = new CardLayout();
-	getContentPane().setLayout(cards);
+	setLayout(cards);
 
 	try {
 	    JComponent firstCard = processPart(msg);
-	    getContentPane().add(firstCard, STD_VIEWER);
+	    add(firstCard, STD_VIEWER);
 	} catch (Exception ex) {
 	    LogFrame.log(ex);
 	}
@@ -41,7 +41,7 @@ class MessageViewer extends JWindowFrame {
 	    jta.setFont(Options.monoFont);
 	    jta.setEditable(false);
 	    JScrollPane secondCard = new JScrollPane(jta);
-	    getContentPane().add(secondCard, RAW_VIEWER);
+	    add(secondCard, RAW_VIEWER);
 	} catch (Exception ex) {
 	    LogFrame.log(ex);
 	}
