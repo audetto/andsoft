@@ -35,7 +35,7 @@ class POP3Frame extends JWindowFrame {
     SwingWorker sw;
 
     public POP3Frame(JMenu windowMenu, String account, String hostname, String username, String password) {
-	super(windowMenu, account, true, true, true, true);
+	super(windowMenu, account, true, false, true, true);
 
 	addInternalFrameListener(new InternalFrameAdapter() {
 		public void internalFrameClosed(InternalFrameEvent e) {
@@ -118,6 +118,7 @@ class POP3Frame extends JWindowFrame {
 			gets[i] = ((Boolean)dtm.getValueAt(i, 5)).booleanValue();
 			dels[i] = ((Boolean)dtm.getValueAt(i, 6)).booleanValue();
 		    }
+		    POP3Frame.this.setClosable(false);
 		    GetPOP3 lh = new GetPOP3(messages, gets, dels, jpb_count, POP3Frame.this);
 		    lh.start();		    
 		}
