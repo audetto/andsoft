@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.mail.*;
 
 class Options {
-    static final String baseDir = "/home/andrea";
+    static final String baseDir = System.getenv("HOME");
 
     static final File inboxDir = new File(baseDir + "/asi/mail/inbox");
     static final File deleteDir = new File(baseDir + "/asi/mail/delete");
