@@ -11,8 +11,8 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 class POP3TableModel extends DefaultTableModel {
-    Class[] classi = {String.class, String.class, Number.class, String.class, Date.class, Boolean.class, Boolean.class, String.class};
-    String[] headers = {"From", "Subject", "Size", "UIDL", "Sent", "Get", "Del", "Msg"};
+    Class[] classi = {String.class, String.class, Number.class, String.class, Date.class, Boolean.class, Boolean.class, Boolean.class, String.class};
+    String[] headers = {"From", "Subject", "Size", "UIDL", "Sent", "Get", "Del", "Old", "Msg"};
     public int getColumnCount() {
 	return headers.length;
     }
@@ -26,28 +26,38 @@ class POP3TableModel extends DefaultTableModel {
 	return (col == 5 || col == 6);
     }
     public Message getMessage(int row) {
-	return (Message)((Vector)dataVector.elementAt(row)).get(7);
+	return (Message)((Vector)dataVector.elementAt(row)).get(8);
     }
 }
 
 class POP3Frame extends JWindowFrame {
 
-    SwingWorker sw;
+    SwingWorker read;
+    SwingWorker get = null;
 
-    public POP3Frame(JMenu windowMenu, String account, String hostname, String username, String password, boolean ssl) {
-	super(windowMenu, account, true, false, true, true);
+    public POP3Frame(JMenu windowMenu, final Account account) {
+	super(windowMenu, account.name, true, false, true, true);
 
 	addInternalFrameListener(new InternalFrameAdapter() {
 		public void internalFrameClosed(InternalFrameEvent e) {
-		    Object[] res = (Object[])sw.get();
-		    // controllare che res potrebbe essere null
-		    Store store = (Store)res[0];
-		    Folder inbox = (Folder)res[1];
-		    try {
-			if (inbox != null) inbox.close(true);
-			if (store != null) store.close();
-		    } catch(Exception ex) {
-			LogFrame.log(ex);
+		    if (get != null) {
+			Object[] res = (Object [])get.get();
+			HashSet newUids = (HashSet)res[0];
+			HashSet delUids = (HashSet)res[1];
+			account.uids.addAll(newUids);
+			account.uids.removeAll(delUids);
+		    }
+		    if (read != null) {
+			Object[] res = (Object[])read.get();
+			// controllare che res potrebbe essere null
+			Store store = (Store)res[0];
+			Folder inbox = (Folder)res[1];
+			try {
+			    if (inbox != null) inbox.close(true);
+			    if (store != null) store.close();
+			} catch(Exception ex) {
+			    LogFrame.log(ex);
+			}
 		    }
 		}
 	    }
@@ -68,8 +78,8 @@ class POP3Frame extends JWindowFrame {
 	jpb_size.setString("0 Kbytes");
 	add(jpb_size, BorderLayout.SOUTH);
 
-	sw = new ReadPOP3(hostname, username, password, ssl, dtm, jpb_count, this);
-	sw.start();
+	read = new ReadPOP3(account.server, account.username, account.password, account.ssl, account.uids, dtm, jpb_count, this);
+	read.start();
 
 	final NumberFormat format = NumberFormat.getIntegerInstance();
 	final TableModelListener tml = new TableModelListener() {
@@ -102,8 +112,8 @@ class POP3Frame extends JWindowFrame {
 	mPOP3.add(mDoIt);
 	mDoIt.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    Object[] res = (Object[])sw.get();
-		    Store store = (Store)res[0];
+		    Object[] res = (Object[])read.get();
+		    // Store store = (Store)res[0];
 		    Folder inbox = (Folder)res[1];
 		    
 		    mDoIt.setEnabled(false);
@@ -119,8 +129,8 @@ class POP3Frame extends JWindowFrame {
 			dels[i] = ((Boolean)dtm.getValueAt(i, 6)).booleanValue();
 		    }
 		    POP3Frame.this.setClosable(false);
-		    GetPOP3 lh = new GetPOP3(messages, gets, dels, jpb_count, POP3Frame.this);
-		    lh.start();		    
+		    get = new GetPOP3(messages, gets, dels, jpb_count, POP3Frame.this, inbox);
+		    get.start();		    
 		}
 	    }
 				);
@@ -129,7 +139,7 @@ class POP3Frame extends JWindowFrame {
 	mPOP3.add(mStop);
 	mStop.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    if (sw != null) sw.interrupt();
+		    if (read != null) read.interrupt();
 		}
 	    }
 				);
