@@ -1,0 +1,22 @@
+[Breakpoint 0]
+Enabled=true
+File=main_win.c
+Line=33
+Temporary=false
+
+[Breakpoint 1]
+Enabled=true
+File=function.c
+Line=183
+Temporary=false
+
+[General]
+DebuggerCmdStr=
+FileVersion=1
+ProgramArgs=
+TTYLevel=7
+WorkingDirectory=
+
+[Memory]
+ColumnWidths=80,200
+NumExprs=0

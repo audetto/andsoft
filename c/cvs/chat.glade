@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<GTK-Interface>
+
+<project>
+  <name>Chat</name>
+  <program_name>chat</program_name>
+  <directory></directory>
+  <source_directory>src</source_directory>
+  <pixmaps_directory>pixmaps</pixmaps_directory>
+  <language>C</language>
+  <gnome_support>False</gnome_support>
+  <gettext_support>False</gettext_support>
+  <backup_source_files>False</backup_source_files>
+</project>
+
+</GTK-Interface>
