@@ -9,7 +9,7 @@ import javax.swing.table.*;
 
 public class ReaderX extends JFrame {
     public ReaderX() {
-	super("ReaderX - POP3 Mail Client - (C)opyRight AndSoft Inc., 2003-04");
+	super("ReaderX - POP3 Mail Client - (C)opyRight AndSoft Inc., 2003-05");
 	
 	Options.init();
 	addWindowListener(new WindowAdapter() {
@@ -205,7 +205,7 @@ public class ReaderX extends JFrame {
 	mHelp.add(mAbout);
 	mAbout.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    String notice = "POP3 Mail Client\n(C)opyRight AndSoft Inc., 2003-04\nVersion " + Version.ver;
+		    String notice = "POP3 Mail Client\n(C)opyRight AndSoft Inc., 2003-05\nVersion " + Version.ver;
 		    JOptionPane.showMessageDialog(ReaderX.this, notice, "About", JOptionPane.INFORMATION_MESSAGE);
 		}
 	    }
