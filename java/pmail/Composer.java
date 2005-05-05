@@ -171,6 +171,7 @@ class Composer extends JWindowFrame {
 
 			    message.setContent(multipart);
 			}
+			message.setSentDate(new Date());
 
 			File tmpFile = File.createTempFile("msg", ".mail.gz", Options.queueDir);
 			OutputStream os = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
