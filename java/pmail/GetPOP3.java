@@ -47,7 +47,10 @@ class GetPOP3 extends SwingWorker {
 		    messages[i].writeTo(os);
 		    os.close();
 
-		    MimeMessage msg2 = new MimeMessage(session, new GZIPInputStream(new BufferedInputStream(new FileInputStream(tmpFile))));
+		    GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(tmpFile)));
+		    MimeMessage msg2 = new MimeMessage(session, gzis);
+		    gzis.close();
+
 		    from = msg2.getFrom();
 		    to = msg2.getAllRecipients();
 		    data = FilesTableModel.processMessage(msg2, tmpFile.getName());

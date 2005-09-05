@@ -8,6 +8,7 @@ class Utilities {
 	while ((nch = in.read(buf)) != -1) {
 	    out.write(buf, 0 , nch);
 	}
+	in.close();
 	out.close();
     }
 

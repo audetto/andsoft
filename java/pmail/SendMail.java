@@ -48,7 +48,11 @@ class SendMail extends SwingWorker {
 
 		    String fileName = (String)queue.getValueAt(i, 3);
 		    File file = new File(queue.getDir(), fileName);
-		    final MimeMessage msg = new MimeMessage(session, new GZIPInputStream(new BufferedInputStream(new FileInputStream(file))));
+
+		    GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)));
+		    final MimeMessage msg = new MimeMessage(session, gzis);
+		    gzis.close();
+
 		    final String sbj = msg.getSubject();
 
 		    SwingUtilities.invokeLater(new Runnable() {

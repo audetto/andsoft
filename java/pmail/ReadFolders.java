@@ -51,7 +51,10 @@ class ReadFolders extends SwingWorker {
 	for (int i = 0; i < msgs; i++) {
 	    if (files[i].isFile()) {
 		try {
-		    MimeMessage msg = new MimeMessage(session, new GZIPInputStream(new BufferedInputStream(new FileInputStream(files[i]))));
+		    GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(files[i])));
+		    MimeMessage msg = new MimeMessage(session, gzis);
+		    gzis.close();
+
 		    final Vector dati = FilesTableModel.processMessage(msg, files[i].getName());
 
 		    file_count++;

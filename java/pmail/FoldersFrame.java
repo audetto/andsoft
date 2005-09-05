@@ -47,7 +47,10 @@ class DestTransferHandler extends TransferHandler {
 		    File sourceFile = new File(sourceDir, fileName);
 
 		    Utilities.copyStream(new BufferedInputStream(new FileInputStream(sourceFile)), new BufferedOutputStream(new FileOutputStream(destFile)));
-		    MimeMessage msg = new MimeMessage(Options.session, new GZIPInputStream(new BufferedInputStream(new FileInputStream(destFile))));
+		    GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(destFile)));
+		    MimeMessage msg = new MimeMessage(Options.session, gzis);
+		    gzis.close();
+
 		    Vector data = FilesTableModel.processMessage(msg, destFile.getName());
 		    mtn.ftm.addRow(data);
 		}

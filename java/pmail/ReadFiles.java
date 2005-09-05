@@ -34,7 +34,9 @@ class ReadFiles extends SwingWorker {
 	    for (int i = 0; i < msgs; i++) {
 		try {
 
-		    MimeMessage msg = new MimeMessage(session, new BufferedInputStream(new FileInputStream(files[i])));
+		    BufferedInputStream bis = new BufferedInputStream(new FileInputStream(files[i]));
+		    MimeMessage msg = new MimeMessage(session, bis);
+		    bis.close();
 		
 		    final Object[] data2 = FilesTableModel.processMessage(msg, files[i].getName());
 		    final int i2 = i + 1;
