@@ -46,7 +46,7 @@ class SourceTransferHandler extends TransferHandler {
 }
 
 class FilesTableModel extends DefaultTableModel {
-    private Class[] classi = {String.class, String.class, Number.class, String.class, Date.class};
+    private Class[] classes = {String.class, String.class, Number.class, String.class, Date.class};
     private String[] headers = {"From", "Subject", "Size", "Filename", "Sent"};
     private TreeSet[] ts = new TreeSet[5];
     private File dir;
@@ -69,7 +69,7 @@ class FilesTableModel extends DefaultTableModel {
 	return headers[col];
     }
     public Class getColumnClass(int col) {
-	return classi[col];
+	return classes[col];
     }
     public boolean isCellEditable(int row, int col) {
 	return false;
@@ -136,7 +136,11 @@ class FilesTableModel extends DefaultTableModel {
 				FilesTableModel ftm = (FilesTableModel)jtab.getModel();
 				String fileName = (String)ftm.getValueAt(row, 3);
 				File file = new File(ftm.dir, fileName);
-				MimeMessage msg = new MimeMessage(Options.session, new GZIPInputStream(new BufferedInputStream(new FileInputStream(file))));
+				
+				GZIPInputStream gzis = new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)));
+				MimeMessage msg = new MimeMessage(Options.session, gzis);
+				gzis.close();
+
 				MessageViewer msgView = new MessageViewer(msg, windowMenu);
 				msgView.setSize(640, 480);
 				msgView.show();
