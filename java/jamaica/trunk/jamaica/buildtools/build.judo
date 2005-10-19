@@ -29,7 +29,6 @@ menuItems = [
   '  Compile Non-Parser Source Code', //  4
   '  Compile All Source Code',        //  5
   '  Package',                        //  6
-  'Exit'
 ];
 
 switch menu(menuItems,false) {
@@ -39,7 +38,7 @@ switch menu(menuItems,false) {
   case 4:  compileSource();  break;
   case 5:  compileAll();     break;
   case 6:  pkg();            break;
-  default: ;
+  default: return;
 }
 
 /////////////////////////////////////////////////////////////////////
