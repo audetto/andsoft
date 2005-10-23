@@ -108,13 +108,14 @@ function pkg {
   *]];
 
   file = '${build}/jamaica-1.0.zip';
+  versionId = 'jamaica-1.0';
   zip = createJar(file, manif);
   copy '${build}/tmp/jamaica.jar, ${build}/tmp/src.jar' into zip under versionId;
   copy 'license.html, release.html' in '${docs}' into zip under versionId;
-  copy 'examples/*' in myroot except '*~, */alfa*' recursive into zip under versionId;
+  copy 'examples/*' except '*/CVS*, *~, */alfa*' in myroot recursive into zip under versionId;
+  copy 'docs/*' except '*/CVS*, *~, */alfa*' in '${myroot}/docs' recursive into zip under versionId;
+  copy 'share/*' except '*/CVS*, *~, */alfa*' in '${JUDOBASE}/common/doc_src' recursive into zip under versionId;
   zip.close();
 
   println<err> nl, 'Created ${file}.', nl;
 }
-
-catch: println<err> $_;
