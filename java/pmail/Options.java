@@ -14,11 +14,14 @@ class Options {
     static final File queueDir = new File(baseDir + "/asi/mail/queue");
     static final File sentDir = new File(baseDir + "/asi/mail/sent");
     static Properties addressBook = new Properties();
+
     static String smtpServer = "pentium";
     static String smtpUserID = null;
     static String smtpPasswd = null;
     static String messageID = null;
+    static boolean debug = true;
     static Hashtable accounts = new Hashtable();
+
     static final JFileChooser saveFileChooser = new JFileChooser();
     static final JFileChooser openFileChooser = new JFileChooser();
     static final Font monoFont = new Font("Monospaced", Font.PLAIN, 12);
@@ -32,11 +35,14 @@ class Options {
 	try {
 	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(accountsFileName)));
 	    accounts = (Hashtable)ois.readObject();
+	    ois.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    addressBook.load(new FileInputStream(new File(addressBookFileName)));
+	    FileInputStream fis = new FileInputStream(new File(addressBookFileName));
+	    addressBook.load(fis);
+	    fis.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
@@ -46,6 +52,8 @@ class Options {
 	    smtpUserID = (String)ois.readObject();
 	    smtpPasswd = (String)ois.readObject();
 	    messageID = (String)ois.readObject();
+	    debug = ois.readBoolean();
+	    ois.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
@@ -54,15 +62,19 @@ class Options {
 	queueDir.mkdir();
 	sentDir.mkdir();
     }
+
     public static void close() {
 	try {
 	    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(accountsFileName)));
 	    oos.writeObject(accounts);
+	    oos.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
 	try {
-	    addressBook.store(new FileOutputStream(new File(addressBookFileName)), "POP3 mail AddressBook");
+	    FileOutputStream fos = new FileOutputStream(new File(addressBookFileName)); 
+	    addressBook.store(fos, "POP3 mail AddressBook");
+	    fos.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
@@ -72,6 +84,8 @@ class Options {
 	    oos.writeObject(smtpUserID);
 	    oos.writeObject(smtpPasswd);
 	    oos.writeObject(messageID);
+	    oos.writeBoolean(debug);
+	    oos.close();
 	} catch(Exception ex) {
 	    ex.printStackTrace();
 	}
