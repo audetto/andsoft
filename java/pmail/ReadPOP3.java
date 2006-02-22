@@ -49,7 +49,10 @@ class ReadPOP3 extends SwingWorker {
 	    }
 
 	    Session session = Session.getInstance(props);
-	    //	    session.setDebug(true);
+	    if (Options.debug) {
+		session.setDebug(true);
+		session.setDebugOut(StreamLog.getPs(hostname));
+	    }
 	    store = session.getStore("pop3");
 	    store.connect(hostname, username, password);
 
@@ -97,7 +100,7 @@ class ReadPOP3 extends SwingWorker {
 		    dati[8] = messages[i];
 
 		    final int i2 = msgs - i;
-		    SwingUtilities.invokeLater(new Runnable() {
+		    EventQueue.invokeLater(new Runnable() {
 			    public void run() {
 				tablemodel.addRow(dati);
 				progress.setMaximum(msgs);
