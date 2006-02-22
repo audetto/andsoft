@@ -59,9 +59,7 @@ class Composer extends JWindowFrame {
 	final JTextField subject = new JTextField();
 	jp.add(subject);
 
-	final JTextArea text = new JTextArea();
-	add(new JScrollPane(text));
-
+	StringBuffer sb = new StringBuffer();
 	if (msg != null) {
 	    try {
 		subject.setText(msg.getSubject());
@@ -70,21 +68,21 @@ class Composer extends JWindowFrame {
 		    ((DefaultComboBoxModel)to.getModel()).addElement(((InternetAddress)froms[0]).getAddress());
 		Object cont = msg.getContent();
 		if (cont instanceof String) {
-		    LineNumberReader lnr = new LineNumberReader(new StringReader((String)cont));
+		    BufferedReader br = new BufferedReader(new StringReader((String)cont));
 		    String str;
 		    do {
-			str = lnr.readLine();
-			if (str != null) {
-			    StringBuffer sb = new StringBuffer("> ").append(str).append("\n");
-			    text.append(sb.toString());
-			}
+			str = br.readLine();
+			if (str != null)
+			    sb.append("> ").append(str).append("\n");
 		    } while (str != null);
 		}
 	    } catch(Exception ex) {
 		LogFrame.log(ex);
 	    }
-
 	}
+
+	final JTextArea text = new JTextArea(sb.toString());
+	add(new JScrollPane(text));
 
 	JPanel attachments = new JPanel();
 	attachments.setLayout(new BoxLayout(attachments, BoxLayout.X_AXIS));
