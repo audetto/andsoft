@@ -35,7 +35,10 @@ class SendMail extends SwingWorker {
 	}
 
 	Session session = Session.getInstance(props);
-	//	session.setDebug(true);
+	if (Options.debug) {
+	    session.setDebug(true);
+	    session.setDebugOut(StreamLog.getPs(Options.smtpServer));
+	}
 	File destDir = sent.getDir();
 	final int rows = queue.getRowCount();
 
