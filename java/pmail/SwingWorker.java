@@ -1,4 +1,4 @@
-import javax.swing.SwingUtilities;
+import java.awt.EventQueue;
 /**
  * This is the 3rd version of SwingWorker (also known as
  * SwingWorker 3), an abstract class that you subclass to
@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities;
 public abstract class SwingWorker {
     private Object value;
     // see getValue(), setValue()
-    private Thread thread;
+
     /**
      * Class to maintain reference to current worker thread
      * under separate synchronization control.
@@ -97,10 +97,11 @@ public abstract class SwingWorker {
 		    finally {
 			threadVar.clear();
 		    }
-		    SwingUtilities.invokeLater(doFinished);
+		    EventQueue.invokeLater(doFinished);
 		}
 	    };
 	Thread t = new Thread(doConstruct);
+	t.setPriority(Thread.NORM_PRIORITY);
 	threadVar = new ThreadVar(t);
     }
     /**
