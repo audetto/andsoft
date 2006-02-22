@@ -1,5 +1,7 @@
 import java.io.*;
 
+import java.awt.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -61,7 +63,7 @@ class LogFrame extends JWindowFrame {
 	e.printStackTrace(new PrintWriter(sw));
 	final String message = e.getMessage();
 	final String stack = sw.toString();
-	SwingUtilities.invokeLater(new Runnable() {
+	EventQueue.invokeLater(new Runnable() {
 		public void run() {
 		    MessageException ecc = new MessageException(message, stack);
 		    one.dlm.addElement(ecc);

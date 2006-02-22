@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import java.awt.*;
+
 import javax.swing.*;
 
 import javax.mail.*;
@@ -55,7 +57,7 @@ class SendMail extends SwingWorker {
 
 		    final String sbj = msg.getSubject();
 
-		    SwingUtilities.invokeLater(new Runnable() {
+		    EventQueue.invokeLater(new Runnable() {
 			    public void run() {
 				progress.setValue(rows - i2);
 				label.setText(sbj);
@@ -67,7 +69,7 @@ class SendMail extends SwingWorker {
 
 		    final File destFile = File.createTempFile("msg", ".mail.gz", destDir);
 		    Utilities.copyStream(new BufferedInputStream(new FileInputStream(file)), new BufferedOutputStream(new FileOutputStream(destFile)));
-		    SwingUtilities.invokeLater(new Runnable() {
+		    EventQueue.invokeLater(new Runnable() {
 			    public void run() {
 				try {
 				    Vector data = FilesTableModel.processMessage(msg, destFile.getName());

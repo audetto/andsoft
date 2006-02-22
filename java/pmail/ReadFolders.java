@@ -62,7 +62,7 @@ class ReadFolders extends SwingWorker {
 		    Object[] data = {new Integer(file_count), new Integer(size_count)};
 		    final String label = MessageFormat.format("{0, number, integer} messages ({1, number, integer} bytes)", data);
 
-		    SwingUtilities.invokeLater(new Runnable() {
+		    EventQueue.invokeLater(new Runnable() {
 			    public void run() {
 				node.ftm.addRow(dati);	
 				progress.setText(label);

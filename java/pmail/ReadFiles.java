@@ -41,7 +41,7 @@ class ReadFiles extends SwingWorker {
 		    final Object[] data2 = FilesTableModel.processMessage(msg, files[i].getName());
 		    final int i2 = i + 1;
 		    final int msgs2 = msgs;
-		    SwingUtilities.invokeLater(new Runnable() {
+		    EventQueue.invokeLater(new Runnable() {
 			    public void run() {
 				FilesFrame.addIfExists(data2);
 				progress.setMinimum(0);

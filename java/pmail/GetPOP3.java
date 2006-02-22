@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import java.awt.*;
+
 import javax.swing.*;
 
 import javax.mail.*;
@@ -67,7 +69,7 @@ class GetPOP3 extends SwingWorker {
 		final Vector data2 = data;
 		final Address[] from2 = from;
 		final Address[] to2 = to;
-		SwingUtilities.invokeLater(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 			    if (data2 != null)
 				FoldersFrame.addIfExists(data2);
