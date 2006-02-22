@@ -9,13 +9,13 @@ import javax.swing.table.*;
 
 public class ReaderX extends JFrame {
     public ReaderX() {
-	super("ReaderX - POP3 Mail Client - (C)opyRight AndSoft Inc., 2003-05");
+	super("ReaderX - POP3 Mail Client - (C)opyRight AndSoft Inc., 2003-06");
 	
 	Options.init();
+	setDefaultCloseOperation(EXIT_ON_CLOSE);
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    Options.close();
-		    System.exit(0);
 		}
 	    }
 			  );
@@ -115,6 +115,7 @@ public class ReaderX extends JFrame {
 			try {
 			    InputStream is = new BufferedInputStream(new FileInputStream(file));
 			    MimeViewer jif = new MimeViewer(mWindow, is, file.getName());
+			    is.close();
 			    jif.setSize(320, 240);
 			    jif.setVisible(true);
 			    desktop.add(jif);
@@ -205,7 +206,7 @@ public class ReaderX extends JFrame {
 	mHelp.add(mAbout);
 	mAbout.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    String notice = "POP3 Mail Client\n(C)opyRight AndSoft Inc., 2003-05\nVersion " + Version.ver;
+		    String notice = "POP3 Mail Client\n(C)opyRight AndSoft Inc., 2003-06\nVersion " + Version.ver;
 		    JOptionPane.showMessageDialog(ReaderX.this, notice, "About", JOptionPane.INFORMATION_MESSAGE);
 		}
 	    }
@@ -216,11 +217,20 @@ public class ReaderX extends JFrame {
 	lf.setVisible(true);
 	desktop.add(lf);
 
+	StreamLog sl = new StreamLog(mWindow);
+	sl.setSize(320, 240);
+	sl.setVisible(true);
+	desktop.add(sl);
+
 	setSize(800, 600);
 	setVisible(true);
     }
 
     public static void main(String args[]) {
-	new ReaderX();
+	EventQueue.invokeLater(new Runnable() {
+		public void run() {
+		    new ReaderX();
+		}
+	    });
     }
 }
