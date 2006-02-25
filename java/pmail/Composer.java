@@ -73,16 +73,14 @@ class Composer extends JWindowFrame {
 		    do {
 			str = br.readLine();
 			if (str != null)
-			    sb.append("> ").append(str).append("\n");
+			    sb.append("> ").append(str).append(Options.newLine);
 		    } while (str != null);
 		}
 	    } catch(Exception ex) {
 		LogFrame.log(ex);
 	    }
 	}
-
 	final JTextArea text = new JTextArea(sb.toString());
-	add(new JScrollPane(text));
 
 	JPanel attachments = new JPanel();
 	attachments.setLayout(new BoxLayout(attachments, BoxLayout.X_AXIS));
@@ -121,7 +119,7 @@ class Composer extends JWindowFrame {
 	attachments.add(buttons);
 
 	JTabbedPane jtp = new JTabbedPane();
-	jtp.addTab("Text", text);
+	jtp.addTab("Text", new JScrollPane(text));
 	jtp.addTab("Attachments", attachments);
 	jtp.setSelectedIndex(0);
 
