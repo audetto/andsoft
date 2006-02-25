@@ -31,6 +31,8 @@ class Options {
     static final String addressBookFileName = baseDir + "/asi/mail/book.conf";
     static final String optionsFileName = baseDir + "/asi/mail/options.conf";
 
+    static final String newLine = System.getProperty("line.separator");
+
     public static void init()  {
 	try {
 	    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(accountsFileName)));
