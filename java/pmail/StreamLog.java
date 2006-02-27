@@ -1,6 +1,7 @@
 import javax.swing.*;
 
 import java.io.*;
+import java.util.*;
 
 import java.awt.event.*;
 
@@ -39,11 +40,15 @@ class StreamLog extends JWindowFrame {
     public static PrintStream getPs(String name) {
 	final JTextArea area = new JTextArea();
 	area.setEditable(false);
-	one.pane.add(new JScrollPane(area), name);
+	String title = String.format("%s @ %2$tH:%2$tM:%2$tS", name, new Date());
+	one.pane.add(new JScrollPane(area), title);
 
 	PrintStream ps = new PrintStream(new DummyOutputStream()) {
 		public void println(String x) {
-		    area.append(x + "\n");
+		    area.append(x + Options.newLine);
+		}
+		public void print(String x) {
+		    area.append(x);
 		}
 	    };
 	return ps;
