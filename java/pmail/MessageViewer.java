@@ -22,7 +22,7 @@ class MessageViewer extends JWindowFrame {
 	setLayout(cards);
 
 	try {
-	    JComponent firstCard = processPart(msg);
+	    JComponent firstCard = processPart(msg, this);
 	    add(firstCard, STD_VIEWER);
 	} catch (Exception ex) {
 	    LogFrame.log(ex);
@@ -96,9 +96,29 @@ class MessageViewer extends JWindowFrame {
 	    }
 			       );
 
+	JMenuItem mSaveAs = new JMenuItem("Save As...");
+	mMessage.add(mSaveAs);
+	mSaveAs.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    Options.saveFileChooser.setSelectedFile(null);
+		    int returnVal = Options.saveFileChooser.showSaveDialog(MessageViewer.this);
+		    if (returnVal == JFileChooser.APPROVE_OPTION) {
+			try {
+			    File file = Options.saveFileChooser.getSelectedFile();
+			    OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+			    msg.writeTo(os);
+			    os.close();
+			} catch(Exception ex) {
+			    LogFrame.log(ex);
+			}
+		    }
+		}
+	    }
+				  );
+	
     }
 
-    private String[] processAddresses(Address[] plain) {
+    private static String[] processAddresses(Address[] plain) {
 	String[] addresses;
 	if (plain == null) 
 	    addresses = new String[0];
@@ -112,7 +132,7 @@ class MessageViewer extends JWindowFrame {
 	return addresses;
     }
 
-    private JComponent processMimeBodyPart(final MimeBodyPart mbp) throws MessagingException, IOException {
+    private static JComponent processMimeBodyPart(final MimeBodyPart mbp, final JInternalFrame parent) throws MessagingException, IOException {
 
 	NumberFormat format = NumberFormat.getIntegerInstance();
 	String disposition = mbp.getDisposition();
@@ -147,7 +167,7 @@ class MessageViewer extends JWindowFrame {
 		fileName = MimeUtility.decodeText(fileName);
 		jb = new JButton(fileName);
 	    }
-	    jb.addActionListener(new SaveStreamAction(fileName, mbp.getInputStream(), this));
+	    jb.addActionListener(new SaveStreamAction(fileName, mbp.getInputStream(), parent));
 	    jc.add(jb);
 	    
 	    jc.add(new JLabel("Description:"));
@@ -167,7 +187,7 @@ class MessageViewer extends JWindowFrame {
 	    jb.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 			Options.saveFileChooser.setSelectedFile(null);
-			int returnVal = Options.saveFileChooser.showSaveDialog(MessageViewer.this);
+			int returnVal = Options.saveFileChooser.showSaveDialog(parent);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 			    File file = Options.saveFileChooser.getSelectedFile();
 			    try {
@@ -187,20 +207,20 @@ class MessageViewer extends JWindowFrame {
 	return jc;
     }
 
-    private JComponent processMimeMultipart(MimeMultipart mmp) throws MessagingException, IOException {
+    private static JComponent processMimeMultipart(MimeMultipart mmp, JInternalFrame parent) throws MessagingException, IOException {
 	JTabbedPane jtp = new JTabbedPane();
 	for (int i = 0; i < mmp.getCount(); i++) {
 	    Part bp = mmp.getBodyPart(i);
 	    
 	    String contentType = bp.getContentType();
-	    JComponent jc = processPart(bp);
+	    JComponent jc = processPart(bp, parent);
 	    jtp.addTab(contentType, jc);
 	}
 	jtp.setSelectedIndex(0);
 	return jtp;
     }
 
-    private JComponent processMimeMessage(MimeMessage msg) {
+    private static JComponent processMimeMessage(MimeMessage msg, JInternalFrame parent) {
     
 	JPanel upPanel = new JPanel();
 	upPanel.setLayout(new BoxLayout(upPanel, BoxLayout.Y_AXIS));
@@ -277,7 +297,7 @@ class MessageViewer extends JWindowFrame {
 	    jpt.add(jlt);
 	    upPanel.add(jpt);
 	    
-	    setTitle(sbj);
+	    parent.setTitle(sbj);
 	} catch(Exception ex) {
 	    LogFrame.log(ex);
 	}
@@ -301,7 +321,7 @@ class MessageViewer extends JWindowFrame {
 	
 	try {
 	    Object cont = msg.getContent();
-	    downPanel = processPart(cont);
+	    downPanel = processPart(cont, parent);
 	} catch(Exception ex) {
 	    LogFrame.log(ex);
 	}
@@ -309,32 +329,32 @@ class MessageViewer extends JWindowFrame {
 	return new JSplitPane(JSplitPane.VERTICAL_SPLIT, upPanel, downPanel);
     }
 
-    private JComponent processString(String str) {
+    private static JComponent processString(String str) {
 	JTextArea jta = new JTextArea(str);
 	jta.setEditable(false);
 	return new JScrollPane(jta);
     }
 
-    private JComponent processPart(Object obj) throws MessagingException, IOException {
+    public static JComponent processPart(Object obj, JInternalFrame parent) throws MessagingException, IOException {
 	if (obj instanceof MimeMessage) {
 	    MimeMessage msg = (MimeMessage)obj;
-	    return processMimeMessage(msg);
+	    return processMimeMessage(msg, parent);
 	}
 	if (obj instanceof MimeMultipart) {
 	    MimeMultipart mmp = (MimeMultipart)obj;
-	    return processMimeMultipart(mmp);
+	    return processMimeMultipart(mmp, parent);
 	}
 	if (obj instanceof MimeBodyPart) {
 	    MimeBodyPart mbp = (MimeBodyPart)obj;
 	    if (mbp.isMimeType("message/rfc822")) {
 		MimeMessage msg = new MimeMessage(Options.session, mbp.getInputStream());
-		return processMimeMessage(msg);
+		return processMimeMessage(msg, parent);
 	    }
 	    if (mbp.isMimeType("multipart/alternative")) {
 		MimeMultipart mmp = new MimeMultipart(new MimePartDataSource(mbp));
-		return processMimeMultipart(mmp);
+		return processMimeMultipart(mmp, parent);
 	    }
-	    return processMimeBodyPart(mbp);
+	    return processMimeBodyPart(mbp, parent);
 	}
 	if (obj instanceof String) {
 	    String str = (String)obj;

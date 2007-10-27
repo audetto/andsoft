@@ -7,6 +7,8 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
+import javax.mail.internet.*;
+
 public class ReaderX extends JFrame {
     public ReaderX() {
 	super("ReaderX - POP3 Mail Client - (C)opyRight AndSoft Inc., 2003-06");
@@ -127,6 +129,32 @@ public class ReaderX extends JFrame {
 	    }
 				    );
 
+	JMenuItem mMimeOpenMessage = new JMenuItem("Open Message...");
+	mMime.add(mMimeOpenMessage);
+	mMimeOpenMessage.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    Options.openFileChooser.setSelectedFile(null);
+		    int returnVal = Options.openFileChooser.showOpenDialog(ReaderX.this);
+		    if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = Options.openFileChooser.getSelectedFile();
+			try {
+			    InputStream is = new BufferedInputStream(new FileInputStream(file));
+			    MimeMessage msg = new MimeMessage(Options.session, is);
+			    is.close();
+
+			    MessageViewer msgView = new MessageViewer(msg, mWindow);
+			    msgView.setSize(640, 480);
+			    msgView.show();
+			    desktop.add(msgView);
+			    msgView.setSelected(true);
+			} catch(Exception ex) {
+			    LogFrame.log(ex);
+			}
+		    }
+		}
+	    }
+				    );
+
 	JMenu mOptions = new JMenu("Options");
 	jmb.add(mOptions);
 
@@ -184,19 +212,26 @@ public class ReaderX extends JFrame {
 	    }
 				);
 
-	JMenuItem mMessageID = new JMenuItem("Message ID...");
-	mOptions.add(mMessageID);
-	mMessageID.addActionListener(new ActionListener() {
+	JMenuItem mPreferences = new JMenuItem("Preferences...");
+	mOptions.add(mPreferences);
+	mPreferences.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    String mID = JOptionPane.showInputDialog(ReaderX.this, "Message ID", Options.messageID);
-		    if (mID != null) {
-			Options.messageID = mID;
+		    JPanel jp = new JPanel(new GridLayout(2, 2));
+		    jp.add(new JLabel("Connections:"));
+		    final JCheckBox debug = new JCheckBox("debug", Options.debug);
+		    jp.add(debug);
+		    jp.add(new JLabel("Message ID:"));
+		    final JTextField msgID = new JTextField(Options.messageID);
+		    jp.add(msgID);
+		    if (JOptionPane.showConfirmDialog(ReaderX.this, jp, "Preferences", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+			Options.debug = debug.isSelected();
+			Options.messageID = msgID.getText();
 		    }
 		    
 		}
 	    }
-				     );
-
+				       );
+	
 	jmb.add(mWindow);
 
 	JMenu mHelp = new JMenu("Help");

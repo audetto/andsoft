@@ -13,10 +13,10 @@
 using namespace std;
 
 struct InterfaceData {
-  int rstart;
-  int tstart;
-  int rlast;
-  int tlast;
+  double rstart;
+  double tstart;
+  double rlast;
+  double tlast;
   int rmaximum;
   int tmaximum;
   QListViewItem *ritem;
@@ -37,8 +37,10 @@ public:
 public slots:
   void update();
 private:
-  void extract(string &line, QString &name, int &rbytes, int &tbytes) const;
-  int getInt(string &line) const;
+  void extract(string &line, QString &name, double &rbytes, double &tbytes) const;
+  double getDouble(string &line) const;
+  QString formatSpeed(const int speed) const;
+  QString formatSize(const double bytes) const;
 
   double lasttime;
   Table table;

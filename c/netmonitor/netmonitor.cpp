@@ -17,7 +17,7 @@ NetMonitor::NetMonitor()
 
   lasttime = tv.tv_sec;
 
-  setCaption("Net Monitor - (C)opyRight AndSoft Inc., 2003-04");
+  setCaption("Net Monitor - (C)opyRight AndSoft Inc., 2003-07");
   
   QTabWidget *qt = new QTabWidget(this);
 
@@ -25,9 +25,9 @@ NetMonitor::NetMonitor()
   rec->addColumn("Interface");
   rec->addColumn("Bytes");
   rec->setColumnAlignment(1, Qt::AlignRight);
-  rec->addColumn("Speed");
+  rec->addColumn("Average");
   rec->setColumnAlignment(2, Qt::AlignRight);
-  rec->addColumn("Current");
+  rec->addColumn("Speed");
   rec->setColumnAlignment(3, Qt::AlignRight);
   rec->addColumn("Maximum");
   rec->setColumnAlignment(4, Qt::AlignRight);
@@ -38,9 +38,9 @@ NetMonitor::NetMonitor()
   tra->addColumn("Interface");
   tra->addColumn("Bytes");
   tra->setColumnAlignment(1, Qt::AlignRight);
-  tra->addColumn("Speed");
+  tra->addColumn("Average");
   tra->setColumnAlignment(2, Qt::AlignRight);
-  tra->addColumn("Current");
+  tra->addColumn("Speed");
   tra->setColumnAlignment(3, Qt::AlignRight);
   tra->addColumn("Maximum");
   tra->setColumnAlignment(4, Qt::AlignRight);
@@ -71,29 +71,62 @@ NetMonitor::~NetMonitor() {
   }
 }
 
-int NetMonitor::getInt(string &line) const {
+double NetMonitor::getDouble(string &line) const {
   static const string CIFRE("0123456789");
   line.erase(0, line.find_first_of(CIFRE));
   const int a = line.find_first_not_of(CIFRE);
   string temp = line.substr(0, a);
   line.erase(0, a);
-  return atoi(temp.c_str());
+  return atof(temp.c_str());
 }
 
-void NetMonitor::extract(string &line, QString &name, int &rbytes, int &tbytes) const {
+void NetMonitor::extract(string &line, QString &name, double &rbytes, double &tbytes) const {
   const QString value = line.substr(0, 6).c_str();
   name = value.simplifyWhiteSpace();
   line.erase(0, 7);
 
-  rbytes = getInt(line);
-  getInt(line);
-  getInt(line);
-  getInt(line);
-  getInt(line);
-  getInt(line);
-  getInt(line);
-  getInt(line);
-  tbytes = getInt(line);
+  rbytes = getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  getDouble(line);
+  tbytes = getDouble(line);
+}
+
+QString NetMonitor::formatSpeed(const int speed) const {
+  QString s;
+  static const double KB = 1024.0;
+  static const double MB = 1024.0 * 1024.0;
+
+  if (speed < KB)
+    s.sprintf("%.2f B/s", double(speed));
+  else
+    if (speed < MB)
+      s.sprintf("%.2f kB/s", speed / KB);
+    else
+      s.sprintf("%.2f MB/s", speed / MB);
+
+  return s;
+}
+
+QString NetMonitor::formatSize(const double bytes) const {
+  QString s;
+  static const double KB = 1024.0;
+  static const double MB = 1024.0 * 1024.0;
+  static const double GB = 1024.0 * 1024.0 * 1024.0;
+
+  if (bytes < MB)
+    s.sprintf("%.2f kB", bytes / KB);
+  else
+    if (bytes < GB)
+      s.sprintf("%.2f MB", bytes / MB);
+    else
+      s.sprintf("%.2f GB", bytes / GB);
+    
+  return s;
 }
 
 void NetMonitor::update() {
@@ -119,7 +152,7 @@ void NetMonitor::update() {
     QString selezionato = combo->currentText();
     if (line.length() > 50) {
       QString name;
-      int rbytes, tbytes;
+      double rbytes, tbytes;
       extract(line, name, rbytes, tbytes);
       Table::iterator it = table.find(name);
       InterfaceData *interface;
@@ -127,23 +160,26 @@ void NetMonitor::update() {
 	interface = (*it).second;
 	const double ett = actualtime - interface->timestart;
 	if (ett > 0) {
-	  const int rspeed = int((rbytes - interface->rstart) / ett);
-	  const int tspeed = int((tbytes - interface->tstart) / ett);
-	  interface->ritem->setText(2, QString::number(rspeed)); 
-	  interface->titem->setText(2, QString::number(tspeed));
+	  const int raverage = int((rbytes - interface->rstart) / ett);
+	  const int taverage = int((tbytes - interface->tstart) / ett);
+
+	  
+
+	  interface->ritem->setText(2, formatSpeed(raverage)); 
+	  interface->titem->setText(2, formatSpeed(taverage));
 	}
 	const double elt = actualtime - lasttime;
 	if (elt > 0) {
 	  const int rspeed = int((rbytes - interface->rlast) / elt);
 	  const int tspeed = int((tbytes - interface->tlast) / elt);
-	  interface->ritem->setText(3, QString::number(rspeed)); 
-	  interface->titem->setText(3, QString::number(tspeed));
+	  interface->ritem->setText(3, formatSpeed(rspeed)); 
+	  interface->titem->setText(3, formatSpeed(tspeed));
 	  if (rspeed > interface->rmaximum) {
-	    interface->ritem->setText(4, QString::number(rspeed));
+	    interface->ritem->setText(4, formatSpeed(rspeed));
 	    interface->rmaximum = rspeed;
 	  }
 	  if (tspeed > interface->tmaximum) {
-	    interface->titem->setText(4, QString::number(tspeed));
+	    interface->titem->setText(4, formatSpeed(tspeed));
 	    interface->tmaximum = tspeed;
 	  }
 	  if (name == selezionato) {
@@ -169,8 +205,8 @@ void NetMonitor::update() {
       interface->rlast = rbytes;
       interface->tlast = tbytes;
       interface->active = true;
-      interface->ritem->setText(1, QString::number(rbytes)); 
-      interface->titem->setText(1, QString::number(tbytes)); 
+      interface->ritem->setText(1, formatSize(rbytes)); 
+      interface->titem->setText(1, formatSize(tbytes)); 
     }
   }
 
