@@ -1,8 +1,8 @@
 #include <stdlib.h>
-#include <qapplication.h>
-#include <qtabwidget.h>
-#include <qtimer.h>
-#include <qvbox.h>
+#include <QApplication>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QTimer>
 
 #include <fstream>
 
@@ -11,63 +11,62 @@
 #include "netmonitor.h"
 
 NetMonitor::NetMonitor() 
-  : QMainWindow(NULL, NULL, WDestructiveClose )
+  : QMainWindow(NULL, NULL)
 {
   timeval tv;
   gettimeofday(&tv, NULL);
 
   lasttime = tv.tv_sec;
 
-  setCaption("Net Monitor - (C)opyRight AndSoft Inc., 2003-07");
+  setWindowTitle("Net Monitor - (C)opyRight AndSoft Inc., 2003-08");
   
   QTabWidget *qt = new QTabWidget(this);
 
-  rec = new QListView(qt);
-  rec->addColumn("Interface");
-  rec->addColumn("Bytes");
-  rec->setColumnAlignment(1, Qt::AlignRight);
-  rec->addColumn("Average");
-  rec->setColumnAlignment(2, Qt::AlignRight);
-  rec->addColumn("Speed");
-  rec->setColumnAlignment(3, Qt::AlignRight);
-  rec->addColumn("Maximum");
-  rec->setColumnAlignment(4, Qt::AlignRight);
+  QStringList columnNames;
+  columnNames.append("Bytes");
+  columnNames.append("Average");
+  columnNames.append("Speed");
+  columnNames.append("Maximum");
+
+  rec = new QTableWidget();
+  rec->setColumnCount(4);
+  rec->setHorizontalHeaderLabels(columnNames);
 
   qt->addTab(rec, "Receive");
 
-  tra = new QListView(qt);
-  tra->addColumn("Interface");
-  tra->addColumn("Bytes");
-  tra->setColumnAlignment(1, Qt::AlignRight);
-  tra->addColumn("Average");
-  tra->setColumnAlignment(2, Qt::AlignRight);
-  tra->addColumn("Speed");
-  tra->setColumnAlignment(3, Qt::AlignRight);
-  tra->addColumn("Maximum");
-  tra->setColumnAlignment(4, Qt::AlignRight);
+  tra = new QTableWidget();
+  tra->setColumnCount(4);
+  tra->setHorizontalHeaderLabels(columnNames);
 
   qt->addTab(tra, "Transmit");
 
-  QVBox *vbox = new QVBox(qt);
+  QWidget *vbox = new QWidget();
 
-  combo = new QComboBox(false, vbox);
+  QVBoxLayout *layout = new QVBoxLayout;
+  combo = new QComboBox(vbox);
+  combo->setEditable(FALSE);
+
   rdial = new QProgressBar(vbox);
   tdial = new QProgressBar(vbox);
-  
+
+  layout->addWidget(combo);
+  layout->addWidget(rdial);
+  layout->addWidget(tdial);
+  vbox->setLayout(layout);
+
   qt->addTab(vbox, "Dial");
 
   setCentralWidget(qt);
 
   QTimer *timer = new QTimer(this);
+  timer->setSingleShot(FALSE);
   connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-  timer->start(2000, FALSE);
+  timer->start(2000);
 }
 
 NetMonitor::~NetMonitor() {
-  for (Table::iterator it = table.begin(); it != table.end(); table.erase(it++)) {
-    InterfaceData* interface = (*it).second;
-    delete interface->ritem;
-    delete interface->titem;
+  for (Table_t::iterator it = table.begin(); it != table.end(); table.erase(it++)) {
+    InterfaceData* interface = it->second;
     delete interface;
   }
 }
@@ -83,7 +82,7 @@ double NetMonitor::getDouble(string &line) const {
 
 void NetMonitor::extract(string &line, QString &name, double &rbytes, double &tbytes) const {
   const QString value = line.substr(0, 6).c_str();
-  name = value.simplifyWhiteSpace();
+  name = value.simplified();
   line.erase(0, 7);
 
   rbytes = getDouble(line);
@@ -139,8 +138,8 @@ void NetMonitor::update() {
   
   const double actualtime = tv.tv_sec + tv.tv_usec / 1000000.0;
   
-  for (Table::iterator it = table.begin(); it != table.end(); it++) {
-    InterfaceData* interface = (*it).second;
+  for (Table_t::iterator it = table.begin(); it != table.end(); it++) {
+    InterfaceData* interface = it->second;
     interface->active = false;
   }
 
@@ -155,46 +154,52 @@ void NetMonitor::update() {
       QString name;
       double rbytes, tbytes;
       extract(line, name, rbytes, tbytes);
-      Table::iterator it = table.find(name);
+      Table_t::iterator it = table.find(name);
       InterfaceData *interface;
       if (it != table.end()) {
-	interface = (*it).second;
+	interface = it->second;
 	const double ett = actualtime - interface->timestart;
 	if (ett > 0) {
 	  const int raverage = int((rbytes - interface->rstart) / ett);
 	  const int taverage = int((tbytes - interface->tstart) / ett);
 
-	  
-
-	  interface->ritem->setText(2, formatSpeed(raverage)); 
-	  interface->titem->setText(2, formatSpeed(taverage));
+	  rec->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(raverage)));
+	  tra->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(taverage)));
 	}
 	const double elt = actualtime - lasttime;
 	if (elt > 0) {
 	  const int rspeed = int((rbytes - interface->rlast) / elt);
 	  const int tspeed = int((tbytes - interface->tlast) / elt);
-	  interface->ritem->setText(3, formatSpeed(rspeed)); 
-	  interface->titem->setText(3, formatSpeed(tspeed));
+
+	  rec->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(rspeed)));
+	  tra->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(tspeed)));
+
 	  if (rspeed > interface->rmaximum) {
-	    interface->ritem->setText(4, formatSpeed(rspeed));
+	    rec->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(rspeed)));
 	    interface->rmaximum = rspeed;
 	  }
 	  if (tspeed > interface->tmaximum) {
-	    interface->titem->setText(4, formatSpeed(tspeed));
+	    tra->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(tspeed)));
 	    interface->tmaximum = tspeed;
 	  }
 	  if (name == selezionato) {
-	    rdial->setProgress(rspeed, interface->rmaximum);
-	    tdial->setProgress(tspeed, interface->tmaximum);
+	      rdial->setMaximum(interface->rmaximum);
+	      tdial->setMaximum(interface->tmaximum);
+	      rdial->setValue(rspeed);
+	      tdial->setValue(tspeed);
 	  }
 	}
       } else {
-	combo->insertItem(name);
+	combo->addItem(name);
 
 	interface = new InterfaceData;
+	interface->row = table.size();
 
-	interface->ritem = new QListViewItem(rec, name);
-	interface->titem = new QListViewItem(tra, name);
+	rec->setRowCount(interface->row + 1);
+	rec->setVerticalHeaderItem(interface->row, new QTableWidgetItem(name));
+
+	tra->setRowCount(interface->row + 1);
+	tra->setVerticalHeaderItem(interface->row, new QTableWidgetItem(name));
 
 	interface->rstart = rbytes;
 	interface->tstart = tbytes;
@@ -206,16 +211,14 @@ void NetMonitor::update() {
       interface->rlast = rbytes;
       interface->tlast = tbytes;
       interface->active = true;
-      interface->ritem->setText(1, formatSize(rbytes)); 
-      interface->titem->setText(1, formatSize(tbytes)); 
+      rec->setItem(interface->row, 0, new QTableWidgetItem(formatSize(rbytes)));
+      tra->setItem(interface->row, 0, new QTableWidgetItem(formatSize(tbytes)));
     }
   }
 
-  for (Table::iterator it = table.begin(); it != table.end(); it++) {
-    InterfaceData* interface = (*it).second;
+  for (Table_t::iterator it = table.begin(); it != table.end(); it++) {
+    InterfaceData* interface = it->second;
     if (!interface->active) {
-      delete interface->ritem;
-      delete interface->titem;
       delete interface;
       table.erase(it);
     }

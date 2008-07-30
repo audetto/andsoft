@@ -1,11 +1,12 @@
 #ifndef NETMONITOR_H
 #define NETMONITOR_H
 
-#include <qlistview.h>
-#include <qmainwindow.h>
-#include <qstring.h>
-#include <qprogressbar.h>
-#include <qcombobox.h>
+#include <QListView>
+#include <QMainWindow>
+#include <QString>
+#include <QProgressBar>
+#include <QComboBox>
+#include <QTableWidget>
 
 #include <map>
 #include <string>
@@ -19,13 +20,12 @@ struct InterfaceData {
   double tlast;
   int rmaximum;
   int tmaximum;
-  QListViewItem *ritem;
-  QListViewItem *titem;
+  int row;
   double timestart;
   bool active;
 };
 
-typedef map<QString, InterfaceData*> Table;
+typedef map<QString, InterfaceData*> Table_t;
 
 class NetMonitor: public QMainWindow {
 
@@ -43,9 +43,9 @@ private:
   QString formatSize(const double bytes) const;
 
   double lasttime;
-  Table table;
-  QListView *rec;
-  QListView *tra;
+  Table_t table;
+  QTableWidget *rec;
+  QTableWidget *tra;
   QProgressBar *rdial;
   QProgressBar *tdial;
   QComboBox *combo;
