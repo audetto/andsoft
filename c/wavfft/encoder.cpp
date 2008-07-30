@@ -103,7 +103,7 @@ bool FFT_Encoder::encode_single() {
   for (i = 1; i < window_ / 2; i++) {
     power_[i] = fft_[i] * fft_[i] + fft_[window_ - i] * fft_[window_ - i];
   }
-  if (window_ & 1 == 0)
+  if ((window_ & 1) == 0)
     power_[window_ / 2] = fft_[window_ / 2] * fft_[window_ / 2];
 
   bool res = indexx<float>(n_, &(power_[0]), &(indx_[0]));
@@ -117,7 +117,7 @@ bool FFT_Encoder::encode_single() {
 	fft_[window_ - i] = 0.0;
       }
     }
-    if (window_ & 1 == 0)
+    if ((window_ & 1) == 0)
       if (indx_[window_ / 2] <= residui_)
 	fft_[window_ / 2] = 0.0;
 

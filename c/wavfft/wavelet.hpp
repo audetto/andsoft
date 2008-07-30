@@ -1,6 +1,8 @@
 #ifndef WAVELET_HPP
 #define WAVELET_HPP
 
+#include <string.h>
+
 template <typename DP> void wt1(DP a[], int n, int isign, void (*wstep)(DP [], int, int)) {
   int nn;
   if (n < 4) return;
