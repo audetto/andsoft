@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <qapplication.h>
 #include <qtabwidget.h>
 #include <qtimer.h>
