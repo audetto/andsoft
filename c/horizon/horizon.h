@@ -5,13 +5,13 @@
 #include <qmainwindow.h>
 
 class Orizzonte : public QMainWindow {
-  Q_OBJECT
-public:
+    Q_OBJECT
+ public:
     Orizzonte();
-public slots:
+ public slots:
     void go();
     void aboutQt();
-private:
+ private:
     QLineEdit *distanza;
     QLineEdit *nascosta;
     QLineEdit *altezza;
