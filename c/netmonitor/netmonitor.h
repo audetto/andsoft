@@ -13,20 +13,24 @@
 
 using namespace std;
 
+struct Stats
+{
+    double start;
+    double last;
+    int maximum;
+};
+
 struct InterfaceData
 {
-    double rstart;
-    double tstart;
-    double rlast;
-    double tlast;
-    int rmaximum;
-    int tmaximum;
     int row;
     double timestart;
     bool active;
+
+    Stats rec;
+    Stats tra;
 };
 
-typedef map<QString, InterfaceData*> Table_t;
+typedef map<QString, InterfaceData *> Table_t;
 
 class NetMonitor: public QMainWindow
 {

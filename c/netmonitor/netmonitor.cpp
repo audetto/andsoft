@@ -173,8 +173,8 @@ void NetMonitor::update()
 		const double ett = actualtime - interface->timestart;
 		if (ett > 0)
 		{
-		    const int raverage = int((rbytes - interface->rstart) / ett);
-		    const int taverage = int((tbytes - interface->tstart) / ett);
+		    const int raverage = int((rbytes - interface->rec.start) / ett);
+		    const int taverage = int((tbytes - interface->tra.start) / ett);
 		    
 		    rec->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(raverage)));
 		    tra->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(taverage)));
@@ -182,26 +182,26 @@ void NetMonitor::update()
 		const double elt = actualtime - lasttime;
 		if (elt > 0)
 		{
-		    const int rspeed = int((rbytes - interface->rlast) / elt);
-		    const int tspeed = int((tbytes - interface->tlast) / elt);
+		    const int rspeed = int((rbytes - interface->rec.last) / elt);
+		    const int tspeed = int((tbytes - interface->tra.last) / elt);
 		    
 		    rec->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(rspeed)));
 		    tra->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(tspeed)));
 		    
-		    if (rspeed > interface->rmaximum)
+		    if (rspeed > interface->rec.maximum)
 		    {
 			rec->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(rspeed)));
-			interface->rmaximum = rspeed;
+			interface->rec.maximum = rspeed;
 		    }
-		    if (tspeed > interface->tmaximum)
+		    if (tspeed > interface->tra.maximum)
 		    {
 			tra->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(tspeed)));
-			interface->tmaximum = tspeed;
+			interface->tra.maximum = tspeed;
 		    }
 		    if (name == selezionato)
 		    {
-			rdial->setMaximum(interface->rmaximum);
-			tdial->setMaximum(interface->tmaximum);
+			rdial->setMaximum(interface->rec.maximum);
+			tdial->setMaximum(interface->tra.maximum);
 			rdial->setValue(rspeed);
 			tdial->setValue(tspeed);
 		    }
@@ -220,15 +220,15 @@ void NetMonitor::update()
 		tra->setRowCount(interface->row + 1);
 		tra->setVerticalHeaderItem(interface->row, new QTableWidgetItem(name));
 		
-		interface->rstart = rbytes;
-		interface->tstart = tbytes;
-		interface->rmaximum = 0;
-		interface->tmaximum = 0;
+		interface->rec.start = rbytes;
+		interface->tra.start = tbytes;
+		interface->rec.maximum = 0;
+		interface->tra.maximum = 0;
 		interface->timestart = actualtime;
 		table[name] = interface;
 	    }
-	    interface->rlast = rbytes;
-	    interface->tlast = tbytes;
+	    interface->rec.last = rbytes;
+	    interface->tra.last = tbytes;
 	    interface->active = true;
 	    rec->setItem(interface->row, 0, new QTableWidgetItem(formatSize(rbytes)));
 	    tra->setItem(interface->row, 0, new QTableWidgetItem(formatSize(tbytes)));
