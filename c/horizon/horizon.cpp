@@ -157,6 +157,8 @@ void Orizzonte::go()
 	}
 	else 
 	{
+	    // Questo e' il caso di un oggetto interamente visibile, che pero' non sporge sull'orizzonte
+
 	    sporgenza->setText("sotto l'orizzonte");
 	    angolo->setText("sotto l'orizzonte");
 	}
