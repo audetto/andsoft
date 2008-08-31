@@ -102,18 +102,9 @@ void NetMonitor::extract(string &line, QString &name, double &rbytes, double &tb
 
 QString NetMonitor::formatSpeed(const int speed) const
 {
-    QString s;
-    static const double KB = 1024.0;
-    static const double MB = 1024.0 * 1024.0;
-    
-    if (speed < KB)
-	s.sprintf("%.2f B/s", double(speed));
-    else
-	if (speed < MB)
-	    s.sprintf("%.2f kB/s", speed / KB);
-	else
-	    s.sprintf("%.2f MB/s", speed / MB);
-    
+    QString s = formatSize(speed);
+    s.append("/s");
+
     return s;
 }
 
@@ -124,13 +115,16 @@ QString NetMonitor::formatSize(const double bytes) const
     static const double MB = 1024.0 * 1024.0;
     static const double GB = 1024.0 * 1024.0 * 1024.0;
     
-    if (bytes < MB)
-	s.sprintf("%.2f kB", bytes / KB);
+    if (bytes < KB)
+	s.sprintf("%.2f B", double(bytes));    
     else
-	if (bytes < GB)
-	    s.sprintf("%.2f MB", bytes / MB);
+	if (bytes < MB)
+	    s.sprintf("%.2f kB", bytes / KB);
 	else
-	    s.sprintf("%.2f GB", bytes / GB);
+	    if (bytes < GB)
+		s.sprintf("%.2f MB", bytes / MB);
+	    else
+		s.sprintf("%.2f GB", bytes / GB);
     
     return s;
 }
@@ -176,8 +170,8 @@ void NetMonitor::update()
 		    const int raverage = int((rbytes - interface->rec.start) / ett);
 		    const int taverage = int((tbytes - interface->tra.start) / ett);
 		    
-		    rec->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(raverage)));
-		    tra->setItem(interface->row, 1, new QTableWidgetItem(formatSpeed(taverage)));
+		    rec->item(interface->row, 1)->setText(formatSpeed(raverage));
+		    tra->item(interface->row, 1)->setText(formatSpeed(taverage));
 		}
 		const double elt = actualtime - lasttime;
 		if (elt > 0)
@@ -185,19 +179,31 @@ void NetMonitor::update()
 		    const int rspeed = int((rbytes - interface->rec.last) / elt);
 		    const int tspeed = int((tbytes - interface->tra.last) / elt);
 		    
-		    rec->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(rspeed)));
-		    tra->setItem(interface->row, 2, new QTableWidgetItem(formatSpeed(tspeed)));
+		    rec->item(interface->row, 2)->setText(formatSpeed(rspeed));
+		    tra->item(interface->row, 2)->setText(formatSpeed(tspeed));
 		    
 		    if (rspeed > interface->rec.maximum)
 		    {
-			rec->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(rspeed)));
+			rec->item(interface->row, 3)->setText(formatSpeed(rspeed));
+			rec->item(interface->row, 3)->setBackground(QBrush(Qt::yellow));
 			interface->rec.maximum = rspeed;
 		    }
+		    else
+		    {
+			rec->item(interface->row, 3)->setBackground(QBrush());
+		    }
+
 		    if (tspeed > interface->tra.maximum)
 		    {
-			tra->setItem(interface->row, 3, new QTableWidgetItem(formatSpeed(tspeed)));
+			tra->item(interface->row, 3)->setText(formatSpeed(tspeed));
+			tra->item(interface->row, 3)->setBackground(QBrush(Qt::yellow));
 			interface->tra.maximum = tspeed;
 		    }
+		    else
+		    {
+			tra->item(interface->row, 3)->setBackground(QBrush());
+		    }
+
 		    if (name == selezionato)
 		    {
 			rdial->setMaximum(interface->rec.maximum);
@@ -220,6 +226,19 @@ void NetMonitor::update()
 		tra->setRowCount(interface->row + 1);
 		tra->setVerticalHeaderItem(interface->row, new QTableWidgetItem(name));
 		
+		for (int i = 0; i < rec->columnCount(); ++i)
+		{
+		    QTableWidgetItem * recItem = new QTableWidgetItem();
+		    rec->setItem(interface->row, i, recItem);
+		    recItem->setTextAlignment(Qt::AlignRight);
+		    recItem->setFlags(recItem->flags() & ~Qt::ItemIsEditable);
+
+		    QTableWidgetItem * traItem = new QTableWidgetItem();
+		    tra->setItem(interface->row, i, traItem);
+		    traItem->setTextAlignment(Qt::AlignRight);
+		    traItem->setFlags(traItem->flags() & ~Qt::ItemIsEditable);
+		}
+
 		interface->rec.start = rbytes;
 		interface->tra.start = tbytes;
 		interface->rec.maximum = 0;
@@ -230,8 +249,9 @@ void NetMonitor::update()
 	    interface->rec.last = rbytes;
 	    interface->tra.last = tbytes;
 	    interface->active = true;
-	    rec->setItem(interface->row, 0, new QTableWidgetItem(formatSize(rbytes)));
-	    tra->setItem(interface->row, 0, new QTableWidgetItem(formatSize(tbytes)));
+
+	    rec->item(interface->row, 0)->setText(formatSize(rbytes));
+	    tra->item(interface->row, 0)->setText(formatSize(tbytes));
 	}
     }
     
