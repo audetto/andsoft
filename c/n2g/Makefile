@@ -11,11 +11,6 @@ FORTRAN_DIR = /home/andrea/projects/maths/fortran
 CPPFLAGS = -I$(FORTRAN_DIR)/libf2c
 
 CFLAGS = -g
-CXXFLAGS = -g
-
-LDFLAGS = -g
-
-LDLIBS = -L$(FORTRAN_DIR)/libf2c -lf2c -lm
 
 CC = g++
 
