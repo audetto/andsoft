@@ -6,6 +6,8 @@ dc7vfn.o  df7hes.o  dh2rfa.o  dl7ivm.o  dl7srt.o  dl7vml.o  dn2lrd.o  dq7rad.o  
 dd7mlp.o  dg7itb.o  dh2rfg.o  dl7msb.o  dl7svn.o  dn2cvp.o  dn2rdp.o  dq7rsh.o  drn2g.o   ds7lvm.o  dv7ipr.o  i7shft.o  dd7tpr.o  dg7lit.o  \
 ditsum.o  dl7mst.o  dl7svx.o  dn2fb.o   do7prd.o  dr7mdc.o  ds7bqn.o  dv2axy.o  dv7scl.o  i1mach.o  r1mach.o
 
+PFILES = $(OBJS:.o=.P)
+
 FORTRAN_DIR = /home/andrea/projects/maths/fortran
 
 CPPFLAGS = -I$(FORTRAN_DIR)/libf2c
@@ -17,8 +19,9 @@ CC = g++
 AR = ar
 RANLIB = ranlib
 
-%.c:	%.f
-	$(FORTRAN_DIR)/f2c/f2c -C++ $^
+# double target rule
+%.P %.c:	%.f
+	$(FORTRAN_DIR)/f2c/f2c -C++ -P $^
 
 %.f:
 	wget http://www.netlib.org/port/$@
@@ -26,7 +29,10 @@ RANLIB = ranlib
 # we need to switch off rule that compiles fortran files.
 %.o: 	%.f
 
-all:	libn2g.a
+all:	libn2g.a n2g.h
+
+n2g.h:	n2g.h.head $(PFILES) n2g.h.tail
+	cat $^ > $@
 
 libn2g.a:	$(OBJS)
 	$(AR) crv $@ $^
@@ -39,6 +45,8 @@ clean:
 	rm -f *.o
 	rm -f *.c
 	rm -f *.a
+	rm -f *.h
+	rm -f *.P
 
 superclean: clean
 	rm -f *.f
