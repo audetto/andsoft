@@ -1,0 +1,55 @@
+#ifndef ASI_MATHS_IDL
+#define ASI_MATHS_IDL
+
+#include <com/sun/star/uno/XInterface.idl>
+#include <com/sun/star/lang/XServiceName.idl>
+#include <com/sun/star/lang/XInitialization.idl>
+#include <com/sun/star/lang/IllegalArgumentException.idl>
+#include <com/sun/star/uno/RuntimeException.idl>
+#include <com/sun/star/sheet/XAddIn.idl>
+
+module org
+{
+    module asi
+    {
+	interface XMaths : com::sun::star::uno::XInterface
+	{
+	    double expo( [in] double m );
+	    sequence<sequence<double> > projection([in] sequence< sequence < double > > x, [in] sequence< sequence < double > > a, [in] sequence< sequence < double > > b)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > dykstra([in] sequence< sequence < double > > x, [in] sequence< sequence < double > > a, [in] sequence< sequence < double > > b)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > svdSolve([in] sequence< sequence < double > > a, [in] sequence< sequence < double > > b)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+
+	    double heston([in] double strike, [in] double time, [in] double sigma, [in] double kappa, [in] double theta, [in] double alpha, [in] double rho, [in] long points)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    double black([in] double strike, [in] double time, [in] double sigma)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    double impliedVolatility([in] double price, [in] double strike, [in] double time)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > variousBS([in] double strike, [in] double time, [in] double sigma) 
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+
+	    double finiteDifference([in] sequence< sequence < double > > xa, [in] sequence< sequence < double > > ya, [in] double x, [in] long order )
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+	};
+	
+	service Service
+	{
+	    interface XMaths;
+	    interface com::sun::star::lang::XInitialization;
+	    interface com::sun::star::lang::XServiceName;
+	    interface com::sun::star::sheet::XAddIn;
+	};
+    };
+};
+
+#endif
