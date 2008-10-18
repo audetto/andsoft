@@ -35,14 +35,14 @@ namespace
 	Heston(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho) : 
 	    variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
 
-	cpl logphi(const cpl & u, const cpl & v, double t) const;
+	cpl logPhi(const cpl & u, const cpl & v, double t) const;
 	double f1(double u, double t, double k) const;
 	double f2(double u, double t, double k) const;
 
 	double get_C_inf(double t) const;
    };
 
-    cpl Heston::logphi(const cpl & u, const cpl & v, double t) const
+    cpl Heston::logPhi(const cpl & u, const cpl & v, double t) const
     {
 
 	const cpl rliu = rho * alpha * u * I;
@@ -70,7 +70,7 @@ namespace
 	    return f1_0;
 	}
 
-	const cpl logp = logphi(u - I, 0.0, t);
+	const cpl logp = logPhi(u - I, 0.0, t);
 	const cpl f = exp(- I * u * log(k) + logp) / (I * u);
 	double result = f.real();
 	return result;
@@ -88,7 +88,7 @@ namespace
 	    return f2_0;
 	}	
 
-	const cpl logp = logphi(u, 0.0, t);
+	const cpl logp = logPhi(u, 0.0, t);
 	const cpl f = exp(- I * u * log(k) + logp) / (I * u);
 	double result = f.real();
 	return result;
