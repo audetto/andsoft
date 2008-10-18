@@ -26,15 +26,14 @@ namespace
     class Heston
     {
     private:
-	const double spot;        // S0
 	const double variance;    // V0
 	const double kappa;       // mean reversion speed
 	const double theta;       // long term variance
 	const double alpha;       // vol of variance
 	const double rho;
     public:
-	Heston(const double aspot, const double asigma, const double akappa, const double atheta, const double aalpha, const double arho) : 
-	    spot(aspot), variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
+	Heston(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho) : 
+	    variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
 
 	cpl logphi(const cpl & u, const cpl & v, double t) const;
 	double f1(double u, double t, double k) const;
@@ -54,7 +53,7 @@ namespace
 	const cpl C = theta * kappa / square(alpha) * ( (kappa - rliu - d) * t - 2.0 * log((1.0 - gg * exp(-d * t)) / (1.0 - gg)) );
 	const cpl D = square(1.0 / alpha) * (kappa - rliu + d) * (g - gg * exp(- d * t)) / (1.0 - gg * exp(-d * t));
 
-	const cpl result = C + D * variance + u * I * t * log(spot);
+	const cpl result = C + D * variance;
 
 	return result;
     }
@@ -139,11 +138,7 @@ namespace ASI
 {
     double hestonCallPrice(const double strike, const double time, const double sigma, const double kappa, const double theta, const double alpha, const double rho, size_t n)
     {
-	const Heston heston(1.0, sigma, kappa, theta, alpha, rho);
-
-	/*	// t = 10, x = t... to debug
-	double phi = normal(t, 2.0, k, h);
-	return phi;*/
+	const Heston heston(sigma, kappa, theta, alpha, rho);
 
 	gsl_heston data(time, strike, heston);
 
@@ -180,7 +175,7 @@ namespace ASI
 
     void heston_try()
     {
-	Heston h(1.0, 0.2, 2.0, 0.25, 0.5, -0.5);
+	Heston h(0.2, 2.0, 0.25, 0.5, -0.5);
 
 	printf("f1(%g)=%g\n", 0.0, h.f1(0.0, 1.5, 0.9));
 	printf("f1(%g)=%g\n", 0.000001, h.f1(0.000001, 1.5, 0.9));
