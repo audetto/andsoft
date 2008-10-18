@@ -36,6 +36,9 @@ namespace
 	    variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
 
 	cpl logPhi(const cpl & u, const cpl & v, double t) const;
+
+	void getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const;
+
 	cpl log_fx(const cpl & u, const cpl & offset, double t, double k) const;
 	double fx_over_iu_0(const cpl & offset, double t, double k) const;
 	double fx_over_iu(double u, const cpl & offset, double t, double k) const;
@@ -43,7 +46,7 @@ namespace
 	double get_C_inf(double t) const;
     };
 
-    cpl Heston::logPhi(const cpl & u, const cpl & v, double t) const
+    void Heston::getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const
     {
 
 	const cpl rliu = rho * alpha * u * I;
@@ -51,9 +54,14 @@ namespace
 	const cpl g  = (kappa - rliu - d                        ) / (kappa - rliu + d                        );
 	const cpl gg = (kappa - rliu - d - v * I * square(alpha)) / (kappa - rliu + d - v * I * square(alpha));
 
-	const cpl C = theta * kappa / square(alpha) * ( (kappa - rliu - d) * t - 2.0 * log((1.0 - gg * exp(-d * t)) / (1.0 - gg)) );
-	const cpl D = square(1.0 / alpha) * (kappa - rliu + d) * (g - gg * exp(- d * t)) / (1.0 - gg * exp(-d * t));
+	C = theta * kappa / square(alpha) * ( (kappa - rliu - d) * t - 2.0 * log((1.0 - gg * exp(-d * t)) / (1.0 - gg)) );
+	D = square(1.0 / alpha) * (kappa - rliu + d) * (g - gg * exp(- d * t)) / (1.0 - gg * exp(-d * t));
+    }
 
+    cpl Heston::logPhi(const cpl & u, const cpl & v, double t) const
+    {
+	cpl C, D;
+	getCD(u, v, t, C, D);
 	const cpl result = C + D * variance;
 
 	return result;
