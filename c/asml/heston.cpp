@@ -40,7 +40,7 @@ namespace
 	double f2(double u, double t, double k) const;
 
 	double get_C_inf(double t) const;
-   };
+    };
 
     cpl Heston::logPhi(const cpl & u, const cpl & v, double t) const
     {
