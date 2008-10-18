@@ -35,7 +35,8 @@ namespace
 	Heston(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho) : 
 	    variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
 
-	cpl logPhi(const cpl & u, const cpl & v, double t) const;
+	cpl logPhi(const cpl & u, const cpl & v, double t) const;  // v = 0 is the canonical Heston Characteristic function
+	cpl logPhiFwd(const cpl & u, double t1, double t2) const;  // characteristic function of S(T2) / S(T1) (forward starting option)
 
 	void getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const;
 
@@ -63,6 +64,22 @@ namespace
 	cpl C, D;
 	getCD(u, v, t, C, D);
 	const cpl result = C + D * variance;
+
+	return result;
+    }
+
+    cpl Heston::logPhiFwd(const cpl & u, double t1, double t2) const
+    {
+	// this the part after the strike
+	cpl C2, D2;
+	getCD(u, 0.0, t2 - t1, C2, D2);
+
+	// first part, forward starting
+	cpl C1, D1;
+	const cpl v = D2 / I;
+	getCD(0.0, v, t1, C2, D2);
+
+	const cpl result = (C1 + C2) + D1 * variance;
 
 	return result;
     }
