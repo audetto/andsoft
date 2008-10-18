@@ -25,7 +25,7 @@ module org
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
 
 
-	    double heston([in] double strike, [in] double time, [in] double sigma, [in] double kappa, [in] double theta, [in] double alpha, [in] double rho, [in] long points)
+	    double heston([in] double strike, [in] double time1, [in] double time2, [in] double sigma, [in] double kappa, [in] double theta, [in] double alpha, [in] double rho, [in] long points)
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
 
 	    double black([in] double strike, [in] double time, [in] double sigma)

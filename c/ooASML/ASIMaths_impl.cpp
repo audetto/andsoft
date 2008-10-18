@@ -51,7 +51,7 @@ namespace _ASIMaths_impl_
 
 	double SAL_CALL finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException);
 	
-	double SAL_CALL heston( double strike, double time, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException);
+	double SAL_CALL heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException);
 
 	double SAL_CALL black( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException);
 
@@ -152,11 +152,11 @@ namespace _ASIMaths_impl_
 	WRAP_END
     }
 
-    double ASIMaths_impl::heston( double strike, double time, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException)
+    double ASIMaths_impl::heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException)
     {
 	WRAP_BEGIN
 
-	const double price = hestonCallPrice(strike, time, sigma, kappa, theta, alpha, rho, points);
+	const double price = hestonCallPrice(strike, time1, time2, sigma, kappa, theta, alpha, rho, points);
 	return price;
 
 	WRAP_END

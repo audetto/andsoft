@@ -40,16 +40,15 @@ namespace
 
 	void getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const;
 
-	cpl log_fx(const cpl & u, const cpl & offset, double t, double k) const;
-	double fx_over_iu_0(const cpl & offset, double t, double k) const;
-	double fx_over_iu(double u, const cpl & offset, double t, double k) const;
+	cpl log_fx(const cpl & u, const cpl & offset, double t1, double t2, double k) const;
+	double fx_over_iu_0(const cpl & offset, double t1, double t2, double k) const;
+	double fx_over_iu(double u, const cpl & offset, double t1, double t2, double k) const;
 
 	double get_C_inf(double t) const;
     };
 
     void Heston::getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const
     {
-
 	const cpl rliu = rho * alpha * u * I;
 	const cpl d  = sqrt(square(rliu - kappa) + square(alpha) * u * (I + u));
 	const cpl g  = (kappa - rliu - d                        ) / (kappa - rliu + d                        );
@@ -77,41 +76,41 @@ namespace
 	// first part, forward starting
 	cpl C1, D1;
 	const cpl v = D2 / I;
-	getCD(0.0, v, t1, C2, D2);
+	getCD(0.0, v, t1, C1, D1);
 
 	const cpl result = (C1 + C2) + D1 * variance;
 
 	return result;
     }
 
-    cpl Heston::log_fx(const cpl & u, const cpl & offset, double t, double k) const
+    cpl Heston::log_fx(const cpl & u, const cpl & offset, double t1, double t2, double k) const
     {
-	return logPhi(u + offset, 0.0, t) - I * u * log(k);
+	return logPhiFwd(u + offset, t1, t2) - I * u * log(k);
     }
 
-    double Heston::fx_over_iu_0(const cpl & offset, double t, double k) const
+    double Heston::fx_over_iu_0(const cpl & offset, double t1, double t2, double k) const
     {
 	cpl u_down = -0.001;
-	cpl u_mid  = 0.0;
+	cpl u_mid  =  0.000;
 	cpl u_up   = +0.001;
 
-	const cpl phi_down = log_fx(u_down, offset, t, k);
-	const cpl phi_mid  = log_fx(u_mid,  offset, t, k);
-	const cpl phi_up   = log_fx(u_up,   offset, t, k);
+	const cpl phi_down = log_fx(u_down, offset, t1, t2, k);
+	const cpl phi_mid  = log_fx(u_mid,  offset, t1, t2, k);
+	const cpl phi_up   = log_fx(u_up,   offset, t1, t2, k);
 	const cpl J_der    = (phi_up - phi_down) / (u_up - u_down);
 
 	const double value = exp(phi_mid.real()) * cos(phi_mid.imag()) * J_der.imag();
 	return value;
     }
 
-    double Heston::fx_over_iu(double u, const cpl & offset, double t, double k) const
+    double Heston::fx_over_iu(double u, const cpl & offset, double t1, double t2, double k) const
     {
 	if (u == 0.0)
 	{
-	    return fx_over_iu_0(offset, t, k);
+	    return fx_over_iu_0(offset, t1, t2, k);
 	}
 
-	const cpl f = exp(log_fx(u, offset, t, k)) / (I * u);
+	const cpl f = exp(log_fx(u, offset, t1, t2, k)) / (I * u);
 	double result = f.real();
 	return result;
     }
@@ -122,47 +121,52 @@ namespace
 	return c_inf;
     }
 
-    double normal(double u, double t, double k, const Heston & h)
+    double normal(double u, double t1, double t2, double k, const Heston & h)
     {
-	double y = (h.fx_over_iu(u, -I, t, k) - k * h.fx_over_iu(u, 0.0, t, k)) / M_PI;
+	double y = (h.fx_over_iu(u, -I, t1, t2, k) - k * h.fx_over_iu(u, 0.0, t1, t2, k)) / M_PI;
 	return y;
     }
 
-    double pj_func(double x, double t, double k, const Heston & h)
+    double pj_func(double x, double t1, double t2, double k, const Heston & h)
     {
 	if (x == 0.0)
 	    return 0.0;
 
-	double c_inf = h.get_C_inf(t);
+	// this is a bit of a guess
+	// from T1 to T2, it is exact, but I have no idea what happens before, so we take half of the first part.
+	double equivalent_t = t2 - 0.5 * t1;
+
+	double c_inf = h.get_C_inf(equivalent_t);
 	double u = -log(x) / c_inf;
-	double y = normal(u, t, k, h) / (x * c_inf);
+	double y = normal(u, t1, t2, k, h) / (x * c_inf);
 	return y;
     }
 
     struct gsl_heston
     {
-	const double t;
+	const double t1;
+	const double t2;
 	const double k;
 	const Heston & h;
-	gsl_heston(const double at, const double ak, const Heston & ah) : t(at), k(ak), h(ah) {}
+	gsl_heston(const double at1, const double at2, const double ak, const Heston & ah) : t1(at1), t2(at2), k(ak), h(ah) {}
     };
 
     double gsl_wrapper(double x, void * params)
     {
 	const gsl_heston * gh = static_cast<const gsl_heston *>(params);
-	return pj_func(x, gh->t, gh->k, gh->h);
-	//	return normal(x, gh->t, gh->k, gh->h);
+	return pj_func(x, gh->t1, gh->t2, gh->k, gh->h);
+	//	return normal(x, gh->t1, gh->t2, gh->k, gh->h);
     }
 
 }
 
 namespace ASI
 {
-    double hestonCallPrice(const double strike, const double time, const double sigma, const double kappa, const double theta, const double alpha, const double rho, size_t n)
+    double hestonCallPrice(const double strike, const double time1, const double time2, const double sigma, const double kappa, const double theta, const double alpha, const double rho, size_t n)
     {
 	const Heston heston(sigma, kappa, theta, alpha, rho);
 
-	gsl_heston data(time, strike, heston);
+	gsl_heston data(time1, time2, strike, heston);
 
 	gsl_function f;
 	f.function = &gsl_wrapper;
@@ -200,11 +204,14 @@ namespace ASI
 	Heston h(0.2, 2.0, 0.25, 0.5, -0.5);
 
 	const cpl & offset = -I;
+	const double t1 = 0.0;
 
-	printf("f(%g)=%g\n", 0.0, h.fx_over_iu(0.0, offset, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000001, h.fx_over_iu(0.000001, offset, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000002, h.fx_over_iu(0.000002, offset, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000003, h.fx_over_iu(0.000003, offset, 1.5, 0.9));
-	
+	printf("f(%g)=%g\n", 0.0, h.fx_over_iu(0.0, offset, t1, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000001, h.fx_over_iu(0.000001, offset, t1, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000002, h.fx_over_iu(0.000002, offset, t1, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000003, h.fx_over_iu(0.000003, offset, t1, 1.5, 0.9));
+
+	const double call = hestonCallPrice(0.9, t1, 1.5, 0.2, 2.0, 0.25, 0.5, -0.4, 200);
+	printf("Call = %g\n", call);
     }
 }
