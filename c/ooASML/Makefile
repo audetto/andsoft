@@ -1,10 +1,10 @@
-.PHONY = all headers lib clean
+.PHONY = all headers lib clean asml
 
 OOoSDK = /usr/lib/openoffice.org/sdk
 OOo = /usr/lib/openoffice.org/program
 OOoPATH = $(OOoSDK)/linux/bin
 
-ASMLDIR = /home/andrea/projects/cvs/trunk/c/asml
+ASMLDIR = ../asml
 
 THISDIR := $(shell pwd)
 
@@ -40,8 +40,11 @@ FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.registry.XRegistryKey \
 	-Tcom.sun.star.reflection.XIdlReflection
 
-all: ASIMaths.rdb libASIMaths.so
+all: asml ASIMaths.rdb libASIMaths.so
 	$(REGCOMP) -register -r ASIMaths.rdb -c $(THISDIR)/libASIMaths.so
+
+asml:
+	$(MAKE) -C ../asml $(MAKECMDGOALS)
 
 headers: ASIMaths.rdb
 	$(CPPUMAKER) -BUCR $(FORCPPUMAKER) $(OOo)/types.rdb $<
@@ -58,7 +61,7 @@ libASIMaths.so: $(OBJFILES)
 dummy: dummy.o $(OBJFILES)
 	g++ -o $@ $^ -L$(OOo) -L$(ASMLDIR) $(LDLIBS)
 
-clean:
+clean: asml
 	rm -rf dummy com org *.o *.so *.urd *.rdb *.d
 
 #### dependencies

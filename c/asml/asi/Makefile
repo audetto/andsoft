@@ -1,4 +1,4 @@
-.PHONY = all headers clean
+.PHONY = all headers clean dummy
 
 LN_S = ln -s
 top_srcdir = ..
@@ -15,3 +15,5 @@ header: clean
 clean: 
 	rm -f *.h
 
+# need to find a better way here
+dummy: all

@@ -14,17 +14,17 @@ RANLIB = ranlib
 all: headers libasml.a
 
 headers:
-	$(MAKE) -C asi all 
+	$(MAKE) -C asi $(MAKECMDGOALS)
 
 libasml.a: $(OBJFILES)
 	$(AR) crv $@ $^
 	$(RANLIB) $@
 
-dummy: dummy.o $(OBJFILES)
-	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ -L. -lasml $(LDLIBS)
+dummy: all dummy.o
+	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ dummy.o -L. -lasml $(LDLIBS)
+	./dummy
 
-clean:
-	$(MAKE) -C asi clean
+clean: headers
 	rm -rf dummy *.o *.a *.d
 
 #### dependencies
