@@ -36,8 +36,9 @@ namespace
 	    variance(square(asigma)), kappa(akappa), theta(atheta), alpha(aalpha), rho(arho) {}
 
 	cpl logPhi(const cpl & u, const cpl & v, double t) const;
-	double f1(double u, double t, double k) const;
-	double f2(double u, double t, double k) const;
+	cpl log_fx(const cpl & u, const cpl & offset, double t, double k) const;
+	double fx_over_iu_0(const cpl & offset, double t, double k) const;
+	double fx_over_iu(double u, const cpl & offset, double t, double k) const;
 
 	double get_C_inf(double t) const;
     };
@@ -58,38 +59,34 @@ namespace
 	return result;
     }
 
-    double Heston::f1(double u, double t, double k) const
+    cpl Heston::log_fx(const cpl & u, const cpl & offset, double t, double k) const
     {
-	if (u == 0.0)
-	{
-	    const double arg = t * (kappa - rho * alpha);
-	    const double C = - 0.5 * theta * kappa * square(t) * decayIntegral2(arg);
-	    const double D = 0.5 * t * decayIntegral(arg);
-
-	    const double f1_0 = -log(k) + C + D * variance;
-	    return f1_0;
-	}
-
-	const cpl logp = logPhi(u - I, 0.0, t);
-	const cpl f = exp(- I * u * log(k) + logp) / (I * u);
-	double result = f.real();
-	return result;
+	return logPhi(u + offset, 0.0, t) - I * u * log(k);
     }
 
-    double Heston::f2(double u, double t, double k) const
+    double Heston::fx_over_iu_0(const cpl & offset, double t, double k) const
+    {
+	cpl u_down = -0.001;
+	cpl u_mid  = 0.0;
+	cpl u_up   = +0.001;
+
+	const cpl phi_down = log_fx(u_down, offset, t, k);
+	const cpl phi_mid  = log_fx(u_mid,  offset, t, k);
+	const cpl phi_up   = log_fx(u_up,   offset, t, k);
+	const cpl J_der    = (phi_up - phi_down) / (u_up - u_down);
+
+	const double value = exp(phi_mid.real()) * cos(phi_mid.imag()) * J_der.imag();
+	return value;
+    }
+
+    double Heston::fx_over_iu(double u, const cpl & offset, double t, double k) const
     {
 	if (u == 0.0)
 	{
-	    const double arg = t * kappa;
-	    const double C = 0.5 * theta * kappa * square(t) * decayIntegral2(arg);
-	    const double D = -0.5 * t * decayIntegral(arg);
+	    return fx_over_iu_0(offset, t, k);
+	}
 
-	    const double f2_0 = -log(k) + C + D * variance;
-	    return f2_0;
-	}	
-
-	const cpl logp = logPhi(u, 0.0, t);
-	const cpl f = exp(- I * u * log(k) + logp) / (I * u);
+	const cpl f = exp(log_fx(u, offset, t, k)) / (I * u);
 	double result = f.real();
 	return result;
     }
@@ -102,7 +99,7 @@ namespace
 
     double normal(double u, double t, double k, const Heston & h)
     {
-	double y = (h.f1(u, t, k) - k * h.f2(u, t, k)) / M_PI;
+	double y = (h.fx_over_iu(u, -I, t, k) - k * h.fx_over_iu(u, 0.0, t, k)) / M_PI;
 	return y;
     }
 
@@ -113,7 +110,7 @@ namespace
 
 	double c_inf = h.get_C_inf(t);
 	double u = -log(x) / c_inf;
-	double y = (h.f1(u, t, k) - k * h.f2(u, t, k)) / (x * M_PI * c_inf);
+	double y = normal(u, t, k, h) / (x * c_inf);
 	return y;
     }
 
@@ -177,14 +174,12 @@ namespace ASI
     {
 	Heston h(0.2, 2.0, 0.25, 0.5, -0.5);
 
-	printf("f1(%g)=%g\n", 0.0, h.f1(0.0, 1.5, 0.9));
-	printf("f1(%g)=%g\n", 0.000001, h.f1(0.000001, 1.5, 0.9));
-	printf("f1(%g)=%g\n", 0.000002, h.f1(0.000002, 1.5, 0.9));
-	printf("f1(%g)=%g\n", 0.000003, h.f1(0.000003, 1.5, 0.9));
-	printf("f2(%g)=%g\n", 0.0, h.f2(0.0, 1.5, 0.9));
-	printf("f2(%g)=%g\n", 0.000001, h.f2(0.000001, 1.5, 0.9));
-	printf("f2(%g)=%g\n", 0.000002, h.f2(0.000002, 1.5, 0.9));
-	printf("f2(%g)=%g\n", 0.000003, h.f2(0.000003, 1.5, 0.9));
+	const cpl & offset = -I;
+
+	printf("f(%g)=%g\n", 0.0, h.fx_over_iu(0.0, offset, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000001, h.fx_over_iu(0.000001, offset, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000002, h.fx_over_iu(0.000002, offset, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.000003, h.fx_over_iu(0.000003, offset, 1.5, 0.9));
 	
     }
 }
