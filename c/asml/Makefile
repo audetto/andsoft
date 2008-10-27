@@ -3,7 +3,7 @@
 OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o
 DEPENDS = $(OBJFILES:.o=.d)
 
-CPPFLAGS = -Wall -I.
+CPPFLAGS = -Wall -I. -D_GLIBCXX_DEBUG
 CXXFLAGS = -gdwarf-2
 
 LDLIBS = -lgsl -lgslcblas -lm
@@ -17,7 +17,7 @@ headers:
 	$(MAKE) -C asi $(MAKECMDGOALS)
 
 libasml.a: $(OBJFILES)
-	$(AR) crv $@ $^
+	$(AR) cr $@ $^
 	$(RANLIB) $@
 
 dummy: all dummy.o
@@ -35,4 +35,7 @@ clean: headers
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
+ifneq ($(MAKECMDGOALS),clean)
 include $(DEPENDS)
+endif
+
