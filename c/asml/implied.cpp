@@ -57,7 +57,7 @@ namespace
 	if (beta < bc)
 	{
 	    const double intr = intrinsic(x, theta);
-	    const double sigma_low = sqrt(2.0 * x * x / (fabs(x) - 4.0 * log((beta - intr) / (bc - intr))));
+	    const double sigma_low = sqrt(2.0 * x * x / (fabs(x) - 4.0 * log((beta - intr) / (bc - intr))));  // eq 3.6
 	    return sigma_low;
 	}
 	else
@@ -65,7 +65,7 @@ namespace
 	    const double phi = gsl_cdf_ugaussian_P(-sqrt(fabs(x) * 0.5));
 	    const double expo = exp(theta * x * 0.5);
 	    const double ratio = (expo - beta) / (expo - bc);
-	    const double sigma_high = -2 * gsl_cdf_ugaussian_Pinv(ratio * phi);
+	    const double sigma_high = -2 * gsl_cdf_ugaussian_Pinv(ratio * phi); // eq 3.7
 	    return sigma_high;
 	}
     }
@@ -74,17 +74,17 @@ namespace
     {
 	const double bc = b_c(x, theta);
 	const double theB = b(x, sigma, theta);
-	const double dBdSigma = exp(-0.5 *(x * x / sigma / sigma + sigma * sigma * 0.25)) / sqrt(2.0 * M_PI);
+	const double dBdSigma = exp(-0.5 *(x * x / sigma / sigma + sigma * sigma * 0.25)) / sqrt(2.0 * M_PI); // eq 3.10
 
 	if (beta < bc)
 	{
 	    const double intr = intrinsic(x, theta);
-	    const double theStep = log((beta - intr) / (theB - intr)) * (theB - intr) / dBdSigma;
+	    const double theStep = log((beta - intr) / (theB - intr)) * log(theB - intr) / log(beta - intr) * (theB - intr) / dBdSigma; // eq 4.10
 	    return theStep;
 	}
 	else
 	{
-	    const double theStep = (beta - theB) / dBdSigma;
+	    const double theStep = (beta - theB) / dBdSigma; // eq 4.10
 	    return theStep;
 	}
     }
