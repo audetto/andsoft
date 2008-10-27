@@ -213,6 +213,9 @@ namespace ASI
     double blackCallPrice(const double strike, const double time, const double sigma)
     {
 	const double sigmaSqrtT = sigma * sqrt(time);
+	if (sigmaSqrtT == 0.0)
+	    return max(1.0 - strike, 0.0);
+
 	const double d1 = -log(strike) / sigmaSqrtT + 0.5 * sigmaSqrtT;
 	const double d2 = -log(strike) / sigmaSqrtT - 0.5 * sigmaSqrtT;
 	const double callPrice = gsl_cdf_ugaussian_P(d1) - strike * gsl_cdf_ugaussian_P(d2);
