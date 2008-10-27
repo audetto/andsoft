@@ -29,4 +29,6 @@ namespace ASI
 	printf("GSL ERROR: %s (%s:%d)\n", reason, file, line);
 	error(reason);
     }
+
+    const cpl I(0.0, 1.0);
 }

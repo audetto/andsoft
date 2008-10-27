@@ -1,7 +1,6 @@
 #include <asi/heston.h>
 #include <asi/numerics.h>
 
-#include <complex>
 #include <math.h>
 
 #include <gsl/gsl_integration.h>
@@ -13,15 +12,11 @@ using namespace ASI;
 namespace
 {
 
-    typedef complex<double> cpl;
-
     template<typename T>
     T square(const T & x)
     {
 	return x * x;
     }
-
-    const cpl I(0.0, 1.0);
 
     class Heston
     {

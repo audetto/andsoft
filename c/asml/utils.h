@@ -5,6 +5,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
 
+#include <complex>
 #include <string>
 
 namespace ASI
@@ -29,6 +30,10 @@ namespace ASI
     void __attribute__ ((__noreturn__)) error(const std::string & msg);
 
     void handler (const char * reason, const char * file, int line, int gsl_errno);
+
+    typedef std::complex<double> cpl;
+
+    extern const cpl I;
 
 }
 
