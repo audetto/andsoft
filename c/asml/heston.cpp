@@ -44,7 +44,7 @@ namespace
 	double fx_over_iu_0(const cpl & offset, double t1, double t2, double k) const;
 	double fx_over_iu(double u, const cpl & offset, double t1, double t2, double k) const;
 
-	double get_C_inf(double t) const;
+	double get_C_inf(double t1, double t2) const;
     };
 
     void Heston::getCD(const cpl & u, const cpl & v, double t, cpl & C, cpl & D) const
@@ -90,9 +90,12 @@ namespace
 
     double Heston::fx_over_iu_0(const cpl & offset, double t1, double t2, double k) const
     {
-	cpl u_down = -0.001;
-	cpl u_mid  =  0.000;
-	cpl u_up   = +0.001;
+	/*
+	  This is done numerically because Mathematica canno tfind a formula for the case t1 > 0.0
+	 */
+	cpl u_down = -0.0001;
+	cpl u_mid  =  0.0000;
+	cpl u_up   = +0.0001;
 
 	const cpl phi_down = log_fx(u_down, offset, t1, t2, k);
 	const cpl phi_mid  = log_fx(u_mid,  offset, t1, t2, k);
@@ -115,9 +118,30 @@ namespace
 	return result;
     }
 
-    double Heston::get_C_inf(double t) const
+    double Heston::get_C_inf(double t1, double t2) const
     {
-	double c_inf = sqrt(1.0 - square(rho)) / alpha * (variance + kappa * theta * t);
+	double equivalent_t = t2 - t1;
+
+	/*
+	  We want to compute here Re(logPhiFwd(u, t1, t2) / u) as u -> +INF
+
+	  Imagine we fix t2 - t1 and let t1 -> 0.0
+
+	  ((C1 + C2) + D1 * variance / u)
+
+	  C2 / u is easy, done by PJ (on t2 - t1)
+	  C1 / u seems to be 0.0
+
+	  D1(D2(u))/u = ~ A / ((exp(-k t1) - 1) u) -> 0.0
+	  If t1 == 0.0, ~ A (see PJ)
+	  If t1 > 0.0,  ~ 0
+
+	  This means that in the following formula we should set variance to 0.0 if t1 > 0.0 (which is confirmed by experiments)
+	  but it does not seem to work very well (gsl's integral takes very long). Using PJ's value for t2-t1 seems to be better.
+	 */
+
+
+	double c_inf = sqrt(1.0 - square(rho)) / alpha * (variance + kappa * theta * equivalent_t);
 	return c_inf;
     }
 
@@ -132,11 +156,7 @@ namespace
 	if (x == 0.0)
 	    return 0.0;
 
-	// this is a bit of a guess
-	// from T1 to T2, it is exact, but I have no idea what happens before, so we take half of the first part.
-	double equivalent_t = t2 - 0.5 * t1;
-
-	double c_inf = h.get_C_inf(equivalent_t);
+	double c_inf = h.get_C_inf(t1, t2);
 	double u = -log(x) / c_inf;
 	double y = normal(u, t1, t2, k, h) / (x * c_inf);
 	return y;
@@ -204,14 +224,17 @@ namespace ASI
 	Heston h(0.2, 2.0, 0.25, 0.5, -0.5);
 
 	const cpl & offset = -I;
-	const double t1 = 0.0;
+	const double t1 = 1.0;
+	const double t2 = t1 + 10.0;
 
-	printf("f(%g)=%g\n", 0.0, h.fx_over_iu(0.0, offset, t1, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000001, h.fx_over_iu(0.000001, offset, t1, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000002, h.fx_over_iu(0.000002, offset, t1, 1.5, 0.9));
-	printf("f(%g)=%g\n", 0.000003, h.fx_over_iu(0.000003, offset, t1, 1.5, 0.9));
+	printf("f(%g)=%g\n", 0.0, h.fx_over_iu(0.0, offset, t1, t2, 0.9));
+	printf("f(%g)=%g\n", 0.000001, h.fx_over_iu(0.000001, offset, t1, t2, 0.9));
+	printf("f(%g)=%g\n", 0.000002, h.fx_over_iu(0.000002, offset, t1, t2, 0.9));
+	printf("f(%g)=%g\n", 0.000003, h.fx_over_iu(0.000003, offset, t1, t2, 0.9));
 
-	const double call = hestonCallPrice(0.9, t1, 1.5, 0.2, 2.0, 0.25, 0.5, -0.4, 200);
-	printf("Call = %g\n", call);
+	const double call = hestonCallPrice(0.9, t1, t2, 0.2, 2.0, 0.25, 0.5, -0.4, 200);
+	printf("Call = %g\n\n", call);
+
+	printf("C INF=%g\n", h.get_C_inf(t1, t2));
     }
 }
