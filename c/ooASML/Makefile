@@ -40,7 +40,7 @@ FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.registry.XRegistryKey \
 	-Tcom.sun.star.reflection.XIdlReflection
 
-all: asml ASIMaths.rdb libASIMaths.so
+all: ASIMaths.rdb libASIMaths.so
 	$(REGCOMP) -register -r ASIMaths.rdb -c $(THISDIR)/libASIMaths.so
 
 asml:
@@ -55,8 +55,8 @@ headers: ASIMaths.rdb
 %.rdb: %.urd
 	$(REGMERGE) $@ /UCR $<
 
-libASIMaths.so: $(OBJFILES)
-	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared -L$(OOo) -L$(ASMLDIR) $^ $(LDLIBS)
+libASIMaths.so: asml $(OBJFILES)
+	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared -L$(OOo) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
 
 dummy: dummy.o $(OBJFILES)
 	g++ -o $@ $^ -L$(OOo) -L$(ASMLDIR) $(LDLIBS) -luno_sal -luno_salhelpergcc3 -luno_cppu -lstlport_gcc
