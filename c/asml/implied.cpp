@@ -20,6 +20,9 @@ namespace
 
     double b(double x, double sigma, double theta)
     {
+	if (sigma == 0.0)
+	    return intrinsic(x, theta);
+
 	const double d1 = x / sigma + 0.5 * sigma;
 	const double d2 = x / sigma - 0.5 * sigma;
 	const double phi1 = gsl_cdf_ugaussian_P(theta * d1);
@@ -140,5 +143,15 @@ namespace ASI
 	result[2] = b_to_inf(x, sigmaSqrtT, theta) * mult;
 
 	return result;
+    }
+
+    double blackCallPrice(double logStrike, double sigmaSqrtT)
+    {
+	const double x = -logStrike;
+	const double mult = exp(0.5 * logStrike);
+	const double callTheta = 1.0;
+	const double price = b(x, sigmaSqrtT, callTheta) * mult;
+
+	return price;
     }
 }

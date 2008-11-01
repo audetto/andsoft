@@ -166,7 +166,9 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	const double price = blackCallPrice(strike, time, sigma);
+	const double sigmaSqrtT = sigma * sqrt(time);
+	const double logStrike  = log(strike);
+	const double price = blackCallPrice(logStrike, sigmaSqrtT);
 	return price;
 
 	WRAP_END;

@@ -6,7 +6,6 @@
 namespace ASI
 {
     double hestonCallPrice(const double strike, const double time1, const double time2, const double sigma, const double kappa, const double theta, const double alpha, const double rho, size_t n);
-    double blackCallPrice(const double strike, const double time, const double sigma);
 
     void heston_try();
 }
