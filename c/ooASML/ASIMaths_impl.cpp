@@ -92,7 +92,7 @@ namespace _ASIMaths_impl_
 
     Sequence<Sequence<double> > ASIMaths_impl::projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	VectorPtr  xVect = vectorFromOOArgument(x);
 	CMatrixPtr aMat  = matrixFromOOArgument(a);
@@ -102,12 +102,12 @@ namespace _ASIMaths_impl_
 	
 	return vectorToOOArgument(xVect);
 
-	WRAP_END
+	WRAP_END;
     }
     
     Sequence<Sequence<double> > ASIMaths_impl::dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	VectorPtr  xVect = vectorFromOOArgument(x);
 	CMatrixPtr aMat  = matrixFromOOArgument(a);
@@ -120,12 +120,12 @@ namespace _ASIMaths_impl_
 	
 	return vectorToOOArgument(xVect);
 
-	WRAP_END
+	WRAP_END;
     }
 
     Sequence<Sequence<double> > ASIMaths_impl::svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	MatrixPtr aMat  = matrixFromOOArgument(a);
 	CVectorPtr bVect = vectorFromOOArgument(b);
@@ -135,62 +135,62 @@ namespace _ASIMaths_impl_
 	
 	return vectorToOOArgument(xVect);
 
-	WRAP_END
+	WRAP_END;
     }
 
     double ASIMaths_impl::finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException)
     {
- 	WRAP_BEGIN
+ 	WRAP_BEGIN;
 
-	    const std::vector<double> xVect = stdVectorFromOOArgument(xa);
+	const std::vector<double> xVect = stdVectorFromOOArgument(xa);
 	const std::vector<double> yVect = stdVectorFromOOArgument(ya);
 	
 	const double result = ASI::finiteDifference(xVect, yVect, x, order);
 
 	return result;
 
-	WRAP_END
+	WRAP_END;
     }
 
     double ASIMaths_impl::heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	const double price = hestonCallPrice(strike, time1, time2, sigma, kappa, theta, alpha, rho, points);
 	return price;
 
-	WRAP_END
+	WRAP_END;
     }
 
     double ASIMaths_impl::black( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	const double price = blackCallPrice(strike, time, sigma);
 	return price;
 
-	WRAP_END
+	WRAP_END;
     }
 
     double ASIMaths_impl::impliedVolatility( double price, double strike, double time ) throw (RuntimeException, lang::IllegalArgumentException)
     {
- 	WRAP_BEGIN
+ 	WRAP_BEGIN;
 
 	const double sigma = ASI::impliedVolatility(price, 1.0, strike, time, 1.0);
 	return sigma;
 
-	WRAP_END
+	WRAP_END;
    }
 
 
     Sequence<Sequence<double> > ASIMaths_impl::variousBS( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException)
     {
-	WRAP_BEGIN
+	WRAP_BEGIN;
 
 	const std::vector<double> res = ASI::variousBS(1.0, strike, time, sigma, 1.0);
 	return stdVectorToOOArgument(res);
 
-	WRAP_END
+	WRAP_END;
     }
 
 
