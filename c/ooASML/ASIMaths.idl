@@ -40,6 +40,20 @@ module org
 
 	    double finiteDifference([in] sequence< sequence < double > > xa, [in] sequence< sequence < double > > ya, [in] double x, [in] long order )
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+
+	    sequence<sequence<double> > fft([in] sequence<sequence<double> > data) 
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > fft_unpack([in] sequence<sequence<double> > data) 
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > fft_pack([in] sequence<sequence<double> > data) 
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
+	    sequence<sequence<double> > ifft([in] sequence<sequence<double> > data) 
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
 	};
 	
 	service Service

@@ -1,7 +1,7 @@
 #ifndef ASI_CONVERSION_H
 #define ASI_CONVERSION_H
 
-#include "utils.h"
+#include <asi/utils.h>
 
 #include <com/sun/star/uno/Sequence.hxx>
 #include <vector>
@@ -18,6 +18,9 @@ namespace ASI
 
     std::vector<double> stdVectorFromOOArgument(const Sequence<Sequence<double> >& vect);
     Sequence<Sequence<double> > stdVectorToOOArgument(const std::vector<double> & vect);
+
+    std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect);
+    Sequence<Sequence<double> > stdVectorComplexToOOArgument(const std::vector<cpl> & vect);
 }
 
 #endif

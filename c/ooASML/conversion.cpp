@@ -121,4 +121,41 @@ namespace ASI
 
 	return result;
     }
+
+    std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect)
+    {
+	CMatrixPtr matrix = matrixFromOOArgument(vect);
+
+	const size_t rows = matrix->size1;
+	const size_t cols = matrix->size2;
+
+	if (cols != 2)
+	    error("For complex data, there must be 2 columns");
+
+	std::vector<cpl> res(rows);
+
+	for (size_t i = 0; i < rows; ++i)
+	{
+	    res[i] = cpl(gsl_matrix_get(matrix.get(), i, 0), gsl_matrix_get(matrix.get(), i, 1));
+	}
+
+	return res;
+    }
+
+    Sequence<Sequence<double> > stdVectorComplexToOOArgument(const std::vector<std::complex<double> > & vect)
+    {
+	const size_t rows = vect.size();
+	const size_t cols = 2;
+
+	Sequence<Sequence<double> > result(rows);
+	
+	for (size_t i = 0; i < rows; ++i)
+	{
+	    result[i].realloc(cols);
+	    result[i][0] = vect[i].real();
+	    result[i][1] = vect[i].imag();
+	}
+
+	return result;
+    }
 }

@@ -18,6 +18,7 @@
 #include <asi/heston.h>
 #include <asi/implied.h>
 #include <asi/numerics.h>
+#include <asi/fourierpricing.h>
 
 #include "ooutils.h"
 #include "conversion.h"
@@ -58,6 +59,11 @@ namespace _ASIMaths_impl_
 	double SAL_CALL impliedVolatility( double price, double strike, double time ) throw (RuntimeException, lang::IllegalArgumentException);
 
 	Sequence<Sequence<double> > SAL_CALL variousBS( double time, double strike, double sigma) throw (RuntimeException, lang::IllegalArgumentException);
+
+	Sequence<Sequence<double> > SAL_CALL fft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
 
 	//XAddIn
 	OUString SAL_CALL getProgrammaticFuntionName( const OUString& aDisplayName ) throw (RuntimeException);
@@ -182,8 +188,7 @@ namespace _ASIMaths_impl_
 	return sigma;
 
 	WRAP_END;
-   }
-
+    }
 
     Sequence<Sequence<double> > ASIMaths_impl::variousBS( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException)
     {
@@ -195,6 +200,51 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
+    Sequence<Sequence<double> > ASIMaths_impl::fft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	ASI::FFT_Real(dataVect, true);
+	return stdVectorToOOArgument(dataVect);
+	
+	WRAP_END;
+    }
+
+    Sequence<Sequence<double> > ASIMaths_impl::fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	const std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	std::vector<cpl> result;
+	ASI::FFT_Unpack(dataVect, result);
+	return stdVectorComplexToOOArgument(result);
+	
+	WRAP_END;
+    }
+
+    Sequence<Sequence<double> > ASIMaths_impl::fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	const std::vector<cpl> dataVect = stdVectorcomplexFromOOArgument(data);
+	std::vector<double> result;
+	ASI::FFT_Pack(dataVect, result);
+	return stdVectorToOOArgument(result);
+	
+	WRAP_END;
+    }
+
+    Sequence<Sequence<double> > ASIMaths_impl::ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	ASI::FFT_Real(dataVect, false);
+	return stdVectorToOOArgument(dataVect);
+	
+	WRAP_END;
+    }
 
 #define _serviceName_ "org.asi.Service"
     
