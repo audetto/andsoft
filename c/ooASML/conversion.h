@@ -21,6 +21,8 @@ namespace ASI
 
     std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect);
     Sequence<Sequence<double> > stdVectorComplexToOOArgument(const std::vector<cpl> & vect);
+
+    void appendStdVectorToOOArgument(Sequence<Sequence<double> > & seq, const std::vector<double> & vect);
 }
 
 #endif

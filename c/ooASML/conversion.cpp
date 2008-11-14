@@ -122,6 +122,25 @@ namespace ASI
 	return result;
     }
 
+    void appendStdVectorToOOArgument(Sequence<Sequence<double> > & seq, const std::vector<double> & vect)
+    {
+	const size_t rows = seq.getLength();
+	const size_t vect_rows = vect.size();
+
+	if (rows == 0)
+	    seq.realloc(vect_rows);
+	else
+	    if (vect.size() != rows)
+		error("size mismatch!");
+
+	for (size_t i = 0; i < vect_rows; ++i)
+	{
+	    const size_t cols = seq[i].getLength();
+	    seq[i].realloc(cols + 1);
+	    seq[i][cols] = vect[i];
+	}
+    }
+
     std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect)
     {
 	CMatrixPtr matrix = matrixFromOOArgument(vect);
