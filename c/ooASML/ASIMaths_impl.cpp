@@ -19,6 +19,7 @@
 #include <asi/implied.h>
 #include <asi/numerics.h>
 #include <asi/fourierpricing.h>
+#include <asi/fastexp.h>
 
 #include "ooutils.h"
 #include "conversion.h"
@@ -49,6 +50,8 @@ namespace _ASIMaths_impl_
         Sequence<Sequence<double> > SAL_CALL projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
         Sequence<Sequence<double> > SAL_CALL dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
 	Sequence<Sequence<double> > SAL_CALL svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
+
+	Sequence<Sequence<double> > SAL_CALL fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method) throw (RuntimeException, lang::IllegalArgumentException);
 
 	double SAL_CALL finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException);
 	
@@ -142,6 +145,33 @@ namespace _ASIMaths_impl_
 	ASI::svdSolve(aMat, bVect, xVect);
 	
 	return vectorToOOArgument(xVect);
+
+	WRAP_END;
+    }
+
+    Sequence<Sequence<double> > ASIMaths_impl::fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	MatrixPtr aMat = matrixFromOOArgument(a);
+	MatrixPtr exptA;
+
+	switch (method)
+	{
+	case 1:
+	    exptA = expViaEigenvalues(t, aMat);
+	    break;
+	case 2:
+	    exptA = expViaGSL(t, aMat);
+	    break;
+	case 3:
+	    exptA = expViaExplicit(t, aMat, 10);
+	    break;
+	default:
+	    error("Invalid method");
+	}
+
+	return matrixToOOArgument(exptA);
 
 	WRAP_END;
     }
