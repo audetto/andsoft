@@ -35,6 +35,11 @@ namespace ASI
 
     extern const cpl I;
 
+    inline int isPowerOfTwo(size_t x)
+    {
+	return !((x - 1) & x);
+    }
+
 }
 
 #endif
