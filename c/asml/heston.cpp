@@ -217,8 +217,8 @@ namespace ASI
 	double price;
 	double abserr;
 
-	int res = gsl_integration_qag (&f, 0.0, 1.0, epsabs, epsrel, limit, key, ws, &price, &abserr);
-	//	int res = gsl_integration_qag (&f, 0.0, 100.0, epsabs, epsrel, limit, key, ws, &price, &abserr);
+	gsl_integration_qag (&f, 0.0, 1.0, epsabs, epsrel, limit, key, ws, &price, &abserr);
+	//	gsl_integration_qag (&f, 0.0, 100.0, epsabs, epsrel, limit, key, ws, &price, &abserr);
 
 	gsl_integration_workspace_free (ws);
 

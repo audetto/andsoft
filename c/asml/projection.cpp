@@ -88,7 +88,7 @@ namespace ASI
 
 		gsl_vector_const_view thisRow = gsl_matrix_const_row (a, i);
 
-		bool changed = projectOnHalf1DSubspace(x, &thisRow.vector, gsl_vector_get(b, i));
+		projectOnHalf1DSubspace(x, &thisRow.vector, gsl_vector_get(b, i));
 
 		gsl_vector_sub(x_prec.get(), x);  // x_prec = x(i-1) - x(i)
 
