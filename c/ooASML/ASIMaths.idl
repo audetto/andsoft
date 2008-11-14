@@ -54,6 +54,9 @@ module org
 	    sequence<sequence<double> > ifft([in] sequence<sequence<double> > data) 
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
 
+	    sequence<sequence<double> > hestonFFT([in] double time1, [in] double time2, [in] double sigma, [in] double kappa, [in] double theta, [in] double alpha, [in] double rho, [in] long N, [in] double stddev)
+		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
+
 	};
 	
 	service Service

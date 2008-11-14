@@ -65,6 +65,8 @@ namespace _ASIMaths_impl_
 	Sequence<Sequence<double> > SAL_CALL fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
 	Sequence<Sequence<double> > SAL_CALL fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
 
+	Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException, lang::IllegalArgumentException);
+
 	//XAddIn
 	OUString SAL_CALL getProgrammaticFuntionName( const OUString& aDisplayName ) throw (RuntimeException);
 	OUString SAL_CALL getDisplayFunctionName( const OUString& aProgrammaticName ) throw (RuntimeException);
@@ -243,6 +245,22 @@ namespace _ASIMaths_impl_
 	ASI::FFT_Real(dataVect, false);
 	return stdVectorToOOArgument(dataVect);
 	
+	WRAP_END;
+    }
+
+    Sequence<Sequence<double> > ASIMaths_impl::hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException, lang::IllegalArgumentException)
+    {
+	WRAP_BEGIN;
+
+	std::vector<double> strikes, prices;
+	ASI::hestonViaFFT(time1, time2, sigma, kappa, theta, alpha, rho, N, stdDev, strikes, prices);
+	Sequence<Sequence<double> > result;
+
+	appendStdVectorToOOArgument(result, strikes);
+	appendStdVectorToOOArgument(result, prices);
+
+	return result;
+
 	WRAP_END;
     }
 

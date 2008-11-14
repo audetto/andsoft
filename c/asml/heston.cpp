@@ -1,5 +1,6 @@
 #include <asi/heston.h>
 #include <asi/numerics.h>
+#include <asi/fourierpricing.h>
 
 #include <math.h>
 
@@ -157,6 +158,25 @@ namespace
 	return y;
     }
 
+    class HestonDistribution : private Heston, public Distribution
+    {
+    public:
+	HestonDistribution(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho, const double at1, const double at2) : 
+	    Heston(asigma, akappa, atheta, aalpha, arho), t1(at1), t2(at2)
+	{
+	}
+
+	virtual cpl laplaceExponent(const cpl & x) const;
+    private:
+	const double t1;
+	const double t2;
+    };
+
+    cpl HestonDistribution::laplaceExponent(const cpl & x) const
+    {
+	return logPhiFwd(x / I, t1, t2);
+    }
+
     struct gsl_heston
     {
 	const double t1;
@@ -203,6 +223,12 @@ namespace ASI
 	gsl_integration_workspace_free (ws);
 
 	return 0.5 * (1.0 - strike) + price;
+    }
+
+    void hestonViaFFT(const double time1, const double time2, const double sigma, const double kappa, const double theta, const double alpha, const double rho, const size_t N, const double std_dev, std::vector<double> & strikes, std::vector<double> & prices)
+    {
+	HestonDistribution heston(sigma, kappa, theta, alpha, rho, time1, time2);
+	priceViaFFT(N, std_dev, heston, strikes, prices);
     }
 
     void heston_try()
