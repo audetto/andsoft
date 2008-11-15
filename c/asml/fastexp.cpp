@@ -109,7 +109,7 @@ namespace ASI
     
     MatrixPtr expViaExplicit(const double time, const MatrixPtr & mat, const size_t powerOfTwo)
     {
-	const size_t steps = 1 << powerOfTwo;
+	const double steps = pow(2.0, powerOfTwo);
 	const double dt = time / steps;
 	
 	const size_t rows = mat->size1;
