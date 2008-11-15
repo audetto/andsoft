@@ -158,17 +158,15 @@ namespace _ASIMaths_impl_
 
 	switch (method)
 	{
-	case 1:
+	case 0:
 	    exptA = expViaEigenvalues(t, aMat);
 	    break;
-	case 2:
+	case 1:
 	    exptA = expViaGSL(t, aMat);
 	    break;
-	case 3:
-	    exptA = expViaExplicit(t, aMat, 10);
-	    break;
 	default:
-	    error("Invalid method");
+	    exptA = expViaExplicit(t, aMat, method);
+	    break;
 	}
 
 	return matrixToOOArgument(exptA);
