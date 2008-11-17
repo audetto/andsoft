@@ -24,7 +24,7 @@ module org
 	    sequence<sequence<double> > svdSolve([in] sequence< sequence < double > > a, [in] sequence< sequence < double > > b)
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
 
-	    sequence<sequence<double> > fastExp([in] double t, [in] sequence< sequence < double > > a, [in] long method)
+	    sequence<sequence<double> > fastExp([in] double t, [in] sequence< sequence < double > > a, [in] long method, [in] double theta)
 		raises (com::sun::star::uno::RuntimeException, com::sun::star::lang::IllegalArgumentException);
 
 

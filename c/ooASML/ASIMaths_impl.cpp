@@ -51,7 +51,7 @@ namespace _ASIMaths_impl_
         Sequence<Sequence<double> > SAL_CALL dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
 	Sequence<Sequence<double> > SAL_CALL svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
 
-	Sequence<Sequence<double> > SAL_CALL fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException, lang::IllegalArgumentException);
 
 	double SAL_CALL finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException);
 	
@@ -149,7 +149,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException, lang::IllegalArgumentException)
     {
 	WRAP_BEGIN;
 
@@ -165,7 +165,7 @@ namespace _ASIMaths_impl_
 	    exptA = expViaGSL(t, aMat);
 	    break;
 	default:
-	    exptA = expViaExplicit(t, aMat, method);
+	    exptA = expViaTheta(t, aMat, method, theta);
 	    break;
 	}
 

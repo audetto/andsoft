@@ -140,4 +140,53 @@ namespace ASI
 	return onePlustA;
     }
 
+    MatrixPtr expViaTheta(const double time, const MatrixPtr & mat, const size_t powerOfTwo, const double theta)
+    {
+	const double steps = pow(2.0, powerOfTwo);
+	const double dt = time / steps;
+	
+	const size_t rows = mat->size1;
+	const size_t cols = mat->size2;
+	
+	if (rows != cols)
+	    error("Cannot exponentiate rectangular matrix.");
+	
+	MatrixPtr onePlusOneMinusThetaTA(gsl_matrix_alloc(rows, cols), MatrixDeleter());
+	MatrixPtr oneMinusThetaTA       (gsl_matrix_alloc(rows, cols), MatrixDeleter());
+	MatrixPtr temp(gsl_matrix_alloc(rows, cols), MatrixDeleter());
+	
+	for (size_t i = 0; i < rows; ++i)
+	{
+	    for (size_t j = 0; j < rows; ++j)
+	    {
+		const double r = gsl_matrix_get(mat.get(), i, j);
+		const double one = (i == j) ? 1.0 : 0.0;
+		gsl_matrix_set(onePlusOneMinusThetaTA.get(), i, j, one + (1.0 - theta) * dt * r);
+		gsl_matrix_set(oneMinusThetaTA.get(),        i, j, one -        theta  * dt * r);
+	    }
+	}
+	
+	gsl_permutation * perm = gsl_permutation_alloc(rows);
+	int s;
+	gsl_linalg_LU_decomp(oneMinusThetaTA.get(), perm, &s);
+
+	MatrixPtr cnMat(gsl_matrix_alloc(rows, cols), MatrixDeleter());
+	for (size_t i = 0; i < rows; ++i)
+	{
+	    gsl_vector_const_view b = gsl_matrix_const_column(onePlusOneMinusThetaTA.get(), i);
+	    gsl_vector_view x       = gsl_matrix_column(cnMat.get(), i);
+	    gsl_linalg_LU_solve(oneMinusThetaTA.get(), perm, &b.vector, &x.vector);
+	}
+	gsl_permutation_free(perm);
+	
+
+	for (size_t i = 0; i < powerOfTwo; ++i)
+	{
+	    gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, cnMat.get(), cnMat.get(), 0.0, temp.get());
+	    swap(temp, cnMat);
+	}
+	
+	return cnMat;
+    }
+
 }
