@@ -1,6 +1,7 @@
 #include <asi/projection.h>
 #include <asi/heston.h>
 #include <asi/numerics.h>
+#include <asi/fastexp.h>
 
 using namespace ASI;
 
@@ -56,9 +57,11 @@ int main()
 	const double tol = 1.0e-10;
 	dykstraProjection(x.get(), a.get(), b.get(), iter, tol);
 
-	heston_try();
+	//	heston_try();
 
-	numerics_try();
+	//	numerics_try();
+
+	fastexp_try();
 	
     }
     catch (const std::exception & e)

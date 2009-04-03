@@ -10,8 +10,74 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_permutation.h>
 
+#include <iostream>
+
+
+using namespace std;
+
+ostream & operator<<(ostream & out, const gsl_matrix * mat)
+{
+    for (size_t i = 0; i < mat->size1; ++i)
+    {
+	out << "[" << i << ", " << mat->size2 << "]: ";
+	for (size_t j = 0; j < mat->size2; ++j)
+	    out << gsl_matrix_get(mat, i, j) << ", ";
+	
+	out << endl;
+    }
+    
+    return out;
+}
+
+ostream & operator<<(ostream & out, const gsl_vector * vec)
+{
+    out << "[" << vec->size << "]: ";
+    
+    for (size_t i = 0; i < vec->size; ++i)
+    {
+	out << gsl_vector_get(vec, i) << ", ";
+    }
+    
+    out << endl;
+    
+    return out;
+}
+
+ostream & operator<<(ostream & out, const gsl_matrix_complex * mat)
+{
+    for (size_t i = 0; i < mat->size1; ++i)
+    {
+	out << "[" << i << ", " << mat->size2 << "]: ";
+	for (size_t j = 0; j < mat->size2; ++j)
+	{
+	    const gsl_complex z = gsl_matrix_complex_get(mat, i, j);
+	    out << GSL_REAL(z) << "-" << GSL_IMAG(z) << ", ";
+	}
+	
+	out << endl;
+    }
+    
+    return out;
+}
+
+ostream & operator<<(ostream & out, const gsl_vector_complex * vec)
+{
+    out << "[" << vec->size << "]: ";
+    
+    for (size_t i = 0; i < vec->size; ++i)
+    {
+	const gsl_complex z = gsl_vector_complex_get(vec, i);
+	out << GSL_REAL(z) << "-" << GSL_IMAG(z) << ", ";
+    }
+    
+    out << endl;
+    
+    return out;
+}
+
 namespace ASI
 {
+
     MatrixPtr expViaEigenvalues(const double time, MatrixPtr & mat)
     {
 	const size_t rows = mat->size1;
@@ -26,7 +92,7 @@ namespace ASI
 	gsl_matrix_complex * evec = gsl_matrix_complex_alloc (rows, rows);
 	
 	const int ok = gsl_eigen_nonsymmv (mat.get(), eval, evec, workspace);
-	
+
 	gsl_eigen_nonsymmv_free (workspace);
 	
 	if (ok == 0)
@@ -187,6 +253,33 @@ namespace ASI
 	}
 	
 	return cnMat;
+    }
+
+    void fastexp_try()
+    {
+	MatrixPtr A(gsl_matrix_alloc(2, 2), MatrixDeleter());
+	gsl_matrix_set(A.get(), 0, 0, -1.0);
+	gsl_matrix_set(A.get(), 0, 1, 5.0);
+	gsl_matrix_set(A.get(), 1, 0, 0.0);
+	gsl_matrix_set(A.get(), 1, 1, -1.1);
+
+	double t = 1.0;
+
+	{
+	    MatrixPtr res = expViaEigenvalues(t, A);
+	    cout << "Result" << endl;
+	    cout << res;
+	}
+	{
+	    MatrixPtr res = expViaGSL(t, A);
+	    cout << "Result" << endl;
+	    cout << res;
+	}
+	{
+	    MatrixPtr res = expViaTheta(t, A, 45, 0.5);
+	    cout << "Result" << endl;
+	    cout << res;
+	}
     }
 
 }
