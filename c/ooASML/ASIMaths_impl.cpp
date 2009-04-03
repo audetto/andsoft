@@ -281,7 +281,9 @@ namespace _ASIMaths_impl_
 	WRAP_BEGIN;
 
 	std::vector<double> strikes, prices;
-	ASI::hestonViaFFT(time1, time2, sigma, kappa, theta, alpha, rho, N, stdDev, strikes, prices);
+	ASI::HestonDistribution heston(sigma, kappa, theta, alpha, rho, time1, time2);
+	ASI::priceViaFFT(N, stdDev, heston, strikes, prices);
+
 	Sequence<Sequence<double> > result;
 
 	appendStdVectorToOOArgument(result, strikes);

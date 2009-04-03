@@ -12,13 +12,16 @@ using namespace ASI;
 
 namespace
 {
-
     template<typename T>
     T square(const T & x)
     {
 	return x * x;
     }
 
+}
+
+namespace ASI
+{
     class Heston
     {
     private:
@@ -87,7 +90,7 @@ namespace
     double Heston::fx_over_iu_0(const cpl & offset, double t1, double t2, double k) const
     {
 	/*
-	  This is done numerically because Mathematica canno tfind a formula for the case t1 > 0.0
+	  This is done numerically because Mathematica cannot find a formula for the case t1 > 0.0
 	 */
 	cpl u_down = -0.0001;
 	cpl u_mid  =  0.0000;
@@ -140,7 +143,24 @@ namespace
 	double c_inf = sqrt(1.0 - square(rho)) / alpha * (variance + kappa * theta * equivalent_t);
 	return c_inf;
     }
+}
 
+namespace ASI
+{
+    HestonDistribution::HestonDistribution(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho, const double at1, const double at2) : 
+	    h(new Heston(asigma, akappa, atheta, aalpha, arho)), t1(at1), t2(at2)
+    {
+    }
+
+    cpl HestonDistribution::laplaceExponent(const cpl & x) const
+    {
+	return h->logPhiFwd(x / I, t1, t2);
+    }
+
+}
+
+namespace
+{
     double normal(double u, double t1, double t2, double k, const Heston & h)
     {
 	double y = (h.fx_over_iu(u, -I, t1, t2, k) - k * h.fx_over_iu(u, 0.0, t1, t2, k)) / M_PI;
@@ -156,25 +176,6 @@ namespace
 	double u = -log(x) / c_inf;
 	double y = normal(u, t1, t2, k, h) / (x * c_inf);
 	return y;
-    }
-
-    class HestonDistribution : private Heston, public Distribution
-    {
-    public:
-	HestonDistribution(const double asigma, const double akappa, const double atheta, const double aalpha, const double arho, const double at1, const double at2) : 
-	    Heston(asigma, akappa, atheta, aalpha, arho), t1(at1), t2(at2)
-	{
-	}
-
-	virtual cpl laplaceExponent(const cpl & x) const;
-    private:
-	const double t1;
-	const double t2;
-    };
-
-    cpl HestonDistribution::laplaceExponent(const cpl & x) const
-    {
-	return logPhiFwd(x / I, t1, t2);
     }
 
     struct gsl_heston
@@ -223,12 +224,6 @@ namespace ASI
 	gsl_integration_workspace_free (ws);
 
 	return 0.5 * (1.0 - strike) + price;
-    }
-
-    void hestonViaFFT(const double time1, const double time2, const double sigma, const double kappa, const double theta, const double alpha, const double rho, const size_t N, const double std_dev, std::vector<double> & strikes, std::vector<double> & prices)
-    {
-	HestonDistribution heston(sigma, kappa, theta, alpha, rho, time1, time2);
-	priceViaFFT(N, std_dev, heston, strikes, prices);
     }
 
     void heston_try()
