@@ -8,7 +8,7 @@ namespace ASI
     class Distribution
     {
     public:
-	~Distribution();
+	virtual ~Distribution();
 
 	/*
 	  E(e^(x * X)) = e^LE(x)
