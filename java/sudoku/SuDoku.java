@@ -10,16 +10,7 @@ class SuDoku extends JFrame
 
     SuDoku()
     {
-	super("Su Doku - (C)opyRight AndSoft Inc., 2005");
-
-	addWindowListener(new WindowAdapter()
-	    {
-		public void windowClosing(WindowEvent e)
-		{
-		    System.exit(0);
-		}
-	    }
-	    );
+	super("Su Doku - (C)opyRight AndSoft Inc., 2005-09");
 
 	Font font = new Font("Monospaced", Font.BOLD, 14);
 
@@ -136,8 +127,6 @@ class SuDoku extends JFrame
 	numbers[8][4].setText("6");
 	numbers[8][6].setText("8");
 	
-	pack();
-	setVisible(true);
     }
 
     void scanForForbiddens()
@@ -343,6 +332,16 @@ class SuDoku extends JFrame
 
     public static void main(String[] args)
     {
-	new SuDoku();
+	EventQueue.invokeLater(new Runnable()
+	    {
+		public void run()
+		{
+		    JFrame frame = new SuDoku();
+		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    frame.pack();
+		    frame.setVisible(true);
+		}
+	    }
+	    );
     }
 }
