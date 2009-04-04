@@ -13,7 +13,7 @@ class CaseInfo {
     }
 
     void forbidValue(int value) {
-        valids[value] = false;
+	valids[value] = false;
     }
 
     boolean allowValue(int value) {

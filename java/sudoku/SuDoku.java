@@ -50,18 +50,18 @@ class SuDoku extends JFrame {
 	JPanel cmds = new JPanel();
 	cmds.setLayout(new BoxLayout(cmds, BoxLayout.X_AXIS));
 	
-	final JCheckBox forbidden  = new JCheckBox("forbidden",  true);
+	final JCheckBox forbidden  = new JCheckBox("forbidden",	 true);
 	final JCheckBox compulsory = new JCheckBox("compulsory", true);
-	final JCheckBox indirect   = new JCheckBox("indirect",   true);
-	final JCheckBox update     = new JCheckBox("update",     true);
+	final JCheckBox indirect   = new JCheckBox("indirect",	 true);
+	final JCheckBox update	   = new JCheckBox("update",	 true);
 
 	JButton go = new JButton("Go");
 	go.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    if (forbidden.isSelected())  scanForForbiddens();
+		    if (forbidden.isSelected())	 scanForForbiddens();
 		    if (compulsory.isSelected()) goForTheGlory();
-		    if (indirect.isSelected())   secondPass();
-		    if (update.isSelected())     update();
+		    if (indirect.isSelected())	 secondPass();
+		    if (update.isSelected())	 update();
 		}
 	    }
 			     );
