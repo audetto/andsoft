@@ -1,49 +1,66 @@
-class CaseInfo {
+class CaseInfo
+{
     private boolean[] valids = new boolean[9];
 
-    CaseInfo() {
+    CaseInfo()
+    {
 	for (int i = 0; i < 9; ++i)
 	    valids[i] = true;
     }
     
-    void setFixed(int value) {
+    void setFixed(int value)
+    {
 	for (int i = 0; i < 9; ++i)
 	    valids[i] = false;
 	valids[value] = true;
     }
 
-    void forbidValue(int value) {
+    void forbidValue(int value)
+    {
 	valids[value] = false;
     }
 
-    boolean allowValue(int value) {
+    boolean allowValue(int value)
+    {
 	return valids[value];
     }
 
-    public String toString() {
+    public String toString()
+    {
 	StringBuffer sb = new StringBuffer();
 	boolean ok = false;
-	for (int i = 0; i < 9; ++i) {
-	    if (valids[i]) {
+	for (int i = 0; i < 9; ++i)
+	{
+	    if (valids[i])
+	    {
 		sb.append(String.valueOf(i + 1));
 		ok = true;
-	    } else
+	    } 
+	    else
+	    {
 		sb.append(" ");
+	    }
 	}
+
 	if (ok)
 	    return sb.toString();
 	else
 	    return "ERRORE";
     }
     
-    int isFixed() {
+    int isFixed()
+    {
 	int count = 0;
 	int value = -1;
 	for (int i = 0; i < 9; ++i)
-	    if (valids[i]) {
+	{
+	    if (valids[i])
+	    {
 		count++;
 		value = i;
 	    }
+	}
+
 	if (count == 1)
 	    return value;
 	else

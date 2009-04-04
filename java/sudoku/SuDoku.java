@@ -3,19 +3,23 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class SuDoku extends JFrame {
+class SuDoku extends JFrame
+{
     private JTextField[][] numbers;
     private Case[][] guesses;
 
-    SuDoku() {
+    SuDoku()
+    {
 	super("Su Doku - (C)opyRight AndSoft Inc., 2005");
 
-	addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
+	addWindowListener(new WindowAdapter()
+	    {
+		public void windowClosing(WindowEvent e)
+		{
 		    System.exit(0);
 		}
 	    }
-			  );
+	    );
 
 	Font font = new Font("Monospaced", Font.BOLD, 14);
 
@@ -27,14 +31,18 @@ class SuDoku extends JFrame {
 	    numbers[i] = new JTextField[9];
 
 	JPanel input = new JPanel(new GridLayout(3, 3));
-	for (int i = 0; i < 3; ++i) {
-	    for (int j = 0; j < 3; ++j) {
+	for (int i = 0; i < 3; ++i)
+	{
+	    for (int j = 0; j < 3; ++j)
+	    {
 		JPanel small = new JPanel(new GridLayout(3, 3));
 		small.setBorder(border);
 		int row_base = i * 3;
 		int col_base = j * 3;
-		for (int k = row_base; k < row_base + 3; ++k) {
-		    for (int l = col_base; l < col_base + 3; ++l) {
+		for (int k = row_base; k < row_base + 3; ++k)
+		{
+		    for (int l = col_base; l < col_base + 3; ++l)
+		    {
 			numbers[k][l] = new JTextField();
 			numbers[k][l].setHorizontalAlignment(JTextField.CENTER);
 			numbers[k][l].setFont(font);
@@ -56,21 +64,23 @@ class SuDoku extends JFrame {
 	final JCheckBox update	   = new JCheckBox("update",	 true);
 
 	JButton go = new JButton("Go");
-	go.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
+	go.addActionListener(new ActionListener()
+	    {
+		public void actionPerformed(ActionEvent e)
+		{
 		    if (forbidden.isSelected())	 scanForForbiddens();
 		    if (compulsory.isSelected()) goForTheGlory();
 		    if (indirect.isSelected())	 secondPass();
 		    if (update.isSelected())	 update();
 		}
 	    }
-			     );
+	    );
 	cmds.add(go);
 	cmds.add(forbidden);
 	cmds.add(compulsory);
 	cmds.add(indirect);
 	cmds.add(update);
-
+	
 	getContentPane().add(cmds);
 
 	guesses = new Case[9][];
@@ -78,14 +88,18 @@ class SuDoku extends JFrame {
 	    guesses[i] = new Case[9];
 
 	JPanel output = new JPanel(new GridLayout(3, 3));
-	for (int i = 0; i < 3; ++i) {
-	    for (int j = 0; j < 3; ++j) {
+	for (int i = 0; i < 3; ++i)
+	{
+	    for (int j = 0; j < 3; ++j)
+	    {
 		JPanel small = new JPanel(new GridLayout(3, 3));
 		small.setBorder(border);
 		int row_base = i * 3;
 		int col_base = j * 3;
-		for (int k = row_base; k < row_base + 3; ++k) {
-		    for (int l = col_base; l < col_base + 3; ++l) {
+		for (int k = row_base; k < row_base + 3; ++k)
+		{
+		    for (int l = col_base; l < col_base + 3; ++l)
+		    {
 			guesses[k][l] = new Case();
 			guesses[k][l].setHorizontalAlignment(JTextField.CENTER);
 			guesses[k][l].setFont(font);
@@ -126,15 +140,18 @@ class SuDoku extends JFrame {
 	setVisible(true);
     }
 
-    void scanForForbiddens() {
+    void scanForForbiddens()
+    {
 	for (int i = 0; i < 9; ++i)
 	    for (int j = 0; j < 9; ++j)
 		doOneCase(i, j);
     }
 
-    void doOneCase(int row, int col) {
+    void doOneCase(int row, int col)
+    {
 	String s = numbers[row][col].getText();
-	if (s.length() > 0) {
+	if (s.length() > 0)
+	{
 	    int value = Integer.parseInt(s) - 1;
 
 	    guesses[row][col].setFixed(value);
@@ -152,14 +169,16 @@ class SuDoku extends JFrame {
 	    int vsq = col / 3;
 	    vsq = vsq * 3;
 
-	    for (int i = hsq; i < hsq + 3; ++i) {
+	    for (int i = hsq; i < hsq + 3; ++i)
+	    {
 		for (int j = vsq; j < vsq + 3; ++j)
 		    guesses[i][j].forbidValue(value, Color.YELLOW);
 	    }
 	}
     }
 
-    void goForTheGlory() {
+    void goForTheGlory()
+    {
 	for (int j = 0; j < 9; ++j)
 	    lookForOneColumn(j);
 	for (int i = 0; i < 9; ++i)
@@ -169,12 +188,16 @@ class SuDoku extends JFrame {
 		lookForOneSquare(r, c);
     }
 
-    void lookForOneColumn(int col) {
-	for (int number = 0; number < 9; ++number) {
+    void lookForOneColumn(int col)
+    {
+	for (int number = 0; number < 9; ++number)
+	{
 	    int count = 0;
 	    int first = -1;
-	    for (int row = 0; row < 9; ++row) {
-		if (guesses[row][col].allowValue(number)) {
+	    for (int row = 0; row < 9; ++row)
+	    {
+		if (guesses[row][col].allowValue(number))
+		{
 		    ++count;
 		    first = row;
 		}
@@ -186,12 +209,16 @@ class SuDoku extends JFrame {
 	}
     }
 
-    void lookForOneRow(int row) {
-	for (int number = 0; number < 9; ++number) {
+    void lookForOneRow(int row)
+    {
+	for (int number = 0; number < 9; ++number)
+	{
 	    int count = 0;
 	    int first = -1;
-	    for (int col = 0; col < 9; ++col) {
-		if (guesses[row][col].allowValue(number)) {
+	    for (int col = 0; col < 9; ++col)
+	    {
+		if (guesses[row][col].allowValue(number))
+		{
 		    ++count;
 		    first = col;
 		}
@@ -203,16 +230,21 @@ class SuDoku extends JFrame {
 	}
     }
 
-    void lookForOneSquare(int r, int c) {
-	for (int number = 0; number < 9; ++number) {
+    void lookForOneSquare(int r, int c)
+    {
+	for (int number = 0; number < 9; ++number)
+	{
 	    int count = 0;
 	    int first_r = -1;
 	    int first_c = -1;
 	    int row_base = r * 3;
 	    int col_base = c * 3;
-	    for (int row = row_base; row < row_base + 3; ++row) {
-		for (int col = col_base; col < col_base + 3; ++col) {
-		    if (guesses[row][col].allowValue(number)) {
+	    for (int row = row_base; row < row_base + 3; ++row)
+	    {
+		for (int col = col_base; col < col_base + 3; ++col)
+		{
+		    if (guesses[row][col].allowValue(number))
+		    {
 			++count;
 			first_r = row;
 			first_c = col;
@@ -227,58 +259,80 @@ class SuDoku extends JFrame {
 	}
     }
 
-    void update() {
+    void update()
+    {
 	for (int i = 0; i < 9; ++i)
-	    for (int j = 0; j < 9; ++j) {
+	    for (int j = 0; j < 9; ++j)
+	    {
 		int isFixed = guesses[i][j].isFixed();
 		if (isFixed != -1)
 		    numbers[i][j].setText(String.valueOf(isFixed + 1));
 	    }
     }
 
-    void secondPass() {
+    void secondPass()
+    {
 	for (int r = 0; r < 3; ++r)
 	    for (int c = 0; c < 3; ++c)
 		lookForDoublesInOneSquare(r, c);
     }
 
-    void lookForDoublesInOneSquare(int r, int c) {
-	for (int number = 0; number < 9; ++number) {
+    void lookForDoublesInOneSquare(int r, int c)
+    {
+	for (int number = 0; number < 9; ++number)
+	{
 	    int count = 0;
 	    int first_r = -1;
 	    int first_c = -1;
 	    int row_base = r * 3;
 	    int col_base = c * 3;
-	    for (int row = row_base; row < row_base + 3; ++row) {
-		for (int col = col_base; col < col_base + 3; ++col) {
-		    if (guesses[row][col].allowValue(number)) {
+	    for (int row = row_base; row < row_base + 3; ++row)
+	    {
+		for (int col = col_base; col < col_base + 3; ++col)
+		{
+		    if (guesses[row][col].allowValue(number))
+		    {
 			++count;
-			if (count == 1) {
+			if (count == 1)
+			{
 			    first_r = row;
 			    first_c = col;
-			} else {
+			}
+			else
+			{
 			    if (first_r == row)
+			    {
 				first_c = -1;
+			    }
 			    else
+			    {
 				if (first_c == col)
+				{
 				    first_r = -1;
-				else {
+				}
+				else
+				{
 				    first_r = -1;
 				    first_c = -1;
 				}
+			    }
 			}
 		    }
 		}
 	    }
-	    if (first_r != -1) {
-		for (int col = 0; col < 9; ++col) {
+	    if (first_r != -1)
+	    {
+		for (int col = 0; col < 9; ++col)
+		{
 		    int c2 = col / 3;
 		    if (c2 != c)
 			guesses[first_r][col].forbidValue(number, Color.WHITE);
 		}
 	    }
-	    if (first_c != -1) {
-		for (int row = 0; row < 9; ++row) {
+	    if (first_c != -1)
+	    {
+		for (int row = 0; row < 9; ++row)
+		{
 		    int r2 = row / 3;
 		    if (r2 != r)
 			guesses[row][first_c].forbidValue(number, Color.WHITE);
@@ -287,7 +341,8 @@ class SuDoku extends JFrame {
 	}
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 	new SuDoku();
     }
 }
