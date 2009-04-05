@@ -67,12 +67,17 @@ class SuDoku extends JFrame
 	    }
 	    );
 	cmds.add(go);
-	cmds.add(forbidden);
-	cmds.add(compulsory);
-	cmds.add(indirect);
-	cmds.add(update);
+
+	JPanel flags = new JPanel();
+	flags.setLayout(new BoxLayout(flags, BoxLayout.X_AXIS));
+
+	flags.add(forbidden);
+	flags.add(compulsory);
+	flags.add(indirect);
+	flags.add(update);
 	
 	getContentPane().add(cmds);
+	getContentPane().add(flags);
 
 	guesses = new Case[9][];
 	for (int i = 0; i < 9; ++i)
