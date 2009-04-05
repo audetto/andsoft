@@ -69,6 +69,17 @@ class SuDoku extends JFrame
 	final JCheckBox indirect   = new JCheckBox("indirect",	 true);
 	final JCheckBox update	   = new JCheckBox("update",	 true);
 
+	JButton clear = new JButton("Clear");
+	clear.addActionListener(new ActionListener()
+	    {
+		public void actionPerformed(ActionEvent e)
+		{
+		    clear();
+		}
+	    }
+	    );
+	cmds.add(clear);
+
 	JButton go = new JButton("Go");
 	go.addActionListener(new ActionListener()
 	    {
@@ -120,6 +131,16 @@ class SuDoku extends JFrame
 	numbers[8][4].setText("6");
 	numbers[8][6].setText("8");
 	
+    }
+
+    void clear()
+    {
+	for (int i = 0; i < 9; ++i)
+	    for (int j = 0; j < 9; ++j)
+	    {
+		numbers[i][j].setText(null);
+		guesses[i][j].reset();
+	    }
     }
 
     void scanForForbiddens()

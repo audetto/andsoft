@@ -5,11 +5,21 @@ class Case extends JTextField
 {
     private CaseInfo ci = new CaseInfo();
     private boolean fixed = false;
+    private Color defaultColor;
 
     Case()
     {
 	super("123456789");
 	setEditable(false);
+	defaultColor = getBackground();
+    }
+
+    void reset()
+    {
+	setText("123456789");
+	setBackground(defaultColor);
+	ci = new CaseInfo();
+	fixed = false;
     }
 
     void forbidValue(int value, Color color)
