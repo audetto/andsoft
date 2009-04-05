@@ -32,12 +32,12 @@ class SuDoku extends JFrame
 		int col_base = j * 3;
 		for (int k = row_base; k < row_base + 3; ++k)
 		{
-		    for (int l = col_base; l < col_base + 3; ++l)
+		    for (int h = col_base; h < col_base + 3; ++h)
 		    {
-			numbers[k][l] = new JTextField();
-			numbers[k][l].setHorizontalAlignment(JTextField.CENTER);
-			numbers[k][l].setFont(font);
-			small.add(numbers[k][l]);
+			numbers[k][h] = new JTextField();
+			numbers[k][h].setHorizontalAlignment(JTextField.CENTER);
+			numbers[k][h].setFont(font);
+			small.add(numbers[k][h]);
 		    }
 		}
 		input.add(small);
@@ -94,12 +94,12 @@ class SuDoku extends JFrame
 		int col_base = j * 3;
 		for (int k = row_base; k < row_base + 3; ++k)
 		{
-		    for (int l = col_base; l < col_base + 3; ++l)
+		    for (int h = col_base; h < col_base + 3; ++h)
 		    {
-			guesses[k][l] = new Case();
-			guesses[k][l].setHorizontalAlignment(JTextField.CENTER);
-			guesses[k][l].setFont(font);
-			small.add(guesses[k][l]);
+			guesses[k][h] = new Case();
+			guesses[k][h].setHorizontalAlignment(JTextField.CENTER);
+			guesses[k][h].setFont(font);
+			small.add(guesses[k][h]);
 		    }
 		}
 		output.add(small);
