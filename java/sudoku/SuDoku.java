@@ -7,6 +7,7 @@ class SuDoku extends JFrame
 {
     private JTextField[][] numbers;
     private Case[][] guesses;
+    private JTextField textRepresentation;
 
     SuDoku()
     {
@@ -80,6 +81,19 @@ class SuDoku extends JFrame
 	    );
 	cmds.add(clear);
 
+	JButton read = new JButton("Read");
+	read.addActionListener(new ActionListener()
+	    {
+		public void actionPerformed(ActionEvent e)
+		{
+		    String str = JOptionPane.showInputDialog(SuDoku.this, "Initial position:");
+		    if (str != null)
+			readFrom(str);
+		}
+	    }
+	    );
+	cmds.add(read);
+
 	JButton go = new JButton("Go");
 	go.addActionListener(new ActionListener()
 	    {
@@ -106,7 +120,14 @@ class SuDoku extends JFrame
 	getContentPane().add(flags);
 
 	getContentPane().add(output);
+
+	textRepresentation = new JTextField();
+	textRepresentation.setFont(font);
+	textRepresentation.setEditable(false);
+	textRepresentation.setHorizontalAlignment(JTextField.CENTER);
 	
+	getContentPane().add(textRepresentation);
+
 	numbers[0][2].setText("7");
 	numbers[0][4].setText("9");
 	numbers[1][1].setText("8");
@@ -141,6 +162,7 @@ class SuDoku extends JFrame
 		numbers[i][j].setText(null);
 		guesses[i][j].reset();
 	    }
+	textRepresentation.setText(null);
     }
 
     void scanForForbiddens()
@@ -148,6 +170,24 @@ class SuDoku extends JFrame
 	for (int i = 0; i < 9; ++i)
 	    for (int j = 0; j < 9; ++j)
 		doOneCase(i, j);
+    }
+
+    void readFrom(String str)
+    {
+	if (str.length() == 9 * 9)
+	{
+	    clear();
+	    for (int i = 0; i < 9; ++i)
+	    {
+		for (int j = 0; j < 9; ++j)
+		{
+		    char ch = str.charAt(i * 9 + j);
+		    if (ch != '.')
+			numbers[i][j].setText(String.valueOf(ch));
+		}
+	    }
+
+	}
     }
 
     void doOneCase(int row, int col)
@@ -264,13 +304,26 @@ class SuDoku extends JFrame
 
     void update()
     {
+	textRepresentation.setText(null);
+	StringBuilder str = new StringBuilder();
+
 	for (int i = 0; i < 9; ++i)
 	    for (int j = 0; j < 9; ++j)
 	    {
 		int isFixed = guesses[i][j].isFixed();
 		if (isFixed != -1)
-		    numbers[i][j].setText(String.valueOf(isFixed + 1));
+		{
+		    String thisStr = String.valueOf(isFixed + 1);
+		    str.append(thisStr);
+		    numbers[i][j].setText(thisStr);
+		}
+		else
+		{
+		    str.append(".");
+		}
+
 	    }
+	textRepresentation.setText(str.toString());
     }
 
     void secondPass()
