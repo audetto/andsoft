@@ -18,16 +18,25 @@ class SuDoku extends JFrame
 	Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
 
 	numbers = new JTextField[9][];
+	guesses = new Case[9][];
 	for (int i = 0; i < 9; ++i)
+	{
 	    numbers[i] = new JTextField[9];
+	    guesses[i] = new Case[9];
+	}
 
 	JPanel input = new JPanel(new GridLayout(3, 3));
+	JPanel output = new JPanel(new GridLayout(3, 3));
 	for (int i = 0; i < 3; ++i)
 	{
 	    for (int j = 0; j < 3; ++j)
 	    {
-		JPanel small = new JPanel(new GridLayout(3, 3));
-		small.setBorder(border);
+		JPanel small_input = new JPanel(new GridLayout(3, 3));
+		small_input.setBorder(border);
+
+		JPanel small_output = new JPanel(new GridLayout(3, 3));
+		small_output.setBorder(border);
+
 		int row_base = i * 3;
 		int col_base = j * 3;
 		for (int k = row_base; k < row_base + 3; ++k)
@@ -37,10 +46,16 @@ class SuDoku extends JFrame
 			numbers[k][h] = new JTextField();
 			numbers[k][h].setHorizontalAlignment(JTextField.CENTER);
 			numbers[k][h].setFont(font);
-			small.add(numbers[k][h]);
+			small_input.add(numbers[k][h]);
+
+			guesses[k][h] = new Case();
+			guesses[k][h].setHorizontalAlignment(JTextField.CENTER);
+			guesses[k][h].setFont(font);
+			small_output.add(guesses[k][h]);
 		    }
 		}
-		input.add(small);
+		input.add(small_input);
+		output.add(small_output);
 	    }
 	}
 	
@@ -78,33 +93,6 @@ class SuDoku extends JFrame
 	
 	getContentPane().add(cmds);
 	getContentPane().add(flags);
-
-	guesses = new Case[9][];
-	for (int i = 0; i < 9; ++i)
-	    guesses[i] = new Case[9];
-
-	JPanel output = new JPanel(new GridLayout(3, 3));
-	for (int i = 0; i < 3; ++i)
-	{
-	    for (int j = 0; j < 3; ++j)
-	    {
-		JPanel small = new JPanel(new GridLayout(3, 3));
-		small.setBorder(border);
-		int row_base = i * 3;
-		int col_base = j * 3;
-		for (int k = row_base; k < row_base + 3; ++k)
-		{
-		    for (int h = col_base; h < col_base + 3; ++h)
-		    {
-			guesses[k][h] = new Case();
-			guesses[k][h].setHorizontalAlignment(JTextField.CENTER);
-			guesses[k][h].setFont(font);
-			small.add(guesses[k][h]);
-		    }
-		}
-		output.add(small);
-	    }
-	}
 
 	getContentPane().add(output);
 	
