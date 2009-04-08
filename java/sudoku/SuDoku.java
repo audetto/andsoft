@@ -9,6 +9,10 @@ class SuDoku extends JFrame
     private Case[][] guesses;
     private JTextField textRepresentation;
 
+    private Case[][] rows;
+    private Case[][] cols;
+    private Case[][] blocks;
+
     SuDoku()
     {
 	super("Su Doku - (C)opyRight AndSoft Inc., 2005-09");
@@ -20,10 +24,17 @@ class SuDoku extends JFrame
 
 	numbers = new JTextField[9][];
 	guesses = new Case[9][];
+	rows    = new Case[9][];
+	cols    = new Case[9][];
+	blocks  = new Case[9][];
 	for (int i = 0; i < 9; ++i)
 	{
 	    numbers[i] = new JTextField[9];
 	    guesses[i] = new Case[9];
+
+	    rows[i]   = new Case[9];
+	    cols[i]   = new Case[9];
+	    blocks[i] = new Case[9];
 	}
 
 	JPanel input = new JPanel(new GridLayout(3, 3));
@@ -38,8 +49,12 @@ class SuDoku extends JFrame
 		JPanel small_output = new JPanel(new GridLayout(3, 3));
 		small_output.setBorder(border);
 
+		int block = i * 3 + j;
 		int row_base = i * 3;
 		int col_base = j * 3;
+		
+		int inBlock = 0;
+
 		for (int k = row_base; k < row_base + 3; ++k)
 		{
 		    for (int h = col_base; h < col_base + 3; ++h)
@@ -49,10 +64,16 @@ class SuDoku extends JFrame
 			numbers[k][h].setFont(font);
 			small_input.add(numbers[k][h]);
 
-			guesses[k][h] = new Case();
+			Case thisCase = new Case();
+			guesses[k][h] = thisCase;
 			guesses[k][h].setHorizontalAlignment(JTextField.CENTER);
 			guesses[k][h].setFont(font);
 			small_output.add(guesses[k][h]);
+
+			rows[k][h] = thisCase;
+			cols[h][k] = thisCase;
+			blocks[block][inBlock] = thisCase;
+			++inBlock;
 		    }
 		}
 		input.add(small_input);
@@ -190,6 +211,14 @@ class SuDoku extends JFrame
 	}
     }
 
+    int getBlock(int row, int col)
+    {
+	int r = row / 3;
+	int c = col / 3;
+	int b = r * 3 + c;
+	return b;
+    }
+
     void doOneCase(int row, int col)
     {
 	String s = numbers[row][col].getText();
@@ -199,23 +228,13 @@ class SuDoku extends JFrame
 
 	    guesses[row][col].setFixed(value);
 
-	    // same row
+	    int b = getBlock(row, col);
+
 	    for (int i = 0; i < 9; ++i)
-		guesses[row][i].forbidValue(value, Color.YELLOW);
-
-	    // same col
-	    for (int j = 0; j < 9; ++j)
-		guesses[j][col].forbidValue(value, Color.YELLOW);
-
-	    int hsq = row / 3;
-	    hsq = hsq * 3;
-	    int vsq = col / 3;
-	    vsq = vsq * 3;
-
-	    for (int i = hsq; i < hsq + 3; ++i)
 	    {
-		for (int j = vsq; j < vsq + 3; ++j)
-		    guesses[i][j].forbidValue(value, Color.YELLOW);
+		rows[row][i].forbidValue(value, Color.YELLOW);
+		cols[col][i].forbidValue(value, Color.YELLOW);
+		blocks[b][i].forbidValue(value, Color.YELLOW);
 	    }
 	}
     }
@@ -223,82 +242,31 @@ class SuDoku extends JFrame
     void goForTheGlory()
     {
 	for (int j = 0; j < 9; ++j)
-	    lookForOneColumn(j);
-	for (int i = 0; i < 9; ++i)
-	    lookForOneRow(i);
-	for (int r = 0; r < 3; ++r)
-	    for (int c = 0; c < 3; ++c)
-		lookForOneSquare(r, c);
+	{
+	    lookForOneBlock(rows[j]);
+	    lookForOneBlock(cols[j]);
+	    lookForOneBlock(blocks[j]);
+	}
     }
 
-    void lookForOneColumn(int col)
+    void lookForOneBlock(Case[] block)
     {
 	for (int number = 0; number < 9; ++number)
 	{
 	    int count = 0;
 	    int first = -1;
-	    for (int row = 0; row < 9; ++row)
+	    for (int pos = 0; pos < 9; ++pos)
 	    {
-		if (guesses[row][col].allowValue(number))
+		if (block[pos].allowValue(number))
 		{
 		    ++count;
-		    first = row;
+		    first = pos;
 		}
 	    }
 	    if (count == 1)
-		guesses[first][col].newFixed(number);
+		block[first].newFixed(number);
 	    if (count == 0)
-		System.out.println("Error " + String.valueOf(number + 1) + " in column " + String.valueOf(col));
-	}
-    }
-
-    void lookForOneRow(int row)
-    {
-	for (int number = 0; number < 9; ++number)
-	{
-	    int count = 0;
-	    int first = -1;
-	    for (int col = 0; col < 9; ++col)
-	    {
-		if (guesses[row][col].allowValue(number))
-		{
-		    ++count;
-		    first = col;
-		}
-	    }
-	    if (count == 1)
-		guesses[row][first].newFixed(number);
-	    if (count == 0)
-		System.out.println("Error " + String.valueOf(number + 1) + " in row " + String.valueOf(row));
-	}
-    }
-
-    void lookForOneSquare(int r, int c)
-    {
-	for (int number = 0; number < 9; ++number)
-	{
-	    int count = 0;
-	    int first_r = -1;
-	    int first_c = -1;
-	    int row_base = r * 3;
-	    int col_base = c * 3;
-	    for (int row = row_base; row < row_base + 3; ++row)
-	    {
-		for (int col = col_base; col < col_base + 3; ++col)
-		{
-		    if (guesses[row][col].allowValue(number))
-		    {
-			++count;
-			first_r = row;
-			first_c = col;
-		    }
-		}
-	    }
-	    if (count == 1)
-		guesses[first_r][first_c].newFixed(number);
-	    if (count == 0)
-		System.out.println("Error " + String.valueOf(number + 1) + " in square " + 
-				   String.valueOf(r * 10 + c));
+		System.out.println("Error " + String.valueOf(number + 1));
 	}
     }
 
