@@ -1,3 +1,5 @@
+import java.util.*;
+
 class CaseInfo
 {
     private boolean[] valids = new boolean[9];
@@ -66,4 +68,17 @@ class CaseInfo
 	else
 	    return -1;
     }
+
+    Set<Integer> allowedValues()
+    {
+        Set<Integer> s = new HashSet<Integer> ();
+        for (int i = 0; i < 9; ++i)
+        {
+            if (valids[i])
+                s.add(i);
+        }
+
+        return s;
+    }
+
 }

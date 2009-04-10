@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 class Case extends JTextField
 {
@@ -67,5 +68,10 @@ class Case extends JTextField
     int isFixed()
     {
 	return ci.isFixed();
+    }
+
+    Set<Integer> allowedValues()
+    {
+        return ci.allowedValues();
     }
 }
