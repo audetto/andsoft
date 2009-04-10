@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 class SuDoku extends JFrame
 {
@@ -89,6 +90,8 @@ class SuDoku extends JFrame
 	final JCheckBox forbidden  = new JCheckBox("forbidden",	 true);
 	final JCheckBox compulsory = new JCheckBox("compulsory", true);
 	final JCheckBox indirect   = new JCheckBox("indirect",	 true);
+	final JCheckBox naked      = new JCheckBox("naked",	     true);
+	final JCheckBox hidden     = new JCheckBox("hidden",     true);
 	final JCheckBox update	   = new JCheckBox("update",	 true);
 
 	JButton clear = new JButton("Clear");
@@ -122,6 +125,8 @@ class SuDoku extends JFrame
 		{
 		    if (forbidden.isSelected())	 scanForForbiddens();
 		    if (compulsory.isSelected()) goForTheGlory();
+            if (naked.isSelected())      goForTheNaked();
+            if (hidden.isSelected())     goForTheHidden();
 		    if (indirect.isSelected())	 secondPass();
 		    if (update.isSelected())	 update();
 		}
@@ -135,6 +140,8 @@ class SuDoku extends JFrame
 	flags.add(forbidden);
 	flags.add(compulsory);
 	flags.add(indirect);
+	flags.add(naked);
+	flags.add(hidden);
 	flags.add(update);
 	
 	getContentPane().add(cmds);
@@ -195,7 +202,7 @@ class SuDoku extends JFrame
 
     void readFrom(String str)
     {
-        clear();
+	    clear();
 
         try
         {
@@ -377,6 +384,138 @@ class SuDoku extends JFrame
 		}
 	    }
 	}
+    }
+
+    void goForTheNaked()
+    {
+        int nakeds = 2;
+        for (int j = 0; j < 9; ++j)
+        {
+            processThisBlockNaked(rows[j],   nakeds);
+            processThisBlockNaked(cols[j],   nakeds);
+            processThisBlockNaked(blocks[j], nakeds);
+        }
+    }
+
+     void goForTheHidden()
+    {
+        int hiddens = 2;
+        for (int j = 0; j < 9; ++j)
+        {
+            processThisBlockHidden(rows[j],   hiddens);
+            processThisBlockHidden(cols[j],   hiddens);
+            processThisBlockHidden(blocks[j], hiddens);
+        }
+    }
+
+    void processThisBlockHidden(Case[] block, int t)
+    {
+        Vector<Set<Integer>> v = new Vector<Set<Integer>>();
+        for (int i = 0; i < 9; ++i)
+        {
+            v.add(new HashSet<Integer>());
+        }
+        
+        for (int i = 0; i < 9; ++i)
+        {
+            Set<Integer> allowedValues = block[i].allowedValues();
+            for (Integer j : allowedValues)
+            {
+                v.elementAt(j).add(i);
+            }
+        }
+
+        Vector<Set<Integer>> allPositions = (Vector<Set<Integer>>)v.clone();
+
+        for (int i = 8; i >= 0; --i)
+        {
+            int thisSize = v.elementAt(i).size();
+
+            // 1 is useless and bigger than t is impossible
+            if (!(thisSize <= t && thisSize > 1))
+                v.remove(i);
+        }
+
+        if (v.size() <= t)
+            return;
+
+        Combinatics comb = new Combinatics(v.size(), t);
+
+        for (Set<Integer> s : comb)
+        {
+            HashSet<Integer> hidden = new HashSet<Integer>();
+            for (Integer i : s)
+            {
+                hidden.addAll(v.elementAt(i));
+            }
+
+            int cardinality = hidden.size();
+            if (cardinality == s.size())
+            {
+                // found (pos of a) hidden t-uple.
+                for (int i = 0; i < 9; ++i)
+                {
+                    Set<Integer> thisPositions = allPositions.elementAt(i);
+                    if (!hidden.containsAll(thisPositions))
+                    {
+                        for (Integer noPos : hidden)
+                        {
+                            block[noPos].forbidValue(i, Color.PINK);
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+    }
+
+    void processThisBlockNaked(Case[] block, int t)
+    {
+        Vector<Set<Integer>> v = new Vector<Set<Integer>>();
+        for (Case c: block)
+        {
+            Set<Integer> allowedValues = c.allowedValues();
+            int thisSize = allowedValues.size();
+
+            // 1 is useless and bigger than t is impossible
+            if (thisSize <= t && thisSize > 1)
+            {
+                v.add(allowedValues);
+            }
+        }
+
+        if (v.size() <= t)
+            return;
+
+        Combinatics comb = new Combinatics(v.size(), t);
+
+        for (Set<Integer> s : comb)
+        {
+            HashSet<Integer> naked = new HashSet<Integer>();
+            for (Integer i : s)
+            {
+                naked.addAll(v.elementAt(i));
+            }
+
+            int cardinality = naked.size();
+            if (cardinality == s.size())
+            {
+                // naked IS a naked t-uple
+                for (Case c: block)
+                {
+                    Set<Integer> allowedValues = c.allowedValues();
+                    if (allowedValues != null && !naked.containsAll(allowedValues))
+                    {
+                        for (Integer i : naked)
+                        {
+                            c.forbidValue(i, Color.PINK);
+                        }
+                    }
+                }
+                return;
+            }
+        }
     }
 
     public static void main(String[] args)
