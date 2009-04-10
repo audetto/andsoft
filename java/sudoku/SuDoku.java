@@ -195,20 +195,34 @@ class SuDoku extends JFrame
 
     void readFrom(String str)
     {
-	if (str.length() == 9 * 9)
-	{
-	    clear();
-	    for (int i = 0; i < 9; ++i)
-	    {
-		for (int j = 0; j < 9; ++j)
-		{
-		    char ch = str.charAt(i * 9 + j);
-		    if (ch != '.')
-			numbers[i][j].setText(String.valueOf(ch));
-		}
-	    }
+        clear();
 
-	}
+        try
+        {
+            int pos = 0;
+
+            for (int i = 0; i < 9; ++i)
+            {
+                for (int j = 0; j < 9; ++j)
+                {
+                    char ch;
+                    do
+                    {
+                        ch = str.charAt(pos);
+                        ++pos;
+                    }
+                    while (!(ch == '.' || (ch >= '1' && ch <= '9')));
+                    if (ch != '.')
+                        numbers[i][j].setText(String.valueOf(ch));
+                }
+            }
+        }
+        catch (RuntimeException e)
+        {
+            clear();
+            e.printStackTrace();
+        }
+
     }
 
     int getBlock(int row, int col)
