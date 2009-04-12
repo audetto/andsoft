@@ -92,7 +92,6 @@ class SuDoku extends JFrame
 	final JCheckBox indirect   = new JCheckBox("indirect",	 true);
 	final JCheckBox naked      = new JCheckBox("naked",	     true);
 	final JCheckBox hidden     = new JCheckBox("hidden",     true);
-	final JCheckBox update	   = new JCheckBox("update",	 true);
 
 	JButton clear = new JButton("Clear");
 	clear.addActionListener(new ActionListener()
@@ -128,7 +127,7 @@ class SuDoku extends JFrame
             if (naked.isSelected())      goForTheNaked();
             if (hidden.isSelected())     goForTheHidden();
 		    if (indirect.isSelected())	 secondPass();
-		    if (update.isSelected())	 update();
+		    update();
 		}
 	    }
 	    );
@@ -142,7 +141,6 @@ class SuDoku extends JFrame
 	flags.add(indirect);
 	flags.add(naked);
 	flags.add(hidden);
-	flags.add(update);
 	
 	getContentPane().add(cmds);
 	getContentPane().add(flags);
@@ -188,6 +186,7 @@ class SuDoku extends JFrame
 	    for (int j = 0; j < 9; ++j)
 	    {
 		numbers[i][j].setText(null);
+        numbers[i][j].setEditable(true);
 		guesses[i][j].reset();
 	    }
 	textRepresentation.setText(null);
@@ -245,7 +244,7 @@ class SuDoku extends JFrame
 	String s = numbers[row][col].getText();
 	if (s.length() > 0)
 	{
-	    int value = Integer.parseInt(s) - 1;
+        int value = Integer.parseInt(s) - 1;
 
 	    guesses[row][col].setFixed(value);
 
@@ -293,7 +292,6 @@ class SuDoku extends JFrame
 
     void update()
     {
-	textRepresentation.setText(null);
 	StringBuilder str = new StringBuilder();
 
 	for (int i = 0; i < 9; ++i)
@@ -302,9 +300,10 @@ class SuDoku extends JFrame
 		int isFixed = guesses[i][j].isFixed();
 		if (isFixed != -1)
 		{
-		    String thisStr = String.valueOf(isFixed + 1);
+            String thisStr = String.valueOf(isFixed + 1);
 		    str.append(thisStr);
 		    numbers[i][j].setText(thisStr);
+            numbers[i][j].setEditable(false);
 		}
 		else
 		{
