@@ -420,10 +420,10 @@ class SuDoku extends JFrame
 	
 	void processThisBlockHidden(Case[] block, int t)
 	{
-		Vector<Set<Integer>> v = new Vector<Set<Integer>>();
+		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
 		for (int i = 0; i < 9; ++i)
 		{
-			v.add(new HashSet<Integer>());
+			allPositions.add(new HashSet<Integer>());
 		}
 		
 		for (int i = 0; i < 9; ++i)
@@ -431,111 +431,70 @@ class SuDoku extends JFrame
 			Set<Integer> allowedValues = block[i].allowedValues();
             for (Integer j : allowedValues)
             {
-                v.elementAt(j).add(i);
+                allPositions.elementAt(j).add(i);
             }
 		}
 		
-		Vector<Set<Integer>> allPositions = (Vector<Set<Integer>>)v.clone();
-		
-		for (int i = 8; i >= 0; --i)
-		{
-			int thisSize = v.elementAt(i).size();
+        NakedSets nakedSets = new NakedSets(allPositions, t);
 
-            // t == 1: we are looking for hidden singles
-			if (!(thisSize <= t && (thisSize > 1 || t == 1)))
-				v.remove(i);
-		}
-		
-		if (v.size() <= t)
-			return;
-		
-		Combinatics comb = new Combinatics(v.size(), t);
-		
-		for (Set<Integer> s : comb)
+		for (Set<Integer> hidden : nakedSets)
 		{
-			HashSet<Integer> hidden = new HashSet<Integer>();
-			for (Integer i : s)
-			{
-				hidden.addAll(v.elementAt(i));
-			}
-			
-			int cardinality = hidden.size();
-			if (cardinality == s.size())
-			{
-                boolean newHidden = false;
+            boolean newHidden = false;
 
-				// found (pos of a) (new?) hidden t-uple.
-				for (int i = 0; i < 9; ++i)
-				{
-					Set<Integer> thisPositions = allPositions.elementAt(i);
-					if (!hidden.containsAll(thisPositions))
-					{
-						for (Integer noPos : hidden)
-						{
-							boolean changed = block[noPos].forbidValue(i, Color.PINK);
-                            newHidden = newHidden | changed;
-						}
-					}
-				}
-				
-                // we only do 1 hidden t-uple per iteration
-				if (newHidden)
-                    return;
-			}
+            // found (pos of a) (new?) hidden t-uple.
+            for (int i = 0; i < 9; ++i)
+            {
+                Set<Integer> thisPositions = allPositions.elementAt(i);
+                if (!hidden.containsAll(thisPositions))
+                {
+                    for (Integer noPos : hidden)
+                    {
+                        boolean changed = block[noPos].forbidValue(i, Color.PINK);
+                        newHidden = newHidden | changed;
+                    }
+                }
+            }
+
+            // we only do 1 hidden t-uple per iteration
+            if (newHidden)
+                return;
 		}
 	}
 	
 	void processThisBlockNaked(Case[] block, int t)
 	{
-		Vector<Set<Integer>> v = new Vector<Set<Integer>>();
+		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
 		for (Case c: block)
 		{
 			Set<Integer> allowedValues = c.allowedValues();
 			int thisSize = allowedValues.size();
 			
-			// 1 is for naked singles, but we never do it here
-			if (thisSize <= t && (thisSize > 1 || t == 1))
-			{
-				v.add(allowedValues);
-			}
+			allPositions.add(allowedValues);
 		}
-		
-		if (v.size() <= t)
-			return;
-		
-		Combinatics comb = new Combinatics(v.size(), t);
-		
-		for (Set<Integer> s : comb)
+
+        NakedSets nakedSets = new NakedSets(allPositions, t);
+
+		for (Set<Integer> naked : nakedSets)
 		{
-			HashSet<Integer> naked = new HashSet<Integer>();
-			for (Integer i : s)
-			{
-				naked.addAll(v.elementAt(i));
-			}
-			
-			int cardinality = naked.size();
-			if (cardinality == s.size())
-			{
-                boolean newNaked = false;
+            boolean newNaked = false;
 
-                // naked IS a (new ?) naked t-uple
-				for (Case c: block)
-				{
-					Set<Integer> allowedValues = c.allowedValues();
-					if (allowedValues != null && !naked.containsAll(allowedValues))
-					{
-						for (Integer i : naked)
-						{
-							boolean changed = c.forbidValue(i, Color.PINK);
-                            newNaked = newNaked | changed;
-						}
-					}
-				}
+            // naked IS a (new ?) naked t-uple
+            for (Case c: block)
+            {
+                Set<Integer> allowedValues = c.allowedValues();
+                if (!naked.containsAll(allowedValues))
+                {
+                    for (Integer i : naked)
+                    {
+                        boolean changed = c.forbidValue(i, Color.PINK);
+                        newNaked = newNaked | changed;
+                    }
+                }
+            }
 
-                // we only do 1 naked t-uple per iteration
-                if (newNaked)
-                    return;
-			}
+            // we only do 1 naked t-uple per iteration
+            if (newNaked)
+                return;
 		}
 	}
 	
