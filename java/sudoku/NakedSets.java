@@ -14,7 +14,7 @@ public class NakedSets implements Iterable<Set<Integer>>
 
         NakedIterator()
         {
-    		if (v.size() <= t)
+    		if (v.size() < t)
             {
                 // no solution
                 next = null;

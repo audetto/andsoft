@@ -98,7 +98,7 @@ class Combinatics implements Iterable<Set<Integer>>
 
     Combinatics(int n, int t)
     {
-        if (!(n > t && t > 0))
+        if (!(n >= t && t >= 0))
             throw new IllegalArgumentException();
 
         this.n = n;
@@ -107,7 +107,24 @@ class Combinatics implements Iterable<Set<Integer>>
 
     public Iterator<Set<Integer>> iterator()
     {
-        return new CombinationIterator();
+        if (n > t && t > 0)
+        {
+            return new CombinationIterator();
+        }
+        else
+        {
+            // The Algorithm does not work for t == n or t == 0
+            // which are special cases, so we handle them here
+            Vector<Set<Integer>> allCombinations = new Vector<Set<Integer>>();
+            Set<Integer> all = new HashSet<Integer>();
+            for (int i = 0; i < t; ++i)
+            {
+                all.add(i);
+            }
+            allCombinations.add(all);
+
+            return allCombinations.iterator();
+        }
     }
 
 }
