@@ -88,8 +88,6 @@ class SuDoku extends JFrame
 		cmds.setLayout(new BoxLayout(cmds, BoxLayout.X_AXIS));
 		
 		final JCheckBox forbidden  = new JCheckBox("forbidden",	 true);
-        // compulsory is obsolede, it is replaced by "hidden(1)"
-		final JCheckBox compulsory = new JCheckBox("compulsory", false);
 		final JCheckBox indirect   = new JCheckBox("indirect",	 true);
 		final JCheckBox naked	   = new JCheckBox("naked",		 true);
 		final JCheckBox hidden	   = new JCheckBox("hidden",	 true);
@@ -124,7 +122,6 @@ class SuDoku extends JFrame
 				public void actionPerformed(ActionEvent e)
 				{
 					if (forbidden.isSelected())	 scanForForbiddens();
-					if (compulsory.isSelected()) goForTheGlory();
 					if (naked.isSelected())
                     {
                         // naked(1) is performed by "forbidden"
@@ -150,7 +147,6 @@ class SuDoku extends JFrame
 		flags.setLayout(new BoxLayout(flags, BoxLayout.X_AXIS));
 		
 		flags.add(forbidden);
-		flags.add(compulsory);
 		flags.add(indirect);
 		flags.add(naked);
 		flags.add(hidden);
@@ -269,37 +265,6 @@ class SuDoku extends JFrame
 				cols[col][i].forbidValue(value, Color.YELLOW);
 				blocks[b][i].forbidValue(value, Color.YELLOW);
 			}
-		}
-	}
-	
-	void goForTheGlory()
-	{
-		for (int j = 0; j < 9; ++j)
-		{
-			lookForOneBlock(rows[j]);
-			lookForOneBlock(cols[j]);
-			lookForOneBlock(blocks[j]);
-		}
-	}
-	
-	void lookForOneBlock(Case[] block)
-	{
-		for (int number = 0; number < 9; ++number)
-		{
-			int count = 0;
-			int first = -1;
-			for (int pos = 0; pos < 9; ++pos)
-			{
-				if (block[pos].allowValue(number))
-				{
-					++count;
-					first = pos;
-				}
-			}
-			if (count == 1)
-				block[first].newFixed(number);
-			if (count == 0)
-				System.out.println("Error " + String.valueOf(number + 1));
 		}
 	}
 	
