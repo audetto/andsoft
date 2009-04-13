@@ -22,9 +22,11 @@ class CaseInfo
 		valids[value] = true;
     }
 	
-    void forbidValue(int value)
+    boolean forbidValue(int value)
     {
+        boolean previous = valids[value];
 		valids[value] = false;
+        return previous;
     }
 	
     boolean allowValue(int value)

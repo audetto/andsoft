@@ -26,9 +26,13 @@ class Case extends JTextField
     boolean forbidValue(int value, Color color)
     {
 		int wasFixed = ci.isFixed();
-		if (!fixed) 
+
+        // returns true is anything has changed
+		boolean result = false;
+
+        if (!fixed)
 		{
-			ci.forbidValue(value);
+			result = ci.forbidValue(value);
 			setText(ci.toString());
 		}
 	    
@@ -37,11 +41,9 @@ class Case extends JTextField
 			int isFixed = ci.isFixed();
 			if (isFixed != -1)
 				setBackground(color);
+        }
 
-            return true;
-		}
-
-        return false;
+        return result;
     }
 	
     void setFixed(int value)
