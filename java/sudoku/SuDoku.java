@@ -234,8 +234,8 @@ class SuDoku extends JFrame
 						ch = str.charAt(pos);
 						++pos;
 					}
-					while (!(ch == '.' || (ch >= '1' && ch <= '9')));
-					if (ch != '.')
+					while (!(ch == '.' || (ch >= '0' && ch <= '9')));
+					if (ch >= '1' && ch <= '9')
 						numbers[i][j].setText(String.valueOf(ch));
 				}
 			}
