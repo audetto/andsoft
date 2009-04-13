@@ -88,7 +88,8 @@ class SuDoku extends JFrame
 		cmds.setLayout(new BoxLayout(cmds, BoxLayout.X_AXIS));
 		
 		final JCheckBox forbidden  = new JCheckBox("forbidden",	 true);
-		final JCheckBox compulsory = new JCheckBox("compulsory", true);
+        // compulsory is obsolede, it is replaced by "hidden(1)"
+		final JCheckBox compulsory = new JCheckBox("compulsory", false);
 		final JCheckBox indirect   = new JCheckBox("indirect",	 true);
 		final JCheckBox naked	   = new JCheckBox("naked",		 true);
 		final JCheckBox hidden	   = new JCheckBox("hidden",	 true);
@@ -124,8 +125,20 @@ class SuDoku extends JFrame
 				{
 					if (forbidden.isSelected())	 scanForForbiddens();
 					if (compulsory.isSelected()) goForTheGlory();
-					if (naked.isSelected())	 goForTheNaked();
-					if (hidden.isSelected())	 goForTheHidden();
+					if (naked.isSelected())
+                    {
+                        // naked(1) is performed by "forbidden"
+                        goForTheNaked(2);
+                        goForTheNaked(3);
+                        goForTheNaked(4);
+                    }
+					if (hidden.isSelected())
+                    {
+                        goForTheHidden(1);
+                        goForTheHidden(2);
+                        goForTheHidden(3);
+                        goForTheHidden(4);
+                    }
 					if (indirect.isSelected())	 secondPass();
 					update();
 				}
@@ -385,9 +398,8 @@ class SuDoku extends JFrame
 		}
 	}
 	
-	void goForTheNaked()
+	void goForTheNaked(int nakeds)
 	{
-		int nakeds = 2;
 		for (int j = 0; j < 9; ++j)
 		{
 			processThisBlockNaked(rows[j],	 nakeds);
@@ -396,9 +408,8 @@ class SuDoku extends JFrame
 		}
 	}
 	
-	void goForTheHidden()
+	void goForTheHidden(int hiddens)
 	{
-		int hiddens = 2;
 		for (int j = 0; j < 9; ++j)
 		{
 			processThisBlockHidden(rows[j],	  hiddens);
@@ -418,10 +429,10 @@ class SuDoku extends JFrame
 		for (int i = 0; i < 9; ++i)
 		{
 			Set<Integer> allowedValues = block[i].allowedValues();
-			for (Integer j : allowedValues)
-			{
-				v.elementAt(j).add(i);
-			}
+            for (Integer j : allowedValues)
+            {
+                v.elementAt(j).add(i);
+            }
 		}
 		
 		Vector<Set<Integer>> allPositions = (Vector<Set<Integer>>)v.clone();
@@ -429,9 +440,9 @@ class SuDoku extends JFrame
 		for (int i = 8; i >= 0; --i)
 		{
 			int thisSize = v.elementAt(i).size();
-			
-			// 1 is useless and bigger than t is impossible
-			if (!(thisSize <= t && thisSize > 1))
+
+            // t == 1: we are looking for hidden singles
+			if (!(thisSize <= t && (thisSize > 1 || t == 1)))
 				v.remove(i);
 		}
 		
@@ -451,7 +462,9 @@ class SuDoku extends JFrame
 			int cardinality = hidden.size();
 			if (cardinality == s.size())
 			{
-				// found (pos of a) hidden t-uple.
+                boolean newHidden = false;
+
+				// found (pos of a) (new?) hidden t-uple.
 				for (int i = 0; i < 9; ++i)
 				{
 					Set<Integer> thisPositions = allPositions.elementAt(i);
@@ -459,12 +472,15 @@ class SuDoku extends JFrame
 					{
 						for (Integer noPos : hidden)
 						{
-							block[noPos].forbidValue(i, Color.PINK);
+							boolean changed = block[noPos].forbidValue(i, Color.PINK);
+                            newHidden = newHidden | changed;
 						}
 					}
 				}
 				
-				return;
+                // we only do 1 hidden t-uple per iteration
+				if (newHidden)
+                    return;
 			}
 		}
 	}
@@ -477,8 +493,8 @@ class SuDoku extends JFrame
 			Set<Integer> allowedValues = c.allowedValues();
 			int thisSize = allowedValues.size();
 			
-			// 1 is useless and bigger than t is impossible
-			if (thisSize <= t && thisSize > 1)
+			// 1 is for naked singles, but we never do it here
+			if (thisSize <= t && (thisSize > 1 || t == 1))
 			{
 				v.add(allowedValues);
 			}
@@ -500,7 +516,9 @@ class SuDoku extends JFrame
 			int cardinality = naked.size();
 			if (cardinality == s.size())
 			{
-				// naked IS a naked t-uple
+                boolean newNaked = false;
+
+                // naked IS a (new ?) naked t-uple
 				for (Case c: block)
 				{
 					Set<Integer> allowedValues = c.allowedValues();
@@ -508,11 +526,15 @@ class SuDoku extends JFrame
 					{
 						for (Integer i : naked)
 						{
-							c.forbidValue(i, Color.PINK);
+							boolean changed = c.forbidValue(i, Color.PINK);
+                            newNaked = newNaked | changed;
 						}
 					}
 				}
-				return;
+
+                // we only do 1 naked t-uple per iteration
+                if (newNaked)
+                    return;
 			}
 		}
 	}
