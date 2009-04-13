@@ -98,6 +98,9 @@ class Combinatics implements Iterable<Set<Integer>>
 
     Combinatics(int n, int t)
     {
+        if (!(n > t && t > 0))
+            throw new IllegalArgumentException();
+
         this.n = n;
         this.t = t;
     }
