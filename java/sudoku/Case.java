@@ -19,7 +19,7 @@ class Case extends JTextField
     {
 		setText("123456789");
 		setBackground(defaultColor);
-		ci = new CaseInfo();
+		ci.reset();
 		fixed = false;
     }
 	

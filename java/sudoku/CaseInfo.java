@@ -6,6 +6,11 @@ class CaseInfo
 	
     CaseInfo()
     {
+        reset();
+    }
+
+    void reset()
+    {
 		for (int i = 0; i < 9; ++i)
 			valids[i] = true;
     }
