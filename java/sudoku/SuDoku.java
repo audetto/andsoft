@@ -91,6 +91,7 @@ class SuDoku extends JFrame
 		final JCheckBox indirect   = new JCheckBox("indirect",	 true);
 		final JCheckBox naked	   = new JCheckBox("naked",		 true);
 		final JCheckBox hidden	   = new JCheckBox("hidden",	 true);
+		final JCheckBox fishy	   = new JCheckBox("fishy",     true);
 		
 		JButton clear = new JButton("Clear");
 		clear.addActionListener(new ActionListener()
@@ -122,6 +123,7 @@ class SuDoku extends JFrame
 				public void actionPerformed(ActionEvent e)
 				{
 					if (forbidden.isSelected())	 scanForForbiddens();
+					if (indirect.isSelected())	 secondPass();
 					if (naked.isSelected())
                     {
                         // naked(1) is performed by "forbidden"
@@ -136,7 +138,12 @@ class SuDoku extends JFrame
                         goForTheHidden(3);
                         goForTheHidden(4);
                     }
-					if (indirect.isSelected())	 secondPass();
+					if (fishy.isSelected())
+                    {
+                        goForTheFishy(2);
+                        goForTheFishy(3);
+                        goForTheFishy(4);
+                    }
 					update();
 				}
 			}
@@ -150,6 +157,7 @@ class SuDoku extends JFrame
 		flags.add(indirect);
 		flags.add(naked);
 		flags.add(hidden);
+        flags.add(fishy);
 		
 		getContentPane().add(cmds);
 		getContentPane().add(flags);
@@ -383,7 +391,16 @@ class SuDoku extends JFrame
 		}
 	}
 	
-	void processThisBlockHidden(Case[] block, int t)
+	void goForTheFishy(int t)
+	{
+		for (int j = 0; j < 9; ++j)
+		{
+			processThisFishyRows(guesses, j, t);
+			processThisFishyCols(guesses, j, t);
+		}
+	}
+
+    void processThisBlockHidden(Case[] block, int t)
 	{
 		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
 		for (int i = 0; i < 9; ++i)
@@ -463,7 +480,93 @@ class SuDoku extends JFrame
 		}
 	}
 	
-	public static void main(String[] args)
+    void processThisFishyRows(Case[][] all, int value, int t)
+	{
+		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
+		for (int r = 0; r < 9; ++r)
+		{
+			allPositions.add(new HashSet<Integer>());
+		}
+
+		for (int r = 0; r < 9; ++r)
+		{
+    		for (int c = 0; c < 9; ++c)
+            {
+                if (all[r][c].allowValue(value))
+                    allPositions.elementAt(r).add(c);
+            }
+		}
+
+        NakedSets nakedSets = new NakedSets(allPositions, t);
+
+		for (Set<Integer> fishy : nakedSets)
+		{
+            boolean newFishy = false;
+
+            // found (pos of a) (new?) fishy t-uple.
+            for (int r = 0; r < 9; ++r)
+            {
+                Set<Integer> thisPositions = allPositions.elementAt(r);
+                if (!fishy.containsAll(thisPositions))
+                {
+                    for (Integer c : fishy)
+                    {
+                        boolean changed = all[r][c].forbidValue(value, Color.PINK);
+                        newFishy = newFishy | changed;
+                    }
+                }
+            }
+
+            // we only do 1 fishy t-uple per iteration
+            if (newFishy)
+                return;
+		}
+	}
+
+    void processThisFishyCols(Case[][] all, int value, int t)
+	{
+		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
+		for (int r = 0; r < 9; ++r)
+		{
+			allPositions.add(new HashSet<Integer>());
+		}
+
+   		for (int c = 0; c < 9; ++c)
+        {
+            for (int r = 0; r < 9; ++r)
+            {
+                if (all[r][c].allowValue(value))
+                    allPositions.elementAt(c).add(r);
+            }
+		}
+
+        NakedSets nakedSets = new NakedSets(allPositions, t);
+
+		for (Set<Integer> fishy : nakedSets)
+		{
+            boolean newFishy = false;
+
+            // found (pos of a) (new?) fishy t-uple.
+            for (int c = 0; c < 9; ++c)
+            {
+                Set<Integer> thisPositions = allPositions.elementAt(c);
+                if (!fishy.containsAll(thisPositions))
+                {
+                    for (Integer r : fishy)
+                    {
+                        boolean changed = all[r][c].forbidValue(value, Color.PINK);
+                        newFishy = newFishy | changed;
+                    }
+                }
+            }
+
+            // we only do 1 fishy t-uple per iteration
+            if (newFishy)
+                return;
+		}
+	}
+
+    public static void main(String[] args)
 	{
 		EventQueue.invokeLater(new Runnable()
 			{
