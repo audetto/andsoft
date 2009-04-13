@@ -449,8 +449,6 @@ class SuDoku extends JFrame
 		for (Case c: block)
 		{
 			Set<Integer> allowedValues = c.allowedValues();
-			int thisSize = allowedValues.size();
-			
 			allPositions.add(allowedValues);
 		}
 
