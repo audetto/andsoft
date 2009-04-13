@@ -11,14 +11,12 @@ class CaseInfo
 
     void reset()
     {
-		for (int i = 0; i < 9; ++i)
-			valids[i] = true;
+        Arrays.fill(valids, true);
     }
     
     void setFixed(int value)
     {
-		for (int i = 0; i < 9; ++i)
-			valids[i] = false;
+        Arrays.fill(valids, false);
 		valids[value] = true;
     }
 	
