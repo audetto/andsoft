@@ -66,9 +66,9 @@ class Case extends JTextField
 		}
     }
 	
-    boolean allowValue(int value)
+    boolean isValid(int value)
     {
-		return ci.allowValue(value);
+		return ci.isValid(value);
     }
 	
     int isFixed()
@@ -76,8 +76,8 @@ class Case extends JTextField
 		return ci.isFixed();
     }
 	
-    Set<Integer> allowedValues()
+    Set<Integer> validValues()
     {
-        return ci.allowedValues();
+        return ci.validValues();
     }
 }

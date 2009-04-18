@@ -347,7 +347,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 			{
 				for (int col = col_base; col < col_base + 3; ++col)
 				{
-					if (guesses[row][col].allowValue(number))
+					if (guesses[row][col].isValid(number))
 					{
 						++count;
 						if (count == 1)
@@ -437,7 +437,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 		
 		for (int i = 0; i < 9; ++i)
 		{
-			Set<Integer> allowedValues = block[i].allowedValues();
+			Set<Integer> allowedValues = block[i].validValues();
             for (Integer j : allowedValues)
             {
                 allPositions.elementAt(j).add(i);
@@ -475,7 +475,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
 		for (Case c: block)
 		{
-			Set<Integer> allowedValues = c.allowedValues();
+			Set<Integer> allowedValues = c.validValues();
 			allPositions.add(allowedValues);
 		}
 
@@ -488,7 +488,7 @@ class SuDoku extends JFrame implements ClipboardOwner
             // naked IS a (new ?) naked t-uple
             for (Case c: block)
             {
-                Set<Integer> allowedValues = c.allowedValues();
+                Set<Integer> allowedValues = c.validValues();
                 if (!naked.containsAll(allowedValues))
                 {
                     for (Integer i : naked)
@@ -517,7 +517,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 		{
     		for (int c = 0; c < 9; ++c)
             {
-                if (all[r][c].allowValue(value))
+                if (all[r][c].isValid(value))
                     allPositions.elementAt(r).add(c);
             }
 		}
@@ -560,7 +560,7 @@ class SuDoku extends JFrame implements ClipboardOwner
         {
             for (int r = 0; r < 9; ++r)
             {
-                if (all[r][c].allowValue(value))
+                if (all[r][c].isValid(value))
                     allPositions.elementAt(c).add(r);
             }
 		}

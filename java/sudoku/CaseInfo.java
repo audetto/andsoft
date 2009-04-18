@@ -27,7 +27,7 @@ class CaseInfo
         return previous;
     }
 	
-    boolean allowValue(int value)
+    boolean isValid(int value)
     {
 		return valids[value];
     }
@@ -74,7 +74,7 @@ class CaseInfo
 			return -1;
     }
 	
-    Set<Integer> allowedValues()
+    Set<Integer> validValues()
     {
         Set<Integer> s = new HashSet<Integer> ();
         for (int i = 0; i < 9; ++i)
