@@ -51,6 +51,13 @@ class IndirectMethod extends SuDokuMethod
 					}
 				}
 			}
+
+            /* We want to check if all occurrencies of a number in this block
+             * are in the same row or column
+             * In that case we can forbid this value from other cells
+             * in the same row or column
+             */
+
 			if (first_r != -1)
 			{
 				for (int col = 0; col < 9; ++col)
