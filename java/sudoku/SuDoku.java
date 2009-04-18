@@ -21,7 +21,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 		
 		Font font = new Font("Monospaced", Font.BOLD, 14);
 		
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		Border border = BorderFactory.createLineBorder(Color.BLUE, 2);
 		
 		numbers = new JTextField[9][];
@@ -83,7 +83,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 			}
 		}
 		
-		getContentPane().add(input);
+		add(input);
 		
 		JPanel cmds = new JPanel();
 		cmds.setLayout(new BoxLayout(cmds, BoxLayout.X_AXIS));
@@ -186,17 +186,17 @@ class SuDoku extends JFrame implements ClipboardOwner
 		flags.add(hidden);
         flags.add(fishy);
 		
-		getContentPane().add(cmds);
-		getContentPane().add(flags);
+		add(cmds);
+		add(flags);
 		
-		getContentPane().add(output);
+		add(output);
 		
 		textRepresentation = new JTextField();
 		textRepresentation.setFont(font);
 		textRepresentation.setEditable(false);
 		textRepresentation.setHorizontalAlignment(JTextField.CENTER);
 		
-		getContentPane().add(textRepresentation);
+		add(textRepresentation);
 		
 		numbers[0][2].setText("7");
 		numbers[0][4].setText("9");
