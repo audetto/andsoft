@@ -3,7 +3,6 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.datatransfer.*;
-import java.util.*;
 
 class SuDoku extends JFrame implements ClipboardOwner
 {
@@ -14,6 +13,11 @@ class SuDoku extends JFrame implements ClipboardOwner
 	private Case[][] rows;
 	private Case[][] cols;
 	private Case[][] blocks;
+
+    private SuDokuMethod indirectMethod;
+    private SuDokuMethod nakedMethod;
+    private SuDokuMethod hiddenMethod;
+    private SuDokuMethod fishyMethod;
 
 	SuDoku()
 	{
@@ -38,6 +42,11 @@ class SuDoku extends JFrame implements ClipboardOwner
 			cols[i]	  = new Case[9];
 			blocks[i] = new Case[9];
 		}
+
+        indirectMethod = new IndirectMethod(guesses, rows, cols, blocks);
+        nakedMethod    = new NakedMethod(guesses, rows, cols, blocks);
+        hiddenMethod   = new HiddenMethod(guesses, rows, cols, blocks);
+        fishyMethod    = new FishyMethod(guesses, rows, cols, blocks);
 		
 		JPanel input = new JPanel(new GridLayout(3, 3));
 		JPanel output = new JPanel(new GridLayout(3, 3));
@@ -82,7 +91,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 				output.add(small_output);
 			}
 		}
-		
+
 		add(input);
 		
 		JPanel cmds = new JPanel();
@@ -150,26 +159,22 @@ class SuDoku extends JFrame implements ClipboardOwner
 				public void actionPerformed(ActionEvent e)
 				{
 					if (forbidden.isSelected())	 scanForForbiddens();
-					if (indirect.isSelected())	 secondPass();
+
+                    if (indirect.isSelected())
+                    {
+                        indirectMethod.solve();
+                    }
 					if (naked.isSelected())
                     {
-                        // naked(1) is performed by "forbidden"
-                        goForTheNaked(2);
-                        goForTheNaked(3);
-                        goForTheNaked(4);
+                        nakedMethod.solve();
                     }
 					if (hidden.isSelected())
                     {
-                        goForTheHidden(1);
-                        goForTheHidden(2);
-                        goForTheHidden(3);
-                        goForTheHidden(4);
+                        hiddenMethod.solve();
                     }
 					if (fishy.isSelected())
                     {
-                        goForTheFishy(2);
-                        goForTheFishy(3);
-                        goForTheFishy(4);
+                        fishyMethod.solve();
                     }
 					update();
 				}
@@ -326,271 +331,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 			}
 		textRepresentation.setText(str.toString());
 	}
-	
-	void secondPass()
-	{
-		for (int r = 0; r < 3; ++r)
-			for (int c = 0; c < 3; ++c)
-				lookForDoublesInOneSquare(r, c);
-	}
-	
-	void lookForDoublesInOneSquare(int r, int c)
-	{
-		for (int number = 0; number < 9; ++number)
-		{
-			int count = 0;
-			int first_r = -1;
-			int first_c = -1;
-			int row_base = r * 3;
-			int col_base = c * 3;
-			for (int row = row_base; row < row_base + 3; ++row)
-			{
-				for (int col = col_base; col < col_base + 3; ++col)
-				{
-					if (guesses[row][col].isValid(number))
-					{
-						++count;
-						if (count == 1)
-						{
-							first_r = row;
-							first_c = col;
-						}
-						else
-						{
-							if (first_r == row)
-							{
-								first_c = -1;
-							}
-							else
-							{
-								if (first_c == col)
-								{
-									first_r = -1;
-								}
-								else
-								{
-									first_r = -1;
-									first_c = -1;
-								}
-							}
-						}
-					}
-				}
-			}
-			if (first_r != -1)
-			{
-				for (int col = 0; col < 9; ++col)
-				{
-					int c2 = col / 3;
-					if (c2 != c)
-						guesses[first_r][col].forbidValue(number, Color.WHITE);
-				}
-			}
-			if (first_c != -1)
-			{
-				for (int row = 0; row < 9; ++row)
-				{
-					int r2 = row / 3;
-					if (r2 != r)
-						guesses[row][first_c].forbidValue(number, Color.WHITE);
-				}
-			}
-		}
-	}
-	
-	void goForTheNaked(int nakeds)
-	{
-		for (int j = 0; j < 9; ++j)
-		{
-			processThisBlockNaked(rows[j],	 nakeds);
-			processThisBlockNaked(cols[j],	 nakeds);
-			processThisBlockNaked(blocks[j], nakeds);
-		}
-	}
-	
-	void goForTheHidden(int hiddens)
-	{
-		for (int j = 0; j < 9; ++j)
-		{
-			processThisBlockHidden(rows[j],	  hiddens);
-			processThisBlockHidden(cols[j],	  hiddens);
-			processThisBlockHidden(blocks[j], hiddens);
-		}
-	}
-	
-	void goForTheFishy(int t)
-	{
-		for (int j = 0; j < 9; ++j)
-		{
-			processThisFishyRows(guesses, j, t);
-			processThisFishyCols(guesses, j, t);
-		}
-	}
-
-    void processThisBlockHidden(Case[] block, int t)
-	{
-		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
-		for (int i = 0; i < 9; ++i)
-		{
-			allPositions.add(new HashSet<Integer>());
-		}
 		
-		for (int i = 0; i < 9; ++i)
-		{
-			Set<Integer> allowedValues = block[i].validValues();
-            for (Integer j : allowedValues)
-            {
-                allPositions.elementAt(j).add(i);
-            }
-		}
-		
-        NakedSets nakedSets = new NakedSets(allPositions, t);
-
-		for (Set<Integer> hidden : nakedSets)
-		{
-            boolean newHidden = false;
-
-            // found (pos of a) (new?) hidden t-uple.
-            for (int i = 0; i < 9; ++i)
-            {
-                Set<Integer> thisPositions = allPositions.elementAt(i);
-                if (!hidden.containsAll(thisPositions))
-                {
-                    for (Integer noPos : hidden)
-                    {
-                        boolean changed = block[noPos].forbidValue(i, Color.PINK);
-                        newHidden = newHidden | changed;
-                    }
-                }
-            }
-
-            // we only do 1 hidden t-uple per iteration
-            if (newHidden)
-                return;
-		}
-	}
-	
-	void processThisBlockNaked(Case[] block, int t)
-	{
-		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
-		for (Case c: block)
-		{
-			Set<Integer> allowedValues = c.validValues();
-			allPositions.add(allowedValues);
-		}
-
-        NakedSets nakedSets = new NakedSets(allPositions, t);
-
-		for (Set<Integer> naked : nakedSets)
-		{
-            boolean newNaked = false;
-
-            // naked IS a (new ?) naked t-uple
-            for (Case c: block)
-            {
-                Set<Integer> allowedValues = c.validValues();
-                if (!naked.containsAll(allowedValues))
-                {
-                    for (Integer i : naked)
-                    {
-                        boolean changed = c.forbidValue(i, Color.PINK);
-                        newNaked = newNaked | changed;
-                    }
-                }
-            }
-
-            // we only do 1 naked t-uple per iteration
-            if (newNaked)
-                return;
-		}
-	}
-	
-    void processThisFishyRows(Case[][] all, int value, int t)
-	{
-		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
-		for (int r = 0; r < 9; ++r)
-		{
-			allPositions.add(new HashSet<Integer>());
-		}
-
-		for (int r = 0; r < 9; ++r)
-		{
-    		for (int c = 0; c < 9; ++c)
-            {
-                if (all[r][c].isValid(value))
-                    allPositions.elementAt(r).add(c);
-            }
-		}
-
-        NakedSets nakedSets = new NakedSets(allPositions, t);
-
-		for (Set<Integer> fishy : nakedSets)
-		{
-            boolean newFishy = false;
-
-            // found (pos of a) (new?) fishy t-uple.
-            for (int r = 0; r < 9; ++r)
-            {
-                Set<Integer> thisPositions = allPositions.elementAt(r);
-                if (!fishy.containsAll(thisPositions))
-                {
-                    for (Integer c : fishy)
-                    {
-                        boolean changed = all[r][c].forbidValue(value, Color.PINK);
-                        newFishy = newFishy | changed;
-                    }
-                }
-            }
-
-            // we only do 1 fishy t-uple per iteration
-            if (newFishy)
-                return;
-		}
-	}
-
-    void processThisFishyCols(Case[][] all, int value, int t)
-	{
-		Vector<Set<Integer>> allPositions = new Vector<Set<Integer>>();
-		for (int r = 0; r < 9; ++r)
-		{
-			allPositions.add(new HashSet<Integer>());
-		}
-
-   		for (int c = 0; c < 9; ++c)
-        {
-            for (int r = 0; r < 9; ++r)
-            {
-                if (all[r][c].isValid(value))
-                    allPositions.elementAt(c).add(r);
-            }
-		}
-
-        NakedSets nakedSets = new NakedSets(allPositions, t);
-
-		for (Set<Integer> fishy : nakedSets)
-		{
-            boolean newFishy = false;
-
-            // found (pos of a) (new?) fishy t-uple.
-            for (int c = 0; c < 9; ++c)
-            {
-                Set<Integer> thisPositions = allPositions.elementAt(c);
-                if (!fishy.containsAll(thisPositions))
-                {
-                    for (Integer r : fishy)
-                    {
-                        boolean changed = all[r][c].forbidValue(value, Color.PINK);
-                        newFishy = newFishy | changed;
-                    }
-                }
-            }
-
-            // we only do 1 fishy t-uple per iteration
-            if (newFishy)
-                return;
-		}
-	}
-
     public void lostOwnership(Clipboard clipboard, Transferable contents)
     {
     }
