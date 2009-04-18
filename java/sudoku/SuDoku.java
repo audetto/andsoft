@@ -2,9 +2,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.datatransfer.*;
 import java.util.*;
 
-class SuDoku extends JFrame
+class SuDoku extends JFrame implements ClipboardOwner
 {
 	private JTextField[][] numbers;
 	private Case[][] guesses;
@@ -104,20 +105,46 @@ class SuDoku extends JFrame
 			);
 		cmds.add(clear);
 		
-		JButton read = new JButton("Read");
-		read.addActionListener(new ActionListener()
+		JButton copy = new JButton("Copy");
+		copy.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
 				{
-					String str = JOptionPane.showInputDialog(SuDoku.this, "Initial position:");
-					if (str != null)
-						readFrom(str);
+                    Clipboard clipboard = getToolkit().getSystemClipboard();
+                    StringSelection fieldContent = new StringSelection(textRepresentation.getText());
+                    clipboard.setContents(fieldContent, SuDoku.this);
+ 				}
+			}
+			);
+		cmds.add(copy);
+		
+		JButton paste = new JButton("Paste");
+		paste.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+                    Clipboard clipboard = getToolkit().getSystemClipboard();
+                    Transferable clipboardContent = clipboard.getContents(this);
+
+    				if (clipboardContent != null && clipboardContent.isDataFlavorSupported(DataFlavor.stringFlavor))
+                    {
+                        try
+                        {
+                            String tempString;
+                            tempString = (String) clipboardContent.getTransferData(DataFlavor.stringFlavor);
+                            readFrom(tempString);
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
 				}
 			}
 			);
-		cmds.add(read);
-		
-		JButton go = new JButton("Go");
+		cmds.add(paste);
+
+        JButton go = new JButton("Go");
 		go.addActionListener(new ActionListener()
 			{
 				public void actionPerformed(ActionEvent e)
@@ -563,6 +590,10 @@ class SuDoku extends JFrame
                 return;
 		}
 	}
+
+    public void lostOwnership(Clipboard clipboard, Transferable contents)
+    {
+    }
 
     public static void main(String[] args)
 	{
