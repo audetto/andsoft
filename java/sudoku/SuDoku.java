@@ -203,29 +203,7 @@ class SuDoku extends JFrame implements ClipboardOwner
 		
 		add(textRepresentation);
 		
-		numbers[0][2].setText("7");
-		numbers[0][4].setText("9");
-		numbers[1][1].setText("8");
-		numbers[1][6].setText("1");
-		numbers[1][8].setText("2");
-		numbers[2][0].setText("6");
-		numbers[2][5].setText("2");
-		numbers[2][7].setText("4");
-		numbers[3][0].setText("4");
-		numbers[3][8].setText("9");
-		numbers[4][3].setText("3");
-		numbers[4][4].setText("4");
-		numbers[4][5].setText("6");
-		numbers[5][0].setText("5");
-		numbers[5][8].setText("7");
-		numbers[6][1].setText("5");
-		numbers[6][3].setText("9");
-		numbers[6][8].setText("3");
-		numbers[7][0].setText("3");
-		numbers[7][2].setText("1");
-		numbers[7][7].setText("2");
-		numbers[8][4].setText("6");
-		numbers[8][6].setText("8");
+        readFrom("..7.9.....8....1.26....2.4.4.......9...346...5.......7.5.9....33.1....2.....6.8..");
 		
 	}
 	
