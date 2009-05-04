@@ -25,8 +25,6 @@
 package com.judoscript.jamaica.parser;
 
 import com.judoscript.jamaica.JavaClassCreator;
-import com.judoscript.jamaica.JavaClassCreatorException;
-import java.util.ArrayList;
 
 public final class ASTMacroStringConcat extends ASTMacroBase implements JavaClassCreator.AssignableMacro
 {

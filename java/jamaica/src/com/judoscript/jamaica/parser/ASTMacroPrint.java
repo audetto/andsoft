@@ -24,9 +24,6 @@
 
 package com.judoscript.jamaica.parser;
 
-import com.judoscript.jamaica.JavaClassCreator;
-import java.util.ArrayList;
-
 public final class ASTMacroPrint extends ASTMacroBase
 {
   public static final int TYPE_print   = 0;

@@ -24,8 +24,6 @@
 
 package com.judoscript.jamaica.parser;
 
-import java.util.ArrayList;
-
 public class ASTInitializer extends SimpleNode
 {
   public ASTInitializer(int id) {

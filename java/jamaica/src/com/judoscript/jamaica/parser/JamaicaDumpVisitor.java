@@ -26,7 +26,6 @@ package com.judoscript.jamaica.parser;
 
 import java.lang.reflect.Modifier;
 import java.io.PrintStream;
-import java.util.ArrayList;
 
 import org.apache.commons.lang.StringEscapeUtils;
 

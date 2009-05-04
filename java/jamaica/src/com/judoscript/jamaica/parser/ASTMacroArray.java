@@ -25,7 +25,6 @@
 package com.judoscript.jamaica.parser;
 
 import com.judoscript.jamaica.JavaClassCreator;
-import com.judoscript.jamaica.JavaClassCreatorException;
 
 public final class ASTMacroArray extends ASTMacroBase implements JavaClassCreator.AssignableMacro
 {

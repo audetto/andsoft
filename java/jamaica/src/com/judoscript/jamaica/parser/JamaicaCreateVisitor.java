@@ -27,10 +27,7 @@
 package com.judoscript.jamaica.parser;
 
 import java.lang.reflect.Modifier;
-import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashSet;
-import org.apache.bcel.Constants;
 import com.judoscript.jamaica.JavaClassCreator;
 import com.judoscript.jamaica.JavaClassCreatorException;
 
