@@ -53,7 +53,7 @@ public abstract class JavaClassCreator
     try {
       String cc = System.getProperty("CreatorClass");
       if (cc == null) {
-        if (MyUtils.existsClass("org.objectweb.asm.Constants"))
+        if (MyUtils.existsClass("org.objectweb.asm.Opcodes"))
           cc = "com.judoscript.jamaica.ASMJavaClassCreator";
         else if (MyUtils.existsClass("org.apache.bcel.classfile.Constant"))
           cc = "com.judoscript.jamaica.BCELJavaClassCreator";

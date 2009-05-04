@@ -33,12 +33,12 @@ import java.util.Map;
 import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.CodeVisitor;
-import org.objectweb.asm.Constants;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
-public final class ASMJavaClassCreator extends JavaClassCreator implements Constants
+public final class ASMJavaClassCreator extends JavaClassCreator implements Opcodes
 {
   private String      fileName;
   private int         accessFlags;
@@ -56,7 +56,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Const
   private Map         varTypes      = new HashMap();
   private Map         labels        = new HashMap();
   private ClassWriter cv;
-  private CodeVisitor mv;
+  private MethodVisitor mv;
 
   public ASMJavaClassCreator() {}
   
@@ -88,7 +88,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Const
     this.superClassName = superClassName;
     this.interfaceNames = itfNames;
     
-    cv = new ClassWriter(true);
+    cv = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
     headerVisited = false;
   }
 
@@ -104,11 +104,12 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Const
         itfs[i] = interfaceNames[i].replace('.', '/');
       }
       cv.visit(
+        Opcodes.V1_6,
         accessFlags, 
-        toJVMClassName(className), 
+        toJVMClassName(className),
+        null,
         toJVMClassName(superClassName), 
-        toJVMClassNames(itfs), 
-        fileName);
+        toJVMClassNames(itfs));
       headerVisited = true;
     }
 
@@ -131,7 +132,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Const
   public void addConstant(int accessFlags, String name, String type, Object value)
     throws JavaClassCreatorException
   {
-    cv.visitField(accessFlags, name, stringToDescriptor(type), value, null);
+    cv.visitField(accessFlags, name, stringToDescriptor(type), null, value);
     fieldTypes.put(name, "?" + type);
   }
 
@@ -196,7 +197,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Const
       exceptions[i] = stringToDescriptor(exceptionNames[i]);
     }
     
-    mv = cv.visitMethod(accessFlags, name, desc.toString(), exceptions, null);
+    mv = cv.visitMethod(accessFlags, name, desc.toString(), null, exceptions);
   }
 
   public void endMethod() throws JavaClassCreatorException {
