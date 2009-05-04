@@ -26,7 +26,6 @@ package com.judoscript.jamaica.parser;
 
 import com.judoscript.jamaica.JavaClassCreator;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public final class ASTMacroPrint extends ASTMacroBase
 {

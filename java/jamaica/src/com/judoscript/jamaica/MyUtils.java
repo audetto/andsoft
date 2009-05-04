@@ -26,18 +26,11 @@ package com.judoscript.jamaica;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class MyUtils extends StringEscapeUtils
 {
-  public static String[] toStringArray(Collection col) {
-    int len = (col==null) ? 0 : col.size();
-    String[] sa = new String[len];
-    Iterator iter = col.iterator();
-    int i=0;
-    while (iter.hasNext())
-      sa[i++] = iter.next().toString();
-    return sa;
+  public static String[] toStringArray(Collection<String> col) {
+    return col.toArray(new String[col.size()]);
   }
 
   public static String processStringLiteral(String lit) {

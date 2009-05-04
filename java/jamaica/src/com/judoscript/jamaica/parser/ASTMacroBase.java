@@ -26,7 +26,6 @@ package com.judoscript.jamaica.parser;
 
 import com.judoscript.jamaica.JavaClassCreator;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public abstract class ASTMacroBase extends ASTCodeWithText
 {
@@ -45,13 +44,15 @@ public abstract class ASTMacroBase extends ASTCodeWithText
     params.add(value);
   }
 
-  public Iterator<JavaClassCreator.VarAccess> getAllVariables() {
+  public ArrayList<JavaClassCreator.VarAccess> getAllVariables() {
     ArrayList<JavaClassCreator.VarAccess> ret = new ArrayList<JavaClassCreator.VarAccess>();
-    int len = params==null ? 0 : params.size();
-    for (int i=0; i<len; ++i)
-      if (params.get(i) instanceof JavaClassCreator.VarAccess)
-        ret.add((JavaClassCreator.VarAccess)params.get(i));
-    return ret.iterator();
+    if (params != null)
+    {
+      for (Object aParam: params)
+        if (aParam instanceof JavaClassCreator.VarAccess)
+          ret.add((JavaClassCreator.VarAccess)aParam);
+    }
+    return ret;
   }
 
   public Object[] getParams() {

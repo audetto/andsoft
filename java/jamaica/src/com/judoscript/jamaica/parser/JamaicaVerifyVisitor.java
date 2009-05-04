@@ -26,7 +26,6 @@ package com.judoscript.jamaica.parser;
 
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
 import com.judoscript.jamaica.JavaClassCreator;
 import com.judoscript.jamaica.JavaClassCreatorException;
 import org.apache.bcel.Constants;
@@ -240,9 +239,8 @@ public class JamaicaVerifyVisitor extends JamaicaVisitorBase
   }
 
   final void checkVariableField(ASTMacroBase macro) {
-    Iterator vars = macro.getAllVariables();
-    while (vars.hasNext())
-      checkVariableField((JavaClassCreator.VarAccess)vars.next());
+    for (JavaClassCreator.VarAccess var: macro.getAllVariables())
+      checkVariableField(var);
   }
 
   final void checkVariableField(JavaClassCreator.VarAccess var) {

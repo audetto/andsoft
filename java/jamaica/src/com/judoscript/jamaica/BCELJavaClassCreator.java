@@ -312,19 +312,16 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
       inst(177);
 
     // Resolve unsettled jump targets
-    if (unresolvedJumps.size() > 0) {
-      Iterator<InstructionHandle> iter = unresolvedJumps.keySet().iterator();
-      while (iter.hasNext()) {
-        BranchHandle branch = (BranchHandle)iter.next();
-        String label = unresolvedJumps.get(branch);
-        branch.setTarget(labels.get(label));
-      }
+    for (InstructionHandle handle: unresolvedJumps.keySet())
+    {
+      BranchHandle branch = (BranchHandle)handle;
+      String label = unresolvedJumps.get(branch);
+      branch.setTarget(labels.get(label));
     }
 
     // Resolve unsettled switch targets -- see inst_switch()
-    Iterator<InstructionHandle> iter = switchPlaceholders.keySet().iterator();
-    while (iter.hasNext()) {
-      InstructionHandle placeholder = iter.next();
+    for (InstructionHandle placeholder: switchPlaceholders.keySet())
+    {
       InstructionHandle target = labels.get(switchPlaceholders.get(placeholder));
       instList.redirectBranches(placeholder, target);
       try { instList.delete(placeholder); } catch(Exception e) {}
