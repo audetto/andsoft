@@ -205,7 +205,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
 
   public void endMethod() throws JavaClassCreatorException {
     if (!Modifier.isAbstract(methodAccessFlags) && methodRetType.equals("void") && !lastInstIsReturn)
-      inst(177);
+      inst(RETURN);
 
     mv.visitMaxs(0, 0);
     mv.visitEnd();
@@ -506,14 +506,14 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
 
   public static int getNewArrayType(String type) throws JavaClassCreatorException {
     try {
-      if (type.equals("boolean")) return 4;
-      if (type.equals("char"))    return 5;
-      if (type.equals("float"))   return 6;
-      if (type.equals("double"))  return 7;
-      if (type.equals("byte"))    return 8;
-      if (type.equals("short"))   return 9;
-      if (type.equals("int"))     return 10;
-      if (type.equals("long"))    return 11;
+      if (type.equals("boolean")) return T_BOOLEAN;
+      if (type.equals("char"))    return T_CHAR;
+      if (type.equals("float"))   return T_FLOAT;
+      if (type.equals("double"))  return T_DOUBLE;
+      if (type.equals("byte"))    return T_BYTE;
+      if (type.equals("short"))   return T_SHORT;
+      if (type.equals("int"))     return T_INT;
+      if (type.equals("long"))    return T_LONG;
     } catch(Exception e) {}
     throw new JavaClassCreatorException("Invalid type for newarray instruction: " + type);
   }
