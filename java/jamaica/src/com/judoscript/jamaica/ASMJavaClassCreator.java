@@ -34,6 +34,7 @@ import java.lang.reflect.Modifier;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
@@ -46,7 +47,6 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   private String      superClassName;
   private String[]    interfaceNames;
   private Map         fieldTypes = new HashMap();
-  private boolean     headerVisited;
   private int         methodAccessFlags;
   private String      methodName;
   private String      methodRetType;
@@ -89,7 +89,18 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
     this.interfaceNames = itfNames;
     
     cv = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-    headerVisited = false;
+    int len = interfaceNames == null ? 0 : interfaceNames.length;
+    String[] itfs = new String[len];
+    for (int i=0; i < len; ++i) {
+      itfs[i] = interfaceNames[i].replace('.', '/');
+    }
+    cv.visit(
+      Opcodes.V1_6,
+      accessFlags,
+      toJVMClassName(className),
+      null,
+      toJVMClassName(superClassName),
+      toJVMClassNames(itfs));
   }
 
   public void startInterface(String className, String[] itfNames) throws JavaClassCreatorException {
@@ -97,22 +108,6 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   }
 
   public byte[] endClass() throws JavaClassCreatorException {
-    if (!headerVisited) {
-      int len = interfaceNames == null ? 0 : interfaceNames.length;
-      String[] itfs = new String[len];
-      for (int i=0; i < len; ++i) {
-        itfs[i] = interfaceNames[i].replace('.', '/');
-      }
-      cv.visit(
-        Opcodes.V1_6,
-        accessFlags, 
-        toJVMClassName(className),
-        null,
-        toJVMClassName(superClassName), 
-        toJVMClassNames(itfs));
-      headerVisited = true;
-    }
-
     fieldTypes.clear();
     fileName = null;
     accessFlags = 0;
@@ -120,11 +115,16 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
     superClassName = null;
     interfaceNames = null;
 
-    return cv.toByteArray();
+    byte [] classBytes = cv.toByteArray();
+    cv.visitEnd();
+    cv = null;
+
+    return classBytes;
   }
 
   public void addField(int accessFlags, String name, String type) throws JavaClassCreatorException {
-    cv.visitField(accessFlags, name, stringToDescriptor(type), null, null);
+    FieldVisitor fv = cv.visitField(accessFlags, name, stringToDescriptor(type), null, null);
+    fv.visitEnd();
     String isStaticPrefix = Modifier.isStatic(accessFlags) ? "?" : "";
     fieldTypes.put(name, isStaticPrefix + type);
   }
@@ -132,7 +132,8 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   public void addConstant(int accessFlags, String name, String type, Object value)
     throws JavaClassCreatorException
   {
-    cv.visitField(accessFlags, name, stringToDescriptor(type), null, value);
+    FieldVisitor fv = cv.visitField(accessFlags, name, stringToDescriptor(type), null, value);
+    fv.visitEnd();
     fieldTypes.put(name, "?" + type);
   }
 
@@ -161,6 +162,8 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
     mv.visitMethodInsn(INVOKESPECIAL, superClassName.replace('.', '/'), "<init>", "()V");
     mv.visitInsn(RETURN);
     mv.visitMaxs(0, 0);
+    mv.visitEnd();
+    mv = null;
   }
 
   public void startMethod(int accessFlags, String name, String[] argTypes, String[] argNames,
@@ -205,6 +208,8 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
       inst(177);
 
     mv.visitMaxs(0, 0);
+    mv.visitEnd();
+    mv = null;
 
     varIndices.clear();
     varTypes.clear();
