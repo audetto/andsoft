@@ -32,7 +32,7 @@ import com.judoscript.jamaica.MyUtils;
  */
 public class ASTCodeInvoke extends ASTCodeMemberAccess
 {
-  ArrayList paramTypes = new ArrayList();
+  ArrayList<String> paramTypes = new ArrayList<String>();
 
   public ASTCodeInvoke(int id) {
     super(id);

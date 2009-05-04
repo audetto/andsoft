@@ -98,7 +98,7 @@ public class JamaicaCreateVisitor extends JamaicaVisitorBase
   }
 
   private void collectFields(SimpleNode node) throws Exception {
-    HashSet names = new HashSet();
+    HashSet<String> names = new HashSet<String>();
 
     int len = node.jjtGetNumChildren();
     for (int i=0; i<len; ++i) {
@@ -170,7 +170,7 @@ public class JamaicaCreateVisitor extends JamaicaVisitorBase
   ////////////////////////////////////////////////////////////////
 
   public Object visit(ASTVariableDeclarator node, Object data) throws Exception {
-    HashSet names = new HashSet();
+    HashSet<String> names = new HashSet<String>();
     // node.getType()
     // node.getName()
     Node parent = node.jjtGetParent();

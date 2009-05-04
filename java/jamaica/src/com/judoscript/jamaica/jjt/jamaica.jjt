@@ -49,7 +49,7 @@ public class JamaicaParser extends MyUtils
   /////////////////////////////////////////////////////////////
 
   String pkgPrefix = null;
-  ArrayList importList = new ArrayList();
+  ArrayList<String> importList = new ArrayList<String>();
 
   String className = null;
   String superClassName = "java.lang.Object";
@@ -81,7 +81,7 @@ public class JamaicaParser extends MyUtils
 
     int len = importList == null ? 0 : importList.size();
     for (int i=0; i<len; ++i) {
-      String s = (String)importList.get(i);
+      String s = importList.get(i);
       if (s.endsWith(".")) { // import ----.*
         try {
           Class.forName(s + name);
@@ -130,7 +130,7 @@ public class JamaicaParser extends MyUtils
   // Constant and Expression Support
   /////////////////////////////////////////////////////////////
 
-  HashMap constants = new HashMap();
+  HashMap<String, Object> constants = new HashMap<String, Object>();
 
   Object resolveConst(String value, String typeHint) throws ParseException {
     int idx = value.lastIndexOf('.');
@@ -632,7 +632,7 @@ void ParamList(ASTMacroBase base) #void :
 
 void MultiDimList(JavaClassCreator.VarAccess var) #void :
 {
-  ArrayList list = new ArrayList();
+  ArrayList<Object> list = new ArrayList<Object>();
   Object o;
 }
 {
@@ -1027,7 +1027,7 @@ String ClassName(boolean process) #void :
 String[] ClassNameList() #void :
 {
   String s;
-  ArrayList al = new ArrayList();
+  ArrayList<String> al = new ArrayList<String>();
 }
 {
   s=ClassName(true)        { al.add(s); }

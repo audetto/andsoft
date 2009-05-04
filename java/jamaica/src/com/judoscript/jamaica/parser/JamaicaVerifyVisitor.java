@@ -37,12 +37,12 @@ public class JamaicaVerifyVisitor extends JamaicaVisitorBase
   StringBuffer sb = new StringBuffer();
 
   // Per-class
-  HashSet fields  = new HashSet(); // name
-  HashSet methods = new HashSet(); // name and signature
+  HashSet<String> fields  = new HashSet<String>(); // name
+  HashSet<String> methods = new HashSet<String>(); // name and signature
 
   // Per-method
-  HashSet locals  = new HashSet(); // name
-  HashSet labels  = new HashSet(); // name
+  HashSet<String> locals  = new HashSet<String>(); // name
+  HashSet<String> labels  = new HashSet<String>(); // name
 
   ////////////////////////////////////////////////////////////////
   // High-Level Constructs
@@ -261,14 +261,14 @@ public class JamaicaVerifyVisitor extends JamaicaVisitorBase
     }
   }
 
-  final void checkConflict(String type, String value, Set set, SimpleNode node) {
+  final void checkConflict(String type, String value, Set<String> set, SimpleNode node) {
     if (set.contains(value))
       addError(type + " '" + value + "' at line " + node.getLineNum() + " is already defined.");
     else
       set.add(value);
   }
 
-  final void checkExistence(String type, String value, Set set, int line) {
+  final void checkExistence(String type, String value, Set<String> set, int line) {
     if (!set.contains(value) && !value.equals("this"))
       addError(type + " '" + value + "' at line " + line + " is not defined.");
   }

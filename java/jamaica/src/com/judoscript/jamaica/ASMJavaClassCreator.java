@@ -46,15 +46,15 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   private String      className;
   private String      superClassName;
   private String[]    interfaceNames;
-  private Map         fieldTypes = new HashMap();
+  private Map<String, String>  fieldTypes    = new HashMap<String, String>();
   private int         methodAccessFlags;
   private String      methodName;
   private String      methodRetType;
   private int         locals;
   private boolean     lastInstIsReturn;
-  private Map         varIndices    = new HashMap();
-  private Map         varTypes      = new HashMap();
-  private Map         labels        = new HashMap();
+  private Map<String, Integer> varIndices    = new HashMap<String, Integer>();
+  private Map<String, String>  varTypes      = new HashMap<String, String>();
+  private Map<String, Label>   labels        = new HashMap<String, Label>();
   private ClassWriter cv;
   private MethodVisitor mv;
 
@@ -138,14 +138,14 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   }
 
   public String getFieldType(String name) throws JavaClassCreatorException {
-    String typ = (String)fieldTypes.get(name);
+    String typ = fieldTypes.get(name);
     if (typ != null && typ.startsWith("?"))
       typ = typ.substring(1);
     return typ;
   }
 
   public boolean isStaticField(String name) throws JavaClassCreatorException {
-    String typ = (String)fieldTypes.get(name);
+    String typ = fieldTypes.get(name);
     return typ != null && typ.startsWith("?");
   }
 
@@ -236,11 +236,11 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
   }
 
   public int getLocalVariableIndex(String name) throws JavaClassCreatorException {
-    return ((Integer)varIndices.get(name)).intValue();
+    return varIndices.get(name);
   }
 
   public String getVariableType(String name) throws JavaClassCreatorException {
-    return (String)varTypes.get(name);
+    return varTypes.get(name);
   }
 
   public void addCatchClause(String type, String startLabel, String endLabel, String actionLabel)
@@ -259,7 +259,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
     if (label == null)
       throw new JavaClassCreatorException("Label cannot be null.");
 
-    Label l = (Label)labels.get(label);
+    Label l = labels.get(label);
     if (l == null) {
       l = new Label();
       labels.put(label, l);

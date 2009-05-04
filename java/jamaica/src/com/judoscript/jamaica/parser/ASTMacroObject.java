@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public final class ASTMacroObject extends ASTMacroBase implements JavaClassCreator.AssignableMacro
 {
-  ArrayList paramTypes = null;
+  ArrayList<String> paramTypes = null;
 
   public ASTMacroObject(int id) {
     super(id);
@@ -44,7 +44,7 @@ public final class ASTMacroObject extends ASTMacroBase implements JavaClassCreat
 
   public void addParamType(String type) {
     if (paramTypes == null)
-      paramTypes = new ArrayList();
+      paramTypes = new ArrayList<String>();
     paramTypes.add(type);
   }
 

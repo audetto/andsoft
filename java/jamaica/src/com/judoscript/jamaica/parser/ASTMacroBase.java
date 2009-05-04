@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 public abstract class ASTMacroBase extends ASTCodeWithText
 {
-  protected ArrayList params = null;
+  protected ArrayList<Object> params = null;
 
   public ASTMacroBase(int id) {
     super(id);
@@ -41,16 +41,16 @@ public abstract class ASTMacroBase extends ASTCodeWithText
   }
 
   public void addParam(Object value) {
-    if (params == null) params = new ArrayList();
+    if (params == null) params = new ArrayList<Object>();
     params.add(value);
   }
 
-  public Iterator getAllVariables() {
-    ArrayList ret = new ArrayList();
+  public Iterator<JavaClassCreator.VarAccess> getAllVariables() {
+    ArrayList<JavaClassCreator.VarAccess> ret = new ArrayList<JavaClassCreator.VarAccess>();
     int len = params==null ? 0 : params.size();
     for (int i=0; i<len; ++i)
       if (params.get(i) instanceof JavaClassCreator.VarAccess)
-        ret.add(params.get(i));
+        ret.add((JavaClassCreator.VarAccess)params.get(i));
     return ret.iterator();
   }
 

@@ -34,7 +34,7 @@ public class ASTCodeSwitch extends ASTCodeWithTextInt
 {
   IntHashtable cases = new IntHashtable();
 
-  HashMap caseLabelLines = new HashMap();
+  HashMap<String, Integer> caseLabelLines = new HashMap<String, Integer>();
   int defaultLabelLineNum = 0;
 
 
@@ -51,11 +51,11 @@ public class ASTCodeSwitch extends ASTCodeWithTextInt
 
   public void addCase(int val, String label, int line) {
     cases.put(val, label);
-    caseLabelLines.put(label, new Integer(line));
+    caseLabelLines.put(label, line);
   }
   public int getCaseLabelLineNum(String label) {
     try {
-      return ((Integer)caseLabelLines.get(label)).intValue();
+      return caseLabelLines.get(label);
     } catch(Exception e) {
       return 0;
     }

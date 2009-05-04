@@ -60,13 +60,13 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
 
   private InstructionList instList = new InstructionList();
   private int       localVarStart = 0; // to discounts the parameters
-  private ArrayList localVarList = new ArrayList();
-  private HashMap   localVarTypes = new HashMap();
-  private HashMap   labels = new HashMap();
+  private ArrayList<String> localVarList = new ArrayList<String>();
+  private HashMap<String, Type> localVarTypes = new HashMap<String, Type>();
+  private HashMap<String, InstructionHandle> labels = new HashMap<String, InstructionHandle>();
   private String    lastLabel = null;
-  private HashMap   unresolvedJumps = new HashMap();
-  private HashMap   switchPlaceholders = new HashMap();
-  private ArrayList catchClauses = new ArrayList();
+  private HashMap<InstructionHandle, String> unresolvedJumps = new HashMap<InstructionHandle, String>();
+  private HashMap<InstructionHandle, String> switchPlaceholders = new HashMap<InstructionHandle, String>();
+  private ArrayList<String[]> catchClauses = new ArrayList<String[]>();
 
   private void reinitMethod() {
     methodAccessFlags = 0;
@@ -313,19 +313,19 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
 
     // Resolve unsettled jump targets
     if (unresolvedJumps.size() > 0) {
-      Iterator iter = unresolvedJumps.keySet().iterator();
+      Iterator<InstructionHandle> iter = unresolvedJumps.keySet().iterator();
       while (iter.hasNext()) {
         BranchHandle branch = (BranchHandle)iter.next();
-        String label = (String)unresolvedJumps.get(branch);
-        branch.setTarget((InstructionHandle)labels.get(label));
+        String label = unresolvedJumps.get(branch);
+        branch.setTarget(labels.get(label));
       }
     }
 
     // Resolve unsettled switch targets -- see inst_switch()
-    Iterator iter = switchPlaceholders.keySet().iterator();
+    Iterator<InstructionHandle> iter = switchPlaceholders.keySet().iterator();
     while (iter.hasNext()) {
-      InstructionHandle placeholder = (InstructionHandle)iter.next();
-      InstructionHandle target = (InstructionHandle)labels.get((String)switchPlaceholders.get(placeholder));
+      InstructionHandle placeholder = iter.next();
+      InstructionHandle target = labels.get(switchPlaceholders.get(placeholder));
       instList.redirectBranches(placeholder, target);
       try { instList.delete(placeholder); } catch(Exception e) {}
     }
@@ -342,17 +342,17 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
     // Add local variables
     len = localVarList.size();
     for (i=localVarStart; i<len; ++i) {
-      String name = (String)localVarList.get(i);
-      mg.addLocalVariable(name, (Type)localVarTypes.get(name), null, null);
+      String name = localVarList.get(i);
+      mg.addLocalVariable(name, localVarTypes.get(name), null, null);
     }
 
     // Resolve exception handler targets
     len = catchClauses.size();
     for (i=0; i<len; ++i) {
-      String[] hdlr = (String[])catchClauses.get(i); // type, startLabel, endLabel, actionLabel
-      InstructionHandle start  = (InstructionHandle)labels.get(hdlr[1]);
-      InstructionHandle end    = (InstructionHandle)labels.get(hdlr[2]);
-      InstructionHandle action = (InstructionHandle)labels.get(hdlr[3]);
+      String[] hdlr = catchClauses.get(i); // type, startLabel, endLabel, actionLabel
+      InstructionHandle start  = labels.get(hdlr[1]);
+      InstructionHandle end    = labels.get(hdlr[2]);
+      InstructionHandle action = labels.get(hdlr[3]);
       if (start == null || end == null || action == null) {
         String x = null;
         if (start == null)  x = hdlr[1];
@@ -386,10 +386,10 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
       return 0;
     int i, idx = Modifier.isStatic(methodAccessFlags) ? 0 : 1;
     for (i=0; i<localVarList.size(); ++i) {
-      String s = (String)localVarList.get(i);
+      String s = localVarList.get(i);
       if (s.equals(name))
         break;
-      idx += ((Type)localVarTypes.get(s)).getSize();
+      idx += localVarTypes.get(s).getSize();
     }
     if (i >= localVarList.size())
       throw new JavaClassCreatorException("Variable " + name + " is not found.");
@@ -398,7 +398,7 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
 
   public String getVariableType(String name) {
     try {
-      return name.equals("this") ? getClassName() : ((Type)localVarTypes.get(name)).toString();
+      return name.equals("this") ? getClassName() : localVarTypes.get(name).toString();
     } catch(Exception e) {
       return null;
     }
@@ -565,7 +565,7 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
   }
 
   public void instJump(int opcode, String label) throws JavaClassCreatorException {
-    InstructionHandle target = (InstructionHandle)labels.get(label);
+    InstructionHandle target = labels.get(label);
 
     BranchInstruction inst = null;
     switch(opcode) {
@@ -836,7 +836,7 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
     throw new JavaClassCreatorException("Invalid type for newarray instruction: " + type);
   }
 
-  private static HashMap classTypes = new HashMap();
+  private static HashMap<String, Type> classTypes = new HashMap<String, Type>();
 
   /**
    *@param type is like <code>int String java.lang.String String[]</code> etc.
@@ -844,7 +844,7 @@ public final class BCELJavaClassCreator extends JavaClassCreator implements Cons
   public Type stringToType(String type) {
     try {
       type = stringToDescriptor(type);
-      Type ret = (Type)classTypes.get(type);
+      Type ret = classTypes.get(type);
       if (ret == null) {
         ret = Type.getType(type);
         classTypes.put(type, ret);
