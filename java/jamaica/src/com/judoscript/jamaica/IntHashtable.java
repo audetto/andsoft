@@ -31,7 +31,7 @@
 // Visit the ACME Labs Java page for up-to-date versions of this and other
 // fine Java utilities: http://www.acme.com/java/
 
-package com.judoscript.util;
+package com.judoscript.jamaica;
 
 import java.util.*;
 

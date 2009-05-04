@@ -25,7 +25,7 @@
 package com.judoscript.jamaica.parser;
 
 import java.util.HashMap;
-import com.judoscript.util.IntHashtable;
+import com.judoscript.jamaica.IntHashtable;
 
 /**
  * Bytecode instructions for <code>tableswitch lookupswitch</code>.
