@@ -33,7 +33,6 @@ public final class ASTMacroPrint extends ASTMacroBase
   public static final int TYPE_println = 1;
   public static final int TYPE_flush   = 2;
   int type = TYPE_print;
-  ArrayList params = null;
 
 
   public ASTMacroPrint(int id) {
