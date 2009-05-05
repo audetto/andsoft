@@ -27,18 +27,18 @@ package com.judoscript.jamaica;
 import org.apache.commons.lang.StringEscapeUtils;
 import java.util.Collection;
 
-public class MyUtils extends StringEscapeUtils
+public class MyUtils
 {
   public static String[] toStringArray(Collection<String> col) {
     return col.toArray(new String[col.size()]);
   }
 
   public static String processStringLiteral(String lit) {
-    return unescapeJava(lit.substring(1, lit.length()-1));
+    return StringEscapeUtils.unescapeJava(lit.substring(1, lit.length()-1));
   }
 
   public static Object parseCharLiteral(String lit, String typeHint) {
-    lit = unescapeJava(lit);
+    lit = StringEscapeUtils.unescapeJava(lit);
     char ch = lit.charAt(1);
     return (typeHint != null) ? number2object(ch, typeHint) : new Character(ch);
   }

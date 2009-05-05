@@ -35,14 +35,14 @@ options {
 PARSER_BEGIN(JamaicaParser)
 package com.judoscript.jamaica.parser;
 
-import com.judoscript.jamaica.MyUtils;
+import static com.judoscript.jamaica.MyUtils.*;
 import com.judoscript.jamaica.JavaClassCreator;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.io.*;
 
-public class JamaicaParser extends MyUtils
+public class JamaicaParser
 {
   /////////////////////////////////////////////////////////////
   // Parser Helpers
