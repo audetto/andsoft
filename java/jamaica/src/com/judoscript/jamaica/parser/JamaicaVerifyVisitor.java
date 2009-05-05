@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.HashSet;
 import com.judoscript.jamaica.JavaClassCreator;
 import com.judoscript.jamaica.JavaClassCreatorException;
-import org.apache.bcel.Constants;
 
 public class JamaicaVerifyVisitor extends JamaicaVisitorBase
 {
