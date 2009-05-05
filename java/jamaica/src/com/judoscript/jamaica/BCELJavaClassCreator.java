@@ -30,11 +30,12 @@ package com.judoscript.jamaica;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-import org.apache.bcel.*;
 import org.apache.bcel.generic.*;
 import org.apache.bcel.classfile.*;
 
-public final class BCELJavaClassCreator extends JavaClassCreator implements Constants
+import static org.apache.bcel.Constants.*;
+
+public final class BCELJavaClassCreator extends JavaClassCreator
 {
   /*************************************************
    * Data Members For Class File Generation

@@ -33,11 +33,12 @@ import java.lang.reflect.Modifier;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
-public final class ASMJavaClassCreator extends JavaClassCreator implements Opcodes
+import static org.objectweb.asm.Opcodes.*;
+
+public final class ASMJavaClassCreator extends JavaClassCreator
 {
   private String      fileName;
   private int         accessFlags;
@@ -93,7 +94,7 @@ public final class ASMJavaClassCreator extends JavaClassCreator implements Opcod
       itfs[i] = interfaceNames[i].replace('.', '/');
     }
     cv.visit(
-      Opcodes.V1_6,
+      V1_6,
       accessFlags,
       toJVMClassName(className),
       null,
