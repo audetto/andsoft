@@ -29,11 +29,12 @@ import com.judoscript.jamaica.parser.*;
 
 public class Main
 {
-  static final String build = "2004-12-20";
+  static final String build = "2009-05-04";
   static final String version =
     "=====================================================================\n" +
-    "Jamaica (JVM Macro Assembler) Version 1.0 [build:" + build + "]\n" +
+    "Jamaica (JVM Macro Assembler) Version 1.99 [build:" + build + "]\n" +
     "Copyright 2004 James Jianbo Huang, http://www.judoscript.com/jamaica/\n" +
+    "Copyright 2009 AndSoft Inc., http://www.odetti.it/andrea/jamaica.htm\n" +
     "=====================================================================";
 
   public static void main(String args[]) {
