@@ -51,6 +51,8 @@ namespace ASI
 		MatrixPtr myMatrix;
 	};
 	
+	typedef boost::shared_ptr<HyperMatrix> HyperMatrixPtr;
+
 }
 
 #endif

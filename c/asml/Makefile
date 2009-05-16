@@ -1,6 +1,6 @@
 .PHONY = all lib clean headers
 
-OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o distribution.o fourierpricing.o fastexp.o hypermatrix.o
+OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o distribution.o fourierpricing.o fastexp.o hypermatrix.o generator.o
 DEPENDS = $(OBJFILES:.o=.d)
 
 CPPFLAGS = -Wall -I. -D_GLIBCXX_DEBUG
