@@ -78,7 +78,7 @@ ostream & operator<<(ostream & out, const gsl_vector_complex * vec)
 namespace ASI
 {
 
-    MatrixPtr expViaEigenvalues(const double time, MatrixPtr & mat)
+    MatrixPtr expViaEigenvalues(const double time, const MatrixPtr & mat)
     {
 	const size_t rows = mat->size1;
 	const size_t cols = mat->size2;
@@ -151,7 +151,7 @@ namespace ASI
 	error("Cannot compute eigenvalues");
     }
     
-    MatrixPtr expViaGSL(const double time, const MatrixPtr & mat)
+    MatrixPtr expViaGSL(const double time, const CMatrixPtr & mat)
     {
 	const size_t rows = mat->size1;
 	const size_t cols = mat->size2;
@@ -173,7 +173,7 @@ namespace ASI
 	return exptA;
     }
     
-    MatrixPtr expViaExplicit(const double time, const MatrixPtr & mat, const size_t powerOfTwo)
+    MatrixPtr expViaExplicit(const double time, const CMatrixPtr & mat, const size_t powerOfTwo)
     {
 	const double steps = pow(2.0, powerOfTwo);
 	const double dt = time / steps;
@@ -206,7 +206,7 @@ namespace ASI
 	return onePlustA;
     }
 
-    MatrixPtr expViaTheta(const double time, const MatrixPtr & mat, const size_t powerOfTwo, const double theta)
+    MatrixPtr expViaTheta(const double time, const CMatrixPtr & mat, const size_t powerOfTwo, const double theta)
     {
 	const double steps = pow(2.0, powerOfTwo);
 	const double dt = time / steps;
@@ -255,6 +255,47 @@ namespace ASI
 	return cnMat;
     }
 
+	VectorPtr expViaTraditional(const double time, const MatrixPtr & mat, const size_t powerOfTwo, const VectorPtr & rhs)
+	{
+		const size_t steps = 1 << powerOfTwo;
+		const double dt = time / steps;
+		
+		const size_t rows = mat->size1;
+		const size_t cols = mat->size2;
+		
+		if (rows != cols)
+			error("Cannot exponentiate rectangular matrix.");
+		
+		MatrixPtr oneMinusTA(gsl_matrix_alloc(rows, cols), MatrixDeleter());
+		
+		for (size_t i = 0; i < rows; ++i)
+		{
+			for (size_t j = 0; j < rows; ++j)
+			{
+				const double r = gsl_matrix_get(mat.get(), i, j);
+				const double one = (i == j) ? 1.0 : 0.0;
+				gsl_matrix_set(oneMinusTA.get(), i, j, one - dt * r);
+			}
+		}
+		
+		gsl_permutation * perm = gsl_permutation_alloc(rows);
+		int s;
+		gsl_linalg_LU_decomp(oneMinusTA.get(), perm, &s);
+
+		VectorPtr x(gsl_vector_alloc(rows), VectorDeleter());
+		VectorPtr b = rhs;
+
+		for (size_t i = 0; i < steps; ++i)
+		{
+			gsl_linalg_LU_solve(oneMinusTA.get(), perm, b.get(), x.get());
+			swap(b, x);
+		}
+		
+		gsl_permutation_free(perm);
+
+		return b;
+	}
+	
     void fastexp_try()
     {
 	MatrixPtr A(gsl_matrix_alloc(2, 2), MatrixDeleter());
