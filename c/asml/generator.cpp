@@ -31,6 +31,9 @@ namespace ASI
 		vector<size_t> point(dim, 0);
 		vector<size_t> temp(dim);
 		QuantLib::Array location(dim);
+
+		// we assume homogeneous model!
+		// no support for time dependent coefficients
 		QuantLib::Time zero = 0.0;
 		
 		do
