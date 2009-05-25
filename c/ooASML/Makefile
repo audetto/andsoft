@@ -18,7 +18,8 @@ CPPUMAKER = $(SET_LD) $(OOoPATH)/cppumaker
 OBJFILES = ASIMaths_impl.o conversion.o ooutils.o
 DEPENDS = $(OBJFILES:.o=.d)
 
-CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OOoSDK)/include -I$(ASMLDIR) -Wall -D_GLIBCXX_DEBUG
+CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OOoSDK)/include -I$(ASMLDIR) -Wall
+# -D_GLIBCXX_DEBUG
 CXXFLAGS = -gdwarf-2
 
 LDLIBS = -lcppuhelpergcc3 -lasml -lgsl -lgslcblas -lm

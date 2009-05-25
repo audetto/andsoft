@@ -1,12 +1,14 @@
 .PHONY = all lib clean headers
 
-OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o distribution.o fourierpricing.o fastexp.o hypermatrix.o generator.o
+OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o distribution.o fourierpricing.o fastexp.o hypermatrix.o generator.o brownianmotionwithdrift.o pde.o
 DEPENDS = $(OBJFILES:.o=.d)
 
-CPPFLAGS = -Wall -I. -D_GLIBCXX_DEBUG
+## It seems QuantLib has been compiled without D_GLIBCXX_DEBUG
+CPPFLAGS = -Wall -I.
+##  -D_GLIBCXX_DEBUG
 CXXFLAGS = -gdwarf-2
 
-LDLIBS = -lgsl -lgslcblas -lm
+LDLIBS = -lgsl -lgslcblas -lm -lQuantLib
 
 AR = ar
 RANLIB = ranlib
@@ -22,7 +24,6 @@ libasml.a: $(OBJFILES)
 
 dummy: all dummy.o
 	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ dummy.o -L. -lasml $(LDLIBS)
-	./dummy
 
 clean: headers
 	rm -rf dummy *.o *.a *.d
