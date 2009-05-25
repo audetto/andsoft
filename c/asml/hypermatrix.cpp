@@ -70,6 +70,16 @@ namespace ASI
 	{
 		return myTotal;
 	}
+
+	size_t LinearHyperMatrix::size(size_t dim) const
+	{
+		return mySizes[dim];
+	}
+
+	size_t LinearHyperMatrix::dim() const
+	{
+		return myDim;
+	}
 	
 	bool LinearHyperMatrix::isBoundary(const vector<size_t> & idxs) const
 	{
@@ -115,7 +125,7 @@ namespace ASI
 		return myMatrix;
 	}
 	
-	MatrixPtr HyperMatrix::mat()
+	const MatrixPtr & HyperMatrix::mat()
 	{
 		return myMatrix;
 	}
@@ -129,5 +139,68 @@ namespace ASI
 	{
 		return myDim2.size();
 	}
+
+	const LinearHyperMatrix & HyperMatrix::dim1() const
+	{
+		return myDim1;
+	}
+
+	const LinearHyperMatrix & HyperMatrix::dim2() const
+	{
+		return myDim2;
+	}
 		
+	// =====================================================================================================
+	
+	HyperVector::HyperVector(const LinearHyperMatrix & dim) :
+		myDim(dim), myVector(gsl_vector_calloc(myDim.size()), VectorDeleter())
+	{
+	}
+	
+	double HyperVector::operator()(const vector<size_t> & idxs) const
+	{
+		const size_t pos = myDim.coord2pos(idxs);
+		return gsl_vector_get(myVector.get(), pos);
+	}
+	
+	double & HyperVector::operator()(const vector<size_t> & idxs)
+	{
+		const size_t pos = myDim.coord2pos(idxs);
+		double * ptr = gsl_vector_ptr(myVector.get(), pos);
+		
+		assert(ptr);
+		
+		return *ptr;
+	}
+	
+	CVectorPtr HyperVector::vect() const
+	{
+		return myVector;
+	}
+	
+	const VectorPtr & HyperVector::vect()
+	{
+		return myVector;
+	}
+	
+	size_t HyperVector::size() const
+	{
+		return myDim.size();
+	}
+	
+	const LinearHyperMatrix & HyperVector::dim() const
+	{
+		return myDim;
+	}
+
+	void HyperVector::operator=(const VectorPtr & rhs)
+	{
+		if (rhs.get() != myVector.get())
+		{
+			assert(myVector->size == rhs->size);
+			myVector = rhs;
+		}
+	}
+
+
 }
