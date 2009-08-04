@@ -31,7 +31,8 @@ class CaseInfo
     {
 		return valids[value];
     }
-	
+
+    @Override
     public String toString()
     {
 		StringBuffer sb = new StringBuffer();
