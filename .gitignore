@@ -1,0 +1,27 @@
+# Global ignores
+*.o
+*.class
+*~
+*.d
+*.a
+*.so
+*.rdb
+*.oxt
+*.jj
+
+/c/asml/asi/*.h
+/c/ooASML/com/*
+/c/ooASML/org/*
+
+/java/jamaica/src/com/judoscript/jamaica/jjt/jamaica.jj
+/java/jamaica/src/com/judoscript/jamaica/parser/JJTJamaicaParserState.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JamaicaParser.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JamaicaParserConstants.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JamaicaParserTokenManager.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JamaicaParserTreeConstants.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JamaicaParserVisitor.java
+/java/jamaica/src/com/judoscript/jamaica/parser/JavaCharStream.java
+/java/jamaica/src/com/judoscript/jamaica/parser/Node.java
+/java/jamaica/src/com/judoscript/jamaica/parser/ParseException.java
+/java/jamaica/src/com/judoscript/jamaica/parser/Token.java
+/java/jamaica/src/com/judoscript/jamaica/parser/TokenMgrError.java
