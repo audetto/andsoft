@@ -1,4 +1,4 @@
-.PHONY = all headers lib clean asml
+.PHONY = all headers lib clean asml libs
 
 OO_SDK_HOME=/usr/lib/openoffice.org/basis3.1/sdk
 OFFICE_HOME=/usr/lib/openoffice.org
@@ -12,8 +12,6 @@ OO_SDK_URE_JAVA_DIR=$(OO_SDK_URE_HOME)/share/java
 OOoSDK_PATH = $(OO_SDK_HOME)/bin
 
 ASMLDIR = ../asml
-
-THISDIR := $(shell pwd)
 
 SET_LD = LD_LIBRARY_PATH=$(OO_SDK_URE_LIB_DIR)
 
@@ -49,8 +47,16 @@ FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.registry.XRegistryKey \
 	-Tcom.sun.star.reflection.XIdlReflection
 
-all: ASIMaths.rdb libASIMaths.so
-	$(REGCOMP) -register -r ASIMaths.rdb -c $(THISDIR)/libASIMaths.so
+all: ASIMaths.oxt
+
+ASIMaths.oxt: libs
+	-mkdir oxt/Linux_x86
+	cp ASIMaths.rdb oxt/Linux_x86
+	cp libASIMaths.so oxt/Linux_x86
+	cd oxt && zip ../ASIMaths.oxt -r .
+
+libs: ASIMaths.rdb libASIMaths.so
+	LD_LIBRARY_PATH=. $(REGCOMP) -register -r ASIMaths.rdb -c libASIMaths.so
 
 asml:
 	$(MAKE) -C ../asml $(MAKECMDGOALS)
@@ -66,13 +72,15 @@ headers: ASIMaths.rdb
 
 libASIMaths.so: asml $(OBJFILES)
 	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
+	chcon -t textrel_shlib_t libASIMaths.so
 
 dummy: dummy.o $(OBJFILES)
 	g++ -o $@ $^ $(LIB_DIR) $(LDLIBS) -luno_sal -luno_salhelpergcc3 -luno_cppu -lstlport_gcc
 	$(SET_LD) ./$@
 
 clean: asml
-	rm -rf dummy com org *.o *.so *.urd *.rdb *.d
+	-rm -r dummy *.o *.so *.urd *.rdb *.d *.oxt
+	-rm -r com org oxt/Linux_x86
 
 #### dependencies
 ooutils.h: headers
