@@ -1,6 +1,6 @@
 package asi.elves.script;
 
-import asi.elves.Path;
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -11,7 +11,7 @@ public interface TimeSeries extends Schedule
 {
 
 //    public List<Date> dates(); // from Schedule
-    public void values(Path path, Map<TimeSeries, List<Double> > memoizer);
+    public void values(Path path, Memoizer storage);
 
     public List<TimeSeries> children();
 }

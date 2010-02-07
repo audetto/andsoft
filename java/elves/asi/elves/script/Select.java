@@ -27,10 +27,10 @@ public class Select implements TimeSeries
         return m_Value.dates().subList(m_First, m_Last);
     }
 
-    public void values(Path path, Map<TimeSeries, List<Double> > memoizer)
+    public void values(Path path, Memoizer storage)
     {
-        List<Double> values = memoizer.get(m_Value);
-        memoizer.put(this, values.subList(m_First, m_Last));
+        List<Double> values = storage.get(m_Value);
+        storage.put(this, values.subList(m_First, m_Last));
     }
 
     public List<TimeSeries> children()

@@ -70,12 +70,12 @@ public class ScriptEngine
          * It would be nice to forbit a node from calling values() directly.
          */
 
-        Map<TimeSeries, List<Double> > memoizer = new HashMap<TimeSeries, List<Double> >();
+        Memoizer storage = new Memoizer();
         for (TimeSeries node : m_allNodes)
         {
-            node.values(path, memoizer);
+            node.values(path, storage);
         }
 
-        return memoizer.get(m_root);
+        return storage.get(m_root);
     }
 }

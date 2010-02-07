@@ -1,6 +1,6 @@
 package asi.elves.script;
 
-import asi.elves.Path;
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -25,7 +25,7 @@ public class Sort extends TimeSeriesBase
         return m_inners;
     }
 
-    public void values(Path path, Map<TimeSeries, List<Double> > memoizer)
+    public void values(Path path, Memoizer storage)
     {
         List<Date> theDates = dates();
         int numberOfDates = theDates.size();
@@ -38,7 +38,7 @@ public class Sort extends TimeSeriesBase
 
         for (TimeSeries child : theChildren)
         {
-            List<Double> values = memoizer.get(child);
+            List<Double> values = storage.get(child);
 
             // shallow copy. we MUST not modify the list returned by the memoizer.
             allValues.add(new ArrayList<Double>(values));
@@ -74,7 +74,7 @@ public class Sort extends TimeSeriesBase
 
         for (int j = 0; j < numberOfValues; ++j)
         {
-            memoizer.put(m_inners.get(j), allValues.get(j));
+            storage.put(m_inners.get(j), allValues.get(j));
         }
     }
 

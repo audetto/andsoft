@@ -1,6 +1,6 @@
 package asi.elves.script;
 
-import asi.elves.Path;
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -17,7 +17,7 @@ public class Stock extends TimeSeriesBase
         m_name = name;
     }
 
-    public void values(Path path, Map<TimeSeries, List<Double> > memoizer)
+    public void values(Path path, Memoizer storage)
     {
         List<Double> stock = new ArrayList<Double>();
         for (Date date : dates())
@@ -25,7 +25,7 @@ public class Stock extends TimeSeriesBase
             stock.add(path.getValue(date, m_name));
         }
 
-        memoizer.put(this, stock);
+        storage.put(this, stock);
     }
 
 }

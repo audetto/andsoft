@@ -1,6 +1,6 @@
 package asi.elves.script;
 
-import asi.elves.Path;
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -23,10 +23,10 @@ public class InnerBlock implements TimeSeries
         return m_schedule.dates();
     }
 
-    public void values(Path path, Map<TimeSeries, List<Double> > memoizer)
+    public void values(Path path, Memoizer storage)
     {
         // the parent must have added it already.
-        assert memoizer.containsKey(this) : this;
+        assert storage.get(this) != null : this;
     }
 
     public List<TimeSeries> children()
