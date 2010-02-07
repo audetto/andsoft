@@ -3,11 +3,13 @@ package asi.elves.script;
 import java.util.*;
 
 /**
- *
- * @author andrea
+ * How to handle merge many schedules
  */
 public enum MergerType
 {
+    /**
+     * Check that all schedules are EQUAL
+     */
     EXACT
     {
         // check all schedules are equal and return the first.
@@ -29,5 +31,9 @@ public enum MergerType
 
     };
 
+    /**
+     * Merges many schedules into one
+     *
+     */
     public abstract List<Date> mergeDates(List<? extends Schedule> schedules);
 }

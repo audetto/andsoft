@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  *
- * @author andrea
+ * Block used by a parent block to return many results
  */
 public class InnerBlock implements TimeSeries
 {

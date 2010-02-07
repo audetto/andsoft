@@ -4,13 +4,18 @@ import asi.elves.*;
 import java.util.*;
 
 /**
- *
- * @author andrea
+ * Block representing the path of a stock
  */
 public class Stock extends TimeSeriesBase
 {
     private final String m_name;
 
+    /**
+     * Create a time series for a stock
+     *
+     * @param name Stock name
+     * @param dates Observation dates
+     */
     public Stock(String name, Schedule dates)
     {
         super(dates);

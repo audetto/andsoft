@@ -3,8 +3,7 @@ package asi.elves.script;
 import java.util.*;
 
 /**
- *
- * @author andrea
+ * Helper class to handle most common cases.
  */
 public abstract class TimeSeriesBase implements TimeSeries
 {
@@ -16,7 +15,12 @@ public abstract class TimeSeriesBase implements TimeSeries
         m_schedule = schedule.dates();
         m_children = null;
     }
-            
+
+    /**
+     *
+     * @param children
+     * @param merger Ruled used to merge the children's dates.
+     */
     public TimeSeriesBase(List<TimeSeries> children, MergerType merger)
     {
         m_children = children;

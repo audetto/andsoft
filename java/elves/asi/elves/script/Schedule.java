@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  *
- * @author andrea
+ * This class represents a List of Dates
  */
 public interface Schedule
 {

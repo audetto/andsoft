@@ -21,8 +21,8 @@ class AsianBasket extends ExternalOption
         return 0;
     }
 
-    /*
-    Pays the average of all underlying (so far) at every fixing date.
+    /**
+     * Pays the average of all underlying (so far) at every fixing date.
      */
     @Override
     public void value(Matrix path, Array payments, Array exercises, ArrayVector states)
@@ -43,14 +43,6 @@ class AsianBasket extends ExternalOption
     }
 }
 
-/**
- * You need to run this with a correctly set library path and something like:
- *
- * -Djava.library.path=/usr/local/lib
- *
- * @author Richard Gomes
- * @author Tito Ingargiola
- */
 public class JavaOption
 {
 

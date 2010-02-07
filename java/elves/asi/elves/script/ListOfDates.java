@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  *
- * @author andrea
+ * Helper to create a schedule from a list of dates
  */
 public class ListOfDates implements Schedule
 {

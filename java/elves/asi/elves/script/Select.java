@@ -5,7 +5,7 @@ import asi.elves.*;
 
 /**
  *
- * @author andrea
+ * Select a subset of a TimeSeries
  */
 public class Select implements TimeSeries
 {
@@ -13,7 +13,15 @@ public class Select implements TimeSeries
     private int m_First;
     private int m_Last;
     
-    // first inclusive, last exclusive
+    /**
+     * Select a subset of a TimeSeries
+     * <p>
+     * Use negative indices to index frm the end of the list
+     *
+     * @param value Original time series
+     * @param first initial point (inclusive)
+     * @param last final point (exclusive)
+     */
     public Select(TimeSeries value, int first, int last)
     {
         m_Value = value;

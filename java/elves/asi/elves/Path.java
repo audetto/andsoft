@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  *
- * @author andrea
+ * The simulated path
  */
 public class Path
 {
@@ -15,6 +15,12 @@ public class Path
         m_data = data;
     }
 
+    /**
+     * Value of a stock on a given date.
+     * <p>
+     * This is the main access to the stochastic path.
+     *
+     */
     public double getValue(Date date, String name)
     {
         Map<String, Double> stocks = m_data.get(date);
