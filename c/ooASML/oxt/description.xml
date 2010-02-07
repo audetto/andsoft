@@ -6,5 +6,11 @@
   <identifier value="inc.andsoft.ASIMaths" />
   <version value="1.0" />
   <platform value="linux_x86" />
+  <display-name>
+    <name lang="en">AndSoft Inc. Maths Addin</name>
+  </display-name>
+  <publisher>
+    <name xlink:href="http://www.odetti.it/andrea/products.htm" lang="en">AndSoft</name>
+  </publisher>
 
 </description>
