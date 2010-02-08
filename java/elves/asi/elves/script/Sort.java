@@ -49,7 +49,7 @@ public class Sort extends TimeSeriesBase
      * <p>
      * Please access results via .innerValues().
      */
-    public void values(Path path, Memoizer storage)
+    public void values(Path path, Memoizer<Double> storage)
     {
         List<Date> theDates = dates();
         int numberOfDates = theDates.size();

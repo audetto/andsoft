@@ -22,7 +22,7 @@ public class Stock extends TimeSeriesBase
         m_name = name;
     }
 
-    public void values(Path path, Memoizer storage)
+    public void values(Path path, Memoizer<Double> storage)
     {
         List<Double> stock = new ArrayList<Double>();
         for (Date date : dates())

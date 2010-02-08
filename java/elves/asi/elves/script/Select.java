@@ -35,7 +35,7 @@ public class Select implements TimeSeries
         return m_Value.dates().subList(m_First, m_Last);
     }
 
-    public void values(Path path, Memoizer storage)
+    public void values(Path path, Memoizer<Double> storage)
     {
         List<Double> values = storage.get(m_Value);
         storage.put(this, values.subList(m_First, m_Last));

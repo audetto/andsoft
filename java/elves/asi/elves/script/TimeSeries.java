@@ -30,7 +30,7 @@ public interface TimeSeries extends Schedule
      * @param storage Where to store results and get values of arguments
      *
      */
-    public void values(Path path, Memoizer storage);
+    public void values(Path path, Memoizer<Double> storage);
 
     /**
      * @return The arguments this node needs to return a value

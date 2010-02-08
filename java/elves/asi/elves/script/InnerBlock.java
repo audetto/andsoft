@@ -23,7 +23,7 @@ public class InnerBlock implements TimeSeries
         return m_schedule.dates();
     }
 
-    public void values(Path path, Memoizer storage)
+    public void values(Path path, Memoizer<Double> storage)
     {
         // the parent must have added it already.
         assert storage.get(this) != null : this;

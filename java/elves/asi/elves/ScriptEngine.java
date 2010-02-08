@@ -70,7 +70,7 @@ public class ScriptEngine
          * It would be nice to forbit a node from calling values() directly.
          */
 
-        Memoizer storage = new Memoizer();
+        Memoizer<Double> storage = new Memoizer<Double>();
         for (TimeSeries node : m_allNodes)
         {
             node.values(path, storage);
