@@ -17,7 +17,7 @@ public class Sort extends TimeSeriesBase
         for (TimeSeries child : children())
         {
             // all inner block are defined on the same dates as this
-            m_inners.add(new InnerBlock(this, this));
+            m_inners.add(new InnerBlock(this));
         }
     }
 
@@ -37,11 +37,13 @@ public class Sort extends TimeSeriesBase
      * @return An empty list.
      */
     @Override
-    public List<Date> dates()
+    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
     {
         // empty since this block has no values
         // use the innerValues()
-        return new ArrayList<Date>();
+        List<Date> theDates = Collections.emptyList();
+
+        return storageDates.put(this, theDates);
     }
 
     /**
@@ -49,9 +51,9 @@ public class Sort extends TimeSeriesBase
      * <p>
      * Please access results via .innerValues().
      */
-    public void values(Path path, Memoizer<Double> storage)
+    public void values(Path path, Memoizer<TimeSeries, Double> storageValues, Memoizer<Schedule, Date> storageDates)
     {
-        List<Date> theDates = dates();
+        List<Date> theDates = storageDates.get(this);
         int numberOfDates = theDates.size();
 
         List<TimeSeries> theChildren = children();
@@ -61,7 +63,7 @@ public class Sort extends TimeSeriesBase
 
         for (TimeSeries child : theChildren)
         {
-            List<Double> values = storage.get(child);
+            List<Double> values = storageValues.get(child);
 
             // shallow copy, since the storage returns const lists.
             allValues.add(new ArrayList<Double>(values));
@@ -101,8 +103,12 @@ public class Sort extends TimeSeriesBase
 
         for (int j = 0; j < numberOfValues; ++j)
         {
-            storage.put(m_inners.get(j), allValues.get(j));
+            storageValues.put(m_inners.get(j), allValues.get(j));
         }
+
+        List<Double> theValues = Collections.emptyList();
+        storageValues.put(this, theValues);
+
     }
 
 }

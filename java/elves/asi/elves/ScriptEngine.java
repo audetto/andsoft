@@ -1,6 +1,6 @@
 package asi.elves;
 
-import asi.elves.script.TimeSeries;
+import asi.elves.script.*;
 import java.util.*;
 
 /**
@@ -11,13 +11,22 @@ public class ScriptEngine
 {
     private TimeSeries m_root;
     private List<TimeSeries> m_allNodes;
-    private List<Date> m_allDates;
+
+    private List<Date> m_rootDates;
+    private Memoizer<Schedule, Date> m_allDates = new Memoizer<Schedule, Date>();
+    private List<Date> m_mergedDates;
 
     public ScriptEngine(TimeSeries root)
     {
         m_root = root;
         m_allNodes = getAllNodes();
-        m_allDates = this.getAllDates(m_allNodes);
+
+        m_rootDates = root.dates(m_allDates);
+
+        if (m_rootDates == null)
+            throw new RuntimeException("Missing dates on root node");
+
+        m_mergedDates = getAllDates();
     }
 
     private List<TimeSeries> getAllNodes()
@@ -27,12 +36,17 @@ public class ScriptEngine
         return allNodes;
     }
 
-    private List<Date> getAllDates(List<TimeSeries> nodes)
+    private List<Date> getAllDates()
     {
         TreeSet<Date> dates = new TreeSet<Date>();
-        for (TimeSeries node : nodes)
+        for (TimeSeries node : m_allNodes)
         {
-            dates.addAll(node.dates());
+            List<Date> nodeDates = m_allDates.get(node);
+
+            if (nodeDates == null)
+                throw new RuntimeException("Missing dates on some node");
+
+            dates.addAll(nodeDates);
         }
 
         List<Date> orderedDates = new ArrayList<Date>(dates);
@@ -70,10 +84,10 @@ public class ScriptEngine
          * It would be nice to forbit a node from calling values() directly.
          */
 
-        Memoizer<Double> storage = new Memoizer<Double>();
+        Memoizer<TimeSeries, Double> storage = new Memoizer<TimeSeries, Double>();
         for (TimeSeries node : m_allNodes)
         {
-            node.values(path, storage);
+            node.values(path, storage, m_allDates);
         }
 
         return storage.get(m_root);

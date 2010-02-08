@@ -13,17 +13,28 @@ public enum MergerType
     EXACT
     {
         // check all schedules are equal and return the first.
+        // nulls are ignored
 
-        public List<Date> mergeDates(List<? extends Schedule> schedules)
+        public List<Date> mergeDates(List<? extends List<Date> > schedules)
         {
             if (schedules.isEmpty())
-                return new ArrayList<Date>();
+                return Collections.emptyList();
 
-            List<Date> dates = schedules.get(0).dates();
-            for (int i = 1; i < schedules.size(); ++i)
+            List<Date> dates = null;
+            for (List<Date> schedule : schedules)
             {
-                if (!dates.equals(schedules.get(i).dates()))
-                    throw new RuntimeException("Dates do not allow for EXACT merge.");
+                if (schedule != null)
+                {
+                    if (dates == null)
+                    {
+                        dates = schedule;
+                    }
+                    else
+                    {
+                        if (!dates.equals(schedule))
+                            throw new RuntimeException("Dates do not allow for EXACT merge.");
+                    }
+                }
             }
 
             return dates;
@@ -35,5 +46,5 @@ public enum MergerType
      * Merges many schedules into one
      *
      */
-    public abstract List<Date> mergeDates(List<? extends Schedule> schedules);
+    public abstract List<Date> mergeDates(List<? extends List<Date>> schedules);
 }

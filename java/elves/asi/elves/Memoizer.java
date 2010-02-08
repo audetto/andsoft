@@ -8,20 +8,21 @@ import java.util.*;
  * The actual value is List<V>
  *
  */
-public class Memoizer<V>
+public class Memoizer<K extends Schedule, V>
 {
-    private Map<TimeSeries, List<V> > m_Storage = new HashMap<TimeSeries, List<V> >();
+    private Map<K, List<V> > m_Storage = new HashMap<K, List<V> >();
 
     /**
      * Stores values of block to be used by other blocks
      * 
      */
 
-    public void put(TimeSeries block, List<V> values)
+    public List<V> put(K block, List<V> values)
     {
         List<V> constList = Collections.unmodifiableList(values);
         Object old = m_Storage.put(block, constList);
         assert old == null : block;
+        return values;
     }
 
     /**
@@ -29,7 +30,7 @@ public class Memoizer<V>
      * @return An unmodifiableList
      */
 
-    public List<V> get(TimeSeries block)
+    public List<V> get(K block)
     {
         return m_Storage.get(block);
     }

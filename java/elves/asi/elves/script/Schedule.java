@@ -1,5 +1,6 @@
 package asi.elves.script;
 
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -8,5 +9,5 @@ import java.util.*;
  */
 public interface Schedule
 {
-    public List<Date> dates();
+    public List<Date> dates(Memoizer<Schedule, Date> storageDates);
 }

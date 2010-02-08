@@ -1,5 +1,6 @@
 package asi.elves.script;
 
+import asi.elves.*;
 import java.util.*;
 
 /**
@@ -14,9 +15,9 @@ public class ListOfDates implements Schedule
         m_dates = dates;
     }
 
-    public List<Date> dates()
+    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
     {
-        return m_dates;
+        return storageDates.put(this, m_dates);
     }
 
 }

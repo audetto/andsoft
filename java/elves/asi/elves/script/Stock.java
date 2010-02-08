@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Block representing the path of a stock
  */
-public class Stock extends TimeSeriesBase
+public class Stock extends Leaf
 {
     private final String m_name;
 
@@ -22,10 +22,13 @@ public class Stock extends TimeSeriesBase
         m_name = name;
     }
 
-    public void values(Path path, Memoizer<Double> storage)
+    public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         List<Double> stock = new ArrayList<Double>();
-        for (Date date : dates())
+
+        List<Date> dates = storageDates.get(this);
+
+        for (Date date : dates)
         {
             stock.add(path.getValue(date, m_name));
         }

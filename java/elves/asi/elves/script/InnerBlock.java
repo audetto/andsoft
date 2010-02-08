@@ -7,32 +7,16 @@ import java.util.*;
  *
  * Block used by a parent block to return many results
  */
-public class InnerBlock implements TimeSeries
+public class InnerBlock extends TimeSeriesBase
 {
-    private TimeSeries m_parent;
-    private Schedule m_schedule;
-
-    public InnerBlock(TimeSeries parent, Schedule schedule)
+    public InnerBlock(TimeSeries parent)
     {
-        m_parent = parent;
-        m_schedule = schedule;
+        super(Arrays.asList(parent), MergerType.EXACT);
     }
 
-    public List<Date> dates()
-    {
-        return m_schedule.dates();
-    }
-
-    public void values(Path path, Memoizer<Double> storage)
+    public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         // the parent must have added it already.
         assert storage.get(this) != null : this;
     }
-
-    public List<TimeSeries> children()
-    {
-        return Arrays.asList(m_parent);
-    }
-
-
 }

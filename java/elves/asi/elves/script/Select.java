@@ -15,8 +15,6 @@ public class Select implements TimeSeries
     
     /**
      * Select a subset of a TimeSeries
-     * <p>
-     * Use negative indices to index frm the end of the list
      *
      * @param value Original time series
      * @param first initial point (inclusive)
@@ -25,17 +23,26 @@ public class Select implements TimeSeries
     public Select(TimeSeries value, int first, int last)
     {
         m_Value = value;
-        int size = m_Value.dates().size();
-        m_First = first < 0 ? first + size : first;
-        m_Last  = last  < 0 ? last  + size : last;
+        m_First = first;
+        m_Last  = last;
     }
 
-    public List<Date> dates()
+    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
     {
-        return m_Value.dates().subList(m_First, m_Last);
+        List<Date> valueDates = m_Value.dates(storageDates);
+        
+        // null is NOT valid
+        
+        List<Date> theDates = valueDates.subList(m_First, m_Last);
+        return storageDates.put(this, theDates);
     }
 
-    public void values(Path path, Memoizer<Double> storage)
+    public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
+    {
+        throw new RuntimeException("WTF");
+    }
+
+    public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         List<Double> values = storage.get(m_Value);
         storage.put(this, values.subList(m_First, m_Last));
