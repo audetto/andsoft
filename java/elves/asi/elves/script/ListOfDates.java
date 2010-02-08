@@ -17,6 +17,10 @@ public class ListOfDates implements Schedule
 
     public List<Date> dates(Memoizer<Schedule, Date> storageDates)
     {
+        List<Date> theseDates = storageDates.get(this);
+        if (theseDates != null)
+            return theseDates;
+
         return storageDates.put(this, m_dates);
     }
 

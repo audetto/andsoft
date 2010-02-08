@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Helper class to handle most common cases.
  */
-public abstract class TimeSeriesBase implements TimeSeries
+public abstract class TimeSeriesBase extends AbstractTimeSeries
 {
     private List<TimeSeries> m_children;
     private MergerType m_merger;
@@ -22,7 +22,13 @@ public abstract class TimeSeriesBase implements TimeSeries
         m_merger = merger;
     }
 
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
+    /**
+     * This is the main implementation of the date propagation.
+     * <p>
+     * If the children with non null dates agree on a common schedule,
+     * this schedule is forced on all null children.
+     */
+    protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
         /*
          * Key algorithm for date propagation.
@@ -49,8 +55,6 @@ public abstract class TimeSeriesBase implements TimeSeries
 
         if (mergedDates != null)
         {
-            storageDates.put(this, mergedDates);
-
             for (TimeSeries child : children())
             {
                 child.forceDates(mergedDates, storageDates);
@@ -60,6 +64,9 @@ public abstract class TimeSeriesBase implements TimeSeries
         return mergedDates;
     }
 
+    /**
+     * Force the dates on this object and all its children.
+     */
     public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
     {
         storageDates.put(this, theDates);

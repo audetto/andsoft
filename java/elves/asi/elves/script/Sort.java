@@ -37,13 +37,13 @@ public class Sort extends TimeSeriesBase
      * @return An empty list.
      */
     @Override
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
+    protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
         // empty since this block has no values
         // use the innerValues()
         List<Date> theDates = Collections.emptyList();
 
-        return storageDates.put(this, theDates);
+        return theDates;
     }
 
     /**

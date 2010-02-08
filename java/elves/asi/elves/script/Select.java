@@ -7,7 +7,7 @@ import asi.elves.*;
  *
  * Select a subset of a TimeSeries
  */
-public class Select implements TimeSeries
+public class Select extends AbstractTimeSeries
 {
     private TimeSeries m_Value;
     private int m_First;
@@ -27,14 +27,14 @@ public class Select implements TimeSeries
         m_Last  = last;
     }
 
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
+    protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
         List<Date> valueDates = m_Value.dates(storageDates);
         
         // null is NOT valid
         
         List<Date> theDates = valueDates.subList(m_First, m_Last);
-        return storageDates.put(this, theDates);
+        return theDates;
     }
 
     public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)

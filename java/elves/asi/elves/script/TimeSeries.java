@@ -47,7 +47,8 @@ public interface TimeSeries extends Schedule
      * returned by dates().
      *
      * @param path The simulated path
-     * @param storage Where to store results and get values of arguments
+     * @param storageValues Where to store results (Double) and get values of arguments
+     * @param storageDates Where to get schedule of arguments
      *
      */
     public void values(Path path, Memoizer<TimeSeries, Double> storageValues, Memoizer<Schedule, Date> storageDates);
