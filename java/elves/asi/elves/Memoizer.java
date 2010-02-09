@@ -13,7 +13,10 @@ public class Memoizer<K extends Schedule, V>
     private Map<K, List<V> > m_Storage = new HashMap<K, List<V> >();
 
     /**
-     * Stores values of block to be used by other blocks
+     * Stores values of block to be used by other blocks.
+     * <p>
+     * If there is already a value, an exception will be thrown if the new
+     * value is not equal.
      * 
      */
 
@@ -21,7 +24,10 @@ public class Memoizer<K extends Schedule, V>
     {
         List<V> constList = Collections.unmodifiableList(values);
         Object old = m_Storage.put(block, constList);
-        assert old == null : block;
+
+        if (old != null && !old.equals(values))
+            throw new RuntimeException("Inconsistent values detected for " + block);
+
         return values;
     }
 
