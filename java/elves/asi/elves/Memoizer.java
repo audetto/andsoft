@@ -22,8 +22,11 @@ public class Memoizer<K extends Schedule, V>
 
     public List<V> put(K block, List<V> values)
     {
-        List<V> constList = Collections.unmodifiableList(values);
-        Object old = m_storage.put(block, constList);
+        List<V> val = null;
+        if (values != null)
+            val = Collections.unmodifiableList(values);
+
+        Object old = m_storage.put(block, val);
 
         if (old != null && !old.equals(values))
             throw new RuntimeException("Inconsistent values detected for " + block);

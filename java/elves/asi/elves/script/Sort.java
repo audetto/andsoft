@@ -16,7 +16,7 @@ public class Sort extends Function
         super(values, MergerType.EXACT);
         for (TimeSeries child : children())
         {
-            // all inner block are defined on the same dates as this
+            // all inner blocks are defined on the same dates as this
             m_inners.add(new InnerBlock(this));
         }
     }
@@ -39,6 +39,15 @@ public class Sort extends Function
     @Override
     protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
+        // we must first checkAndStore the children()
+        List<Date> argDates = super.datesImpl(storageDates);
+
+        for (TimeSeries inner : m_inners)
+        {
+            storageDates.put(inner, argDates);
+        }
+
+        // finally
         // empty since this block has no values
         // use the innerValues()
         List<Date> theDates = Collections.emptyList();

@@ -66,6 +66,11 @@ public class ScriptEngine
         nodes.add(one);
     }
 
+    public List<Date> allDates()
+    {
+        return m_mergedDates;
+    }
+
     private List<Double> valuePath(Path path)
     {
         /* There is actually no need to value only the unique nodes
