@@ -7,7 +7,7 @@ import java.util.*;
  *
  * Block used by a parent block to return many results
  */
-public class InnerBlock extends TimeSeriesBase
+public class InnerBlock extends Function
 {
     public InnerBlock(TimeSeries parent)
     {

@@ -7,7 +7,7 @@ import java.util.*;
  *
  * Sort (pointwise) a vector of time series
  */
-public class Sort extends TimeSeriesBase
+public class Sort extends Function
 {
     private List<TimeSeries> m_inners = new ArrayList<TimeSeries>();
 

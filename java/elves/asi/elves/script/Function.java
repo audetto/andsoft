@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Helper class to handle most common cases.
  */
-public abstract class TimeSeriesBase extends AbstractTimeSeries
+public abstract class Function extends AbstractTimeSeries
 {
     private List<TimeSeries> m_children;
     private MergerType m_merger;
@@ -16,7 +16,7 @@ public abstract class TimeSeriesBase extends AbstractTimeSeries
      * @param children
      * @param merger Ruled used to merge the children's dates.
      */
-    public TimeSeriesBase(List<TimeSeries> children, MergerType merger)
+    public Function(List<TimeSeries> children, MergerType merger)
     {
         m_children = children;
         m_merger = merger;
