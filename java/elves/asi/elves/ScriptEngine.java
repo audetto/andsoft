@@ -71,6 +71,15 @@ public class ScriptEngine
         return m_mergedDates;
     }
 
+    public void printNodeDates()
+    {
+        for (TimeSeries node : m_allNodes)
+        {
+            System.out.println(node.toString() + m_allDates.get(node).toString());
+        }
+    }
+
+
     private List<Double> valuePath(Path path)
     {
         /* There is actually no need to value only the unique nodes

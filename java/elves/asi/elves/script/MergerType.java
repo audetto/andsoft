@@ -18,7 +18,7 @@ public enum MergerType
         public List<Date> mergeDates(List<? extends List<Date> > schedules)
         {
             if (schedules.isEmpty())
-                return Collections.emptyList();
+                return null;
 
             List<Date> dates = null;
             for (List<Date> schedule : schedules)

@@ -32,30 +32,6 @@ public class Sort extends Function
     }
 
     /**
-     * This block has no value and no dates.
-     * 
-     * @return An empty list.
-     */
-    @Override
-    protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
-    {
-        // we must first checkAndStore the children()
-        List<Date> argDates = super.datesImpl(storageDates);
-
-        for (TimeSeries inner : m_inners)
-        {
-            storageDates.put(inner, argDates);
-        }
-
-        // finally
-        // empty since this block has no values
-        // use the innerValues()
-        List<Date> theDates = Collections.emptyList();
-
-        return theDates;
-    }
-
-    /**
      * This block does not provide values.
      * <p>
      * Please access results via .innerValues().

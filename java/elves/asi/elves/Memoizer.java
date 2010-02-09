@@ -29,7 +29,8 @@ public class Memoizer<K extends Schedule, V>
         Object old = m_storage.put(block, val);
 
         if (old != null && !old.equals(values))
-            throw new RuntimeException("Inconsistent values detected for " + block);
+            throw new RuntimeException("Inconsistent values detected for " + block +
+                    ", old: " + old + ", new: " + values);
 
         return values;
     }
