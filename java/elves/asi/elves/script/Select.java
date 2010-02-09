@@ -29,9 +29,12 @@ public class Select extends AbstractTimeSeries
 
     protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
+        /* this is a leaf since we cannot inverse the transformation
+         * dates[first, last)
+         */
         List<Date> valueDates = m_Value.dates(storageDates);
         
-        // null is NOT valid
+        // null is NOT valid and a NPE will be thrown
         
         List<Date> theDates = valueDates.subList(m_First, m_Last);
         return theDates;
@@ -39,6 +42,8 @@ public class Select extends AbstractTimeSeries
 
     public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
     {
+        // this is not supposed to be called
+        // since datesImpl() never returns null
         throw new RuntimeException("WTF");
     }
 

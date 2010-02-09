@@ -14,25 +14,24 @@ public abstract class AbstractTimeSeries implements TimeSeries
     /**
      * Raw unprotected implemetation of dates().
      * <p>
-     * It is not required to use the memoizer directly.
-     * NEVER call datesImple(), ALWAYS call dates()!
+     * Do not use the memoizer here,
+     * just call dates() on the children.
+     * <p>
+     * NEVER call datesImpl(), ALWAYS call dates()!
      *
      */
     protected abstract List<Date> datesImpl(Memoizer<Schedule, Date> storageDates);
 
     /**
      * Safe implementation of date().
-     * <p>
-     * It first checks to see if this object has already calculated it,
-     * then caches the result before returning.
      */
     final public List<Date> dates(Memoizer<Schedule, Date> storageDates)
     {
-        List<Date> theseDates = storageDates.get(this);
-        if (theseDates != null)
-            return theseDates;
+        /* we must not stop to check if the node has already a set of dates
+         * they could have been forced.
+         * we still have to check different dates will not be force elsewhere */
 
-        theseDates = datesImpl(storageDates);
+        List<Date> theseDates = datesImpl(storageDates);
         return storageDates.put(this, theseDates);
     }
 
