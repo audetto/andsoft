@@ -9,5 +9,5 @@ import java.util.*;
  */
 public interface Schedule
 {
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates);
+    public List<Date> checkAndStoreDates(Memoizer<Schedule, Date> storageDates);
 }

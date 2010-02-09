@@ -14,7 +14,7 @@ public class Stock extends Leaf
      * Create a time series for a stock
      *
      * @param name Stock name
-     * @param dates Observation dates
+     * @param checkAndStoreDates Observation dates
      */
     public Stock(String name, Schedule dates)
     {

@@ -15,9 +15,9 @@ public abstract class Leaf implements TimeSeries
         m_schedule = schedule;
     }
 
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
+    public List<Date> checkAndStoreDates(Memoizer<Schedule, Date> storageDates)
     {
-        return storageDates.put(this, m_schedule.dates(storageDates));
+        return storageDates.put(this, m_schedule.checkAndStoreDates(storageDates));
     }
 
     public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)

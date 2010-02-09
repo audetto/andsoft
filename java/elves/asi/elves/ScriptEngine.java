@@ -21,7 +21,7 @@ public class ScriptEngine
         m_root = root;
         m_allNodes = getAllNodes();
 
-        m_rootDates = root.dates(m_allDates);
+        m_rootDates = root.checkAndStoreDates(m_allDates);
 
         if (m_rootDates == null)
             throw new RuntimeException("Missing dates on root node");

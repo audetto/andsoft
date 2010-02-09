@@ -15,7 +15,7 @@ public class ListOfDates implements Schedule
         m_dates = dates;
     }
 
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates)
+    public List<Date> checkAndStoreDates(Memoizer<Schedule, Date> storageDates)
     {
         return storageDates.put(this, m_dates);
     }

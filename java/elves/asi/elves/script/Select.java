@@ -32,7 +32,7 @@ public class Select extends AbstractTimeSeries
         /* this is a leaf since we cannot inverse the transformation
          * dates[first, last)
          */
-        List<Date> valueDates = m_Value.dates(storageDates);
+        List<Date> valueDates = m_Value.checkAndStoreDates(storageDates);
         
         // null is NOT valid and a NPE will be thrown
         

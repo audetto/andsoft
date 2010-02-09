@@ -44,7 +44,7 @@ public abstract class TimeSeriesBase extends AbstractTimeSeries
         
         for (TimeSeries child : children())
         {
-            List<Date> theseDates = child.dates(storageDates);
+            List<Date> theseDates = child.checkAndStoreDates(storageDates);
             if (theseDates == null)
                 nullChildren.add(child);
             else

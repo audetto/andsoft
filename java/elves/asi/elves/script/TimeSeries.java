@@ -15,7 +15,7 @@ public interface TimeSeries extends Schedule
     /**
      * @return The dates on which this block has values
      */
-    public List<Date> dates(Memoizer<Schedule, Date> storageDates);
+    public List<Date> checkAndStoreDates(Memoizer<Schedule, Date> storageDates);
 
     /**
      * Store the given date for this node and all its children
@@ -43,8 +43,8 @@ public interface TimeSeries extends Schedule
      * This function must NOT call .values() on its arguments
      * but retrieve is from the Memoizer.
      *
-     * The Memoizer will store a List(Double) corresponding to the dates
-     * returned by dates().
+     * The Memoizer will store a List(Double) corresponding to the values
+     * returned by values().
      *
      * @param path The simulated path
      * @param storageValues Where to store results (Double) and get values of arguments
