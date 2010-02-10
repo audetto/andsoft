@@ -26,7 +26,7 @@ public class ScriptEngine
         if (m_rootDates == null)
             throw new RuntimeException("Missing dates on root node");
 
-        m_mergedDates = getAllDates();
+        m_mergedDates = mergeAllDates();
     }
 
     private List<TimeSeries> getAllNodes()
@@ -36,7 +36,7 @@ public class ScriptEngine
         return allNodes;
     }
 
-    private List<Date> getAllDates()
+    private List<Date> mergeAllDates()
     {
         TreeSet<Date> dates = new TreeSet<Date>();
         for (TimeSeries node : m_allNodes)
