@@ -55,7 +55,7 @@ public abstract class Function extends AbstractTimeSeries
 
         if (mergedDates != null)
         {
-            for (TimeSeries child : children())
+            for (TimeSeries child : nullChildren)
             {
                 child.forceDates(mergedDates, storageDates);
             }

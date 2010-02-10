@@ -22,9 +22,10 @@ public class Memoizer<K extends Schedule, V>
 
     public List<V> put(K block, List<V> values)
     {
-        List<V> val = null;
-        if (values != null)
-            val = Collections.unmodifiableList(values);
+        if (values == null)
+            return null;
+
+        List<V> val = Collections.unmodifiableList(values);
 
         Object old = m_storage.put(block, val);
 
