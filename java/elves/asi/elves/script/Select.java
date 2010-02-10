@@ -7,7 +7,7 @@ import asi.elves.*;
  *
  * Select a subset of a TimeSeries
  */
-public class Select extends AbstractTimeSeries
+public class Select extends ScheduleSource
 {
     private TimeSeries m_value;
     private int m_first;
@@ -22,43 +22,30 @@ public class Select extends AbstractTimeSeries
      */
     public Select(TimeSeries value, int first, int last)
     {
+        super(Arrays.asList(value), MergerType.EXACT);
         m_value = value;
         m_first = first;
         m_last  = last;
     }
 
+    @Override
     protected List<Date> datesImpl(Memoizer<Schedule, Date> storageDates)
     {
         /* this is a leaf since we cannot inverse the transformation
          * dates[first, last)
          */
-        List<Date> valueDates = m_value.checkAndStoreDates(storageDates);
+        List<Date> valueDates = super.datesImpl(storageDates);
 
-        if (valueDates == null)
-            throw new RuntimeException("Missing dates for " + m_value);
-        // null is NOT valid and a NPE will be thrown
-        
+        // this is guaranteed to be non null
+
         List<Date> theDates = valueDates.subList(m_first, m_last);
         return theDates;
-    }
-
-    @Override
-    public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
-    {
-        // this is not supposed to be called
-        // since datesImpl() never returns null
-        throw new RuntimeException("WTF");
     }
 
     public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         List<Double> values = storage.get(m_value);
         storage.put(this, values.subList(m_first, m_last));
-    }
-
-    public List<TimeSeries> valueChildren()
-    {
-        return Arrays.asList(m_value);
     }
 
 }
