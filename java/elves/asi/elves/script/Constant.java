@@ -20,6 +20,14 @@ public class Constant extends Leaf
         m_value = value;
     }
 
+    /**
+     * Create a constant time series without schedule
+     */
+    public Constant(double value)
+    {
+        this(value, null);
+    }
+
     public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         List<Double> constant = new ArrayList<Double>();

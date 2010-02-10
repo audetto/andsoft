@@ -14,7 +14,7 @@ public class Elf
         Schedule dates = new ListOfDates(Arrays.asList(new Date(10, 10, 10), new Date(11, 11, 11)));
 
         TimeSeries number1 = new Constant(4, dates);
-        TimeSeries number2 = new Constant(5, null);
+        TimeSeries number2 = new Constant(5);
         Sort sorted  = new Sort(Arrays.asList(number1, number2));
         TimeSeries first = sorted.innerValues().get(0);
         TimeSeries firstDate = new Select(first, 0, 1);

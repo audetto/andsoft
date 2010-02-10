@@ -22,6 +22,16 @@ public class Stock extends Leaf
         m_name = name;
     }
 
+    /**
+     * Create a time series for a stock without a stock
+     *
+     * @param name Stock name
+     */
+    public Stock(String name)
+    {
+        this(name, null);
+    }
+
     public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
     {
         List<Double> stock = new ArrayList<Double>();
