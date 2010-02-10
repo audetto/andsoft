@@ -58,7 +58,7 @@ public class ScriptEngine
         if (nodes.contains(one))
             return;
 
-        for (TimeSeries node : one.children())
+        for (TimeSeries node : one.valueChildren())
         {
             addChildren(nodes, node);
         }

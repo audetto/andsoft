@@ -13,8 +13,8 @@ public abstract class Function extends AbstractTimeSeries
 
     /**
      *
-     * @param children
-     * @param merger Ruled used to merge the children's dates.
+     * @param valueChildren
+     * @param merger Rule used to merge the children's dates.
      */
     public Function(List<TimeSeries> children, MergerType merger)
     {
@@ -39,23 +39,26 @@ public abstract class Function extends AbstractTimeSeries
          * and wait for its parent to call forceDates() on this.
          */
 
-        List<TimeSeries> nullChildren = new ArrayList<TimeSeries>();
+        List<Schedule> nullChildren = new ArrayList<Schedule>();
         List<List<Date> > stdChildren = new ArrayList<List<Date> >();
         
-        for (TimeSeries child : children())
+        for (Schedule child : dateChildren())
         {
-            List<Date> theseDates = child.checkAndStoreDates(storageDates);
-            if (theseDates == null)
-                nullChildren.add(child);
-            else
-                stdChildren.add(theseDates);
+            if (child != null)
+            {
+                List<Date> theseDates = child.checkAndStoreDates(storageDates);
+                if (theseDates == null)
+                    nullChildren.add(child);
+                else
+                    stdChildren.add(theseDates);
+            }
         }
         
         List<Date> mergedDates = m_merger.mergeDates(stdChildren);
 
         if (mergedDates != null)
         {
-            for (TimeSeries child : nullChildren)
+            for (Schedule child : nullChildren)
             {
                 child.forceDates(mergedDates, storageDates);
             }
@@ -64,19 +67,7 @@ public abstract class Function extends AbstractTimeSeries
         return mergedDates;
     }
 
-    /**
-     * Force the dates on this object and all its children.
-     */
-    public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
-    {
-        storageDates.put(this, theDates);
-        for (TimeSeries child : children())
-        {
-            child.forceDates(theDates, storageDates);
-        }
-    }
-
-    public List<TimeSeries> children()
+    public List<TimeSeries> valueChildren()
     {
         return m_children;
     }

@@ -35,4 +35,27 @@ public abstract class AbstractTimeSeries implements TimeSeries
         return storageDates.put(this, theseDates);
     }
 
+    /**
+     * Force the dates on this object and all its children.
+     */
+    public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
+    {
+        storageDates.put(this, theDates);
+        for (Schedule child : dateChildren())
+        {
+            if (child != null)
+                child.forceDates(theDates, storageDates);
+        }
+    }
+
+    /**
+     * Return the nodes used to compute this node's dates
+     *
+     * @return the valueChildren()
+     */
+    public List<? extends Schedule> dateChildren()
+    {
+        return valueChildren();
+    }
+
 }

@@ -33,13 +33,16 @@ public class Select extends AbstractTimeSeries
          * dates[first, last)
          */
         List<Date> valueDates = m_value.checkAndStoreDates(storageDates);
-        
+
+        if (valueDates == null)
+            throw new RuntimeException("Missing dates for " + m_value);
         // null is NOT valid and a NPE will be thrown
         
         List<Date> theDates = valueDates.subList(m_first, m_last);
         return theDates;
     }
 
+    @Override
     public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
     {
         // this is not supposed to be called
@@ -53,10 +56,9 @@ public class Select extends AbstractTimeSeries
         storage.put(this, values.subList(m_first, m_last));
     }
 
-    public List<TimeSeries> children()
+    public List<TimeSeries> valueChildren()
     {
         return Arrays.asList(m_value);
     }
-
 
 }

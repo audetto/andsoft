@@ -20,4 +20,13 @@ public class ListOfDates implements Schedule
         return storageDates.put(this, m_dates);
     }
 
+    public List<? extends Schedule> dateChildren()
+    {
+        return Collections.emptyList();
+    }
+
+    public void forceDates(List<Date> theDates, Memoizer<Schedule, Date> storageDates)
+    {
+        throw new RuntimeException("WTF");
+    }
 }

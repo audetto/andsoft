@@ -14,7 +14,7 @@ public class Sort extends Function
     public Sort(List<TimeSeries> values)
     {
         super(values, MergerType.EXACT);
-        for (TimeSeries child : children())
+        for (TimeSeries child : valueChildren())
         {
             // all inner blocks are defined on the same dates as this
             m_inners.add(new InnerBlock(this));
@@ -41,7 +41,7 @@ public class Sort extends Function
         List<Date> theDates = storageDates.get(this);
         int numberOfDates = theDates.size();
 
-        List<TimeSeries> theChildren = children();
+        List<TimeSeries> theChildren = valueChildren();
         final int numberOfValues = theChildren.size();
 
         final List<List<Double> > allValues = new ArrayList<List<Double> >();
