@@ -4,8 +4,7 @@ import asi.elves.script.*;
 import java.util.*;
 
 /**
- *
- * @author andrea
+ *  Interpreter for ELVES
  */
 public class ScriptEngine
 {
@@ -66,16 +65,24 @@ public class ScriptEngine
         nodes.add(one);
     }
 
+    /**
+     * Return all merged dates.
+     *
+     * @return dates required in the simulation
+     */
     public List<Date> allDates()
     {
         return m_mergedDates;
     }
 
+    /**
+     * Print a list of all nodes and on which dates they provide a value
+     */
     public void printNodeDates()
     {
         for (TimeSeries node : m_allNodes)
         {
-            System.out.println(node.toString() + m_allDates.get(node).toString());
+            System.out.println(node.toString() + ": " + m_allDates.get(node).toString());
         }
     }
 
