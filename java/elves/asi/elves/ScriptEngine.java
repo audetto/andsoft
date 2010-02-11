@@ -2,6 +2,8 @@ package asi.elves;
 
 import asi.elves.script.*;
 import java.util.*;
+import org.quantlib.*;
+
 
 /**
  *  Interpreter for ELVES
@@ -11,9 +13,9 @@ public class ScriptEngine
     private TimeSeries m_root;
     private List<TimeSeries> m_allNodes;
 
-    private List<Date> m_rootDates;
-    private Memoizer<Schedule, Date> m_allDates = new Memoizer<Schedule, Date>();
-    private List<Date> m_mergedDates;
+    private List<java.util.Date> m_rootDates;
+    private Memoizer<asi.elves.script.Schedule, java.util.Date> m_allSchedules = new Memoizer<asi.elves.script.Schedule, java.util.Date>();
+    private List<java.util.Date> m_mergedDates;
 
     private int m_numberOfStocks;
 
@@ -22,7 +24,7 @@ public class ScriptEngine
         m_root = root;
         m_allNodes = getAllNodes();
 
-        m_rootDates = root.checkAndStoreDates(m_allDates);
+        m_rootDates = root.checkAndStoreDates(m_allSchedules);
 
         if (m_rootDates == null)
             throw new RuntimeException("Missing dates on root node");
@@ -36,9 +38,9 @@ public class ScriptEngine
         int maxId = -1;
         for (TimeSeries child : m_allNodes)
         {
-            if (child instanceof Stock)
+            if (child instanceof asi.elves.script.Stock)
             {
-                Stock stock = (Stock)child;
+                asi.elves.script.Stock stock = (asi.elves.script.Stock)child;
                 maxId = Math.max(maxId, stock.id());
             }
         }
@@ -54,12 +56,12 @@ public class ScriptEngine
         return allNodes;
     }
 
-    private List<Date> mergeAllDates()
+    private List<java.util.Date> mergeAllDates()
     {
-        TreeSet<Date> dates = new TreeSet<Date>();
+        TreeSet<java.util.Date> dates = new TreeSet<java.util.Date>();
         for (TimeSeries node : m_allNodes)
         {
-            List<Date> nodeDates = m_allDates.get(node);
+            List<java.util.Date> nodeDates = m_allSchedules.get(node);
 
             if (nodeDates == null)
                 throw new RuntimeException("Missing dates on some node");
@@ -67,7 +69,7 @@ public class ScriptEngine
             dates.addAll(nodeDates);
         }
 
-        List<Date> orderedDates = new ArrayList<Date>(dates);
+        List<java.util.Date> orderedDates = new ArrayList<java.util.Date>(dates);
         return orderedDates;
     }
 
@@ -89,7 +91,7 @@ public class ScriptEngine
      *
      * @return dates required in the simulation
      */
-    public List<Date> allDates()
+    public List<java.util.Date> allDates()
     {
         return m_mergedDates;
     }
@@ -101,7 +103,7 @@ public class ScriptEngine
     {
         for (TimeSeries node : m_allNodes)
         {
-            System.out.println(node.toString() + ": " + m_allDates.get(node).toString());
+            System.out.println(node.toString() + ": " + m_allSchedules.get(node).toString());
         }
     }
 
@@ -126,10 +128,74 @@ public class ScriptEngine
         Memoizer<TimeSeries, Double> storage = new Memoizer<TimeSeries, Double>();
         for (TimeSeries node : m_allNodes)
         {
-            node.values(path, storage, m_allDates);
+            node.values(path, storage, m_allSchedules);
         }
 
         return storage.get(m_root);
+    }
+
+    static org.quantlib.Date toQLDate(java.util.Date date)
+    {
+        int day = date.getDate();
+        int month = date.getMonth() + 1;
+        int year = date.getYear() + 1900;
+
+        Month m = Month.swigToEnum(month);
+
+        return new org.quantlib.Date(day, m, year);
+    }
+
+    class QLPayoff extends ExternalOption
+    {
+        @Override
+        public DateVector fixingDates()
+        {
+            DateVector dv = new DateVector();
+
+            for (java.util.Date date : m_mergedDates)
+            {
+                dv.add(toQLDate(date));
+            }
+            return dv;
+        }
+
+        @Override
+        public long basisSystemDimension()
+        {
+            return 0;
+        }
+
+        /**
+         * Pays the average of all underlying (so far) at every fixing date.
+         */
+        @Override
+        public void value(final Matrix path, Array payments, Array exercises, ArrayVector states)
+        {
+            Path p = new Path()
+            {
+                public double getValue(java.util.Date date, int id)
+                {
+                    int pos = m_mergedDates.indexOf(date);
+                    return path.get(id, pos);
+                }
+            };
+
+            List<Double> values = valuePath(p);
+
+            int numberOfValues = values.size();
+
+            for (int i = 0; i < numberOfValues; ++i)
+            {
+                java.util.Date date = m_mergedDates.get(i);
+                int pos = m_mergedDates.indexOf(date);
+                payments.set(pos, values.get(i));
+            }
+        }
+    }
+
+    public ExternalOption getQLOption()
+    {
+        return new QLPayoff();
     }
 
 }

@@ -1,6 +1,8 @@
 package asi;
 
-
+import asi.elves.*;
+import asi.elves.script.*;
+import java.util.*;
 import org.quantlib.*;
 
 class AsianBasket extends ExternalOption
@@ -10,8 +12,8 @@ class AsianBasket extends ExternalOption
     public DateVector fixingDates()
     {
         DateVector dv = new DateVector();
-        dv.add(new Date(5, Month.May, 2010));
-        dv.add(new Date(5, Month.May, 2011));
+        dv.add(new org.quantlib.Date(5, Month.May, 2010));
+        dv.add(new org.quantlib.Date(5, Month.May, 2011));
         return dv;
     }
 
@@ -71,12 +73,12 @@ public class JavaOption
         double dividendYield = 0.00;
         double volatility = 0.2;
 
-        Date todaysDate = new Date(15, Month.May, 1998);
-        Date settlementDate = new Date(17, Month.May, 1998);
+        org.quantlib.Date todaysDate = new org.quantlib.Date(15, Month.May, 1998);
+        org.quantlib.Date settlementDate = new org.quantlib.Date(17, Month.May, 1998);
         Settings.instance().setEvaluationDate(todaysDate);
 
         DayCounter dayCounter = new Actual365Fixed();
-        Calendar calendar = new TARGET();
+        org.quantlib.Calendar calendar = new TARGET();
 
         // write column headings
         String fmt = "\n%-35s %-14s %-14s %-14s\n";
@@ -108,16 +110,29 @@ public class JavaOption
 
         StochasticProcessArray asp = new StochasticProcessArray(vsp, corr);
 
-        AsianBasket asianBasket = new AsianBasket();
-        Instrument option = asianBasket.instrument();
+        asi.elves.script.Schedule dates = new ListOfDates(Arrays.asList(
+                new java.util.Date(101, 6, 1),
+                new java.util.Date(102, 6, 1)));
+
+        TimeSeries number1 = new Constant(100, dates);
+        TimeSeries number2 = new asi.elves.script.Stock(0);
+
+        Sort maximum = new Sort(Arrays.asList(number1, number2));
+
+        ScriptEngine engine = new ScriptEngine(maximum.sortedValues().get(1));
+
+        ExternalOption payoff = engine.getQLOption();
+
+//        AsianBasket asianBasket = new AsianBasket();
+        Instrument option = payoff.instrument();
 
         fmt = "%34s %13.9f %13.9f %13.9f\n";
 
         // Monte Carlo Method
         int timeSteps = 1;
         int mcSeed = 43;
-        int nSamples = 65000;
-        int maxSamples = 1048576; // 2^20
+        int nSamples = 10000;
+        int maxSamples = 10000; // 2^20
 
         String method = "MC (crude)";
         option.setPricingEngine(
@@ -146,10 +161,6 @@ public class JavaOption
                     Double.NaN,
                     Double.NaN
                 });
-
-        asianBasket = null;
-
-        System.gc();
 
         long msecs = (System.currentTimeMillis() - beginTime);
         System.out.println("Run completed in " + msecs + " ms.");
