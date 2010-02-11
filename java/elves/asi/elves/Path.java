@@ -8,9 +8,9 @@ import java.util.*;
  */
 public class Path
 {
-    private Map<Date, Map<String, Double> > m_data;
+    private Map<Date, Map<Integer, Double> > m_data;
 
-    public Path(Map<Date, Map<String, Double> > data)
+    public Path(Map<Date, Map<Integer, Double> > data)
     {
         m_data = data;
     }
@@ -21,10 +21,10 @@ public class Path
      * This is the main access to the stochastic path.
      *
      */
-    public double getValue(Date date, String name)
+    public double getValue(Date date, int id)
     {
-        Map<String, Double> stocks = m_data.get(date);
-        Double value = stocks.get(name);
+        Map<Integer, Double> stocks = m_data.get(date);
+        Double value = stocks.get(id);
         return value;
     }
 

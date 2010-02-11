@@ -15,6 +15,8 @@ public class ScriptEngine
     private Memoizer<Schedule, Date> m_allDates = new Memoizer<Schedule, Date>();
     private List<Date> m_mergedDates;
 
+    private int m_numberOfStocks;
+
     public ScriptEngine(TimeSeries root)
     {
         m_root = root;
@@ -26,6 +28,23 @@ public class ScriptEngine
             throw new RuntimeException("Missing dates on root node");
 
         m_mergedDates = mergeAllDates();
+        m_numberOfStocks = checkNumberOfStocks();
+    }
+
+    private int checkNumberOfStocks()
+    {
+        int maxId = -1;
+        for (TimeSeries child : m_allNodes)
+        {
+            if (child instanceof Stock)
+            {
+                Stock stock = (Stock)child;
+                maxId = Math.max(maxId, stock.id());
+            }
+        }
+
+        // return the NUMBER of stocks
+        return maxId + 1;
     }
 
     private List<TimeSeries> getAllNodes()
@@ -86,7 +105,6 @@ public class ScriptEngine
         }
     }
 
-
     private List<Double> valuePath(Path path)
     {
         /* There is actually no need to value only the unique nodes
@@ -113,4 +131,5 @@ public class ScriptEngine
 
         return storage.get(m_root);
     }
+
 }

@@ -8,28 +8,33 @@ import java.util.*;
  */
 public class Stock extends Leaf
 {
-    private final String m_name;
+    private final int m_id;
 
     /**
      * Create a time series for a stock
      *
-     * @param name Stock name
+     * @param id Stock id
      * @param dates Observation dates
      */
-    public Stock(String name, Schedule dates)
+    public Stock(int id, Schedule dates)
     {
         super(dates);
-        m_name = name;
+        m_id = id;
     }
 
     /**
      * Create a time series for a stock without a stock
      *
-     * @param name Stock name
+     * @param id Stock id
      */
-    public Stock(String name)
+    public Stock(Integer id)
     {
-        this(name, null);
+        this(id, null);
+    }
+
+    public int id()
+    {
+        return m_id;
     }
 
     public void values(Path path, Memoizer<TimeSeries, Double> storage, Memoizer<Schedule, Date> storageDates)
@@ -40,7 +45,7 @@ public class Stock extends Leaf
 
         for (Date date : dates)
         {
-            stock.add(path.getValue(date, m_name));
+            stock.add(path.getValue(date, m_id));
         }
 
         storage.put(this, stock);
