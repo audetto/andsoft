@@ -16,12 +16,12 @@ public class Elf
         TimeSeries number1 = new Constant(4, dates);
         TimeSeries number2 = new Constant(5);
         Sort sorted  = new Sort(Arrays.asList(number1, number2));
-        TimeSeries first = sorted.innerValues().get(0);
+        TimeSeries first = sorted.sortedValues().get(0);
         TimeSeries firstDate = new Select(first, 0, 1);
 
         Sort sorted2  = new Sort(Arrays.asList(firstDate, number2));
 
-        ScriptEngine engine = new ScriptEngine(sorted2.innerValues().get(0));
+        ScriptEngine engine = new ScriptEngine(sorted2.sortedValues().get(0));
 
         System.out.println(engine.allDates());
         engine.printNodeDates();

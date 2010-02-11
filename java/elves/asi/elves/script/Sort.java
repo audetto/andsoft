@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  *
- * Sort (pointwise) a vector of time series
+ * Sort (date by date) a vector of time series in ascending order
  */
 public class Sort extends Function
 {
@@ -24,9 +24,9 @@ public class Sort extends Function
     /**
      * The blocks used to retrieve the return values of this object from the storage.
      *
-     * @return The sorted values.
+     * @return The sorted values in ascending order.
      */
-    public List<TimeSeries> innerValues()
+    public List<TimeSeries> sortedValues()
     {
         return m_inners;
     }
@@ -34,7 +34,7 @@ public class Sort extends Function
     /**
      * This block does not provide values.
      * <p>
-     * Please access results via .innerValues().
+     * Please access results via .sortedValues().
      */
     public void values(Path path, Memoizer<TimeSeries, Double> storageValues, Memoizer<Schedule, Date> storageDates)
     {
