@@ -33,7 +33,7 @@ public abstract class Function extends AbstractTimeSeries
 
     /**
      *
-     * @param valueChildren
+     * @param children
      * @param merger Rule used to merge the children's dates.
      */
     public Function(List<TimeSeries> children, MergerType merger)

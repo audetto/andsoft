@@ -185,9 +185,6 @@ public class ScriptEngine
             return 0;
         }
 
-        /**
-         * Pays the average of all underlying (so far) at every fixing date.
-         */
         @Override
         public void value(final Matrix path, Array payments, Array exercises, ArrayVector states)
         {
