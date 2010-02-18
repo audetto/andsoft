@@ -25,34 +25,35 @@ import java.util.*;
 /**
  * Value in each time is a function of the children's values.
  * <p>
- * value = f(f(f(f(f(initialValue, x1), x2), x3), x4), x5)
+ * There must be at least a child
+ * value = f(f(f(f(x1, x2), x3), x4), x5)
  *
  * @author Andrea Odetti <mariofutire@gmail.com>
  */
 public class HorizontalFold extends TimewiseFunction
 {
     private BinaryFunction m_func;
-    private double m_initialValue;
 
     /**
      * FoldLeft func timewise
      *
      * @param func binary function
-     * @param initialValue start value of the fold
      */
-    public HorizontalFold(BinaryFunction func, double initialValue, List<TimeSeries> values)
+    public HorizontalFold(BinaryFunction func, List<TimeSeries> values)
     {
         super(values, MergerType.EXACT);
         m_func = func;
-        m_initialValue = initialValue;
     }
 
     public double computeSingleValue(int datePos, Date date, List<Double> values)
     {
-        double value = m_initialValue;
-        for (Double v : values)
+        if (values.isEmpty())
+            throw new RuntimeException("Cannot fold empty list " + this);
+
+        double value = values.get(0);
+        for (int i = 1; i < values.size(); ++i)
         {
-            value = m_func.value(value, v);
+            value = m_func.value(value, values.get(i));
         }
 
         return value;
