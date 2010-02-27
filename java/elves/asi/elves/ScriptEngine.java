@@ -186,7 +186,7 @@ public class ScriptEngine
         }
 
         @Override
-        public void value(final Matrix path, Array payments, Array exercises, ArrayVector states)
+        public void value(final Matrix path, TermStructureVector yieldCurves, Array payments, Array exercises, ArrayVector states)
         {
             Path p = new Path()
             {

@@ -27,7 +27,7 @@ class AsianBasket extends ExternalOption
      * Pays the average of all underlying (so far) at every fixing date.
      */
     @Override
-    public void value(Matrix path, Array payments, Array exercises, ArrayVector states)
+    public void value(Matrix path, TermStructureVector yieldCurves, Array payments, Array exercises, ArrayVector states)
     {
         long numberOfAssets = path.rows();
         long numberOfTimes = path.columns();
