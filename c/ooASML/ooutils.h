@@ -12,6 +12,6 @@ namespace ASI
 }
 
 #define WRAP_BEGIN try {
-#define WRAP_END   } catch (const std::exception & e) { throw lang::IllegalArgumentException(); }
+#define WRAP_END   } catch (const std::exception & e) { throw RuntimeException( OUString::createFromAscii(e.what()), *this ); }
 
 #endif

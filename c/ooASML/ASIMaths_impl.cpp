@@ -47,28 +47,28 @@ namespace _ASIMaths_impl_
 
 	//XMaths
 	double SAL_CALL expo( double m ) throw (RuntimeException); //expo(mean)
-        Sequence<Sequence<double> > SAL_CALL projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
-        Sequence<Sequence<double> > SAL_CALL dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
-	Sequence<Sequence<double> > SAL_CALL svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException);
+        Sequence<Sequence<double> > SAL_CALL projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException);
+        Sequence<Sequence<double> > SAL_CALL dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException);
+	Sequence<Sequence<double> > SAL_CALL svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException);
 
-	Sequence<Sequence<double> > SAL_CALL fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException);
 
-	double SAL_CALL finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException);
+	double SAL_CALL finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException);
 	
-	double SAL_CALL heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException);
+	double SAL_CALL heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException);
 
-	double SAL_CALL black( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException);
+	double SAL_CALL black( double strike, double time, double sigma) throw (RuntimeException);
 
-	double SAL_CALL impliedVolatility( double price, double strike, double time ) throw (RuntimeException, lang::IllegalArgumentException);
+	double SAL_CALL impliedVolatility( double price, double strike, double time ) throw (RuntimeException);
 
-	Sequence<Sequence<double> > SAL_CALL variousBS( double time, double strike, double sigma) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL variousBS( double time, double strike, double sigma) throw (RuntimeException);
 
-	Sequence<Sequence<double> > SAL_CALL fft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
-	Sequence<Sequence<double> > SAL_CALL ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
-	Sequence<Sequence<double> > SAL_CALL fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
-	Sequence<Sequence<double> > SAL_CALL fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL fft( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+	Sequence<Sequence<double> > SAL_CALL ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+	Sequence<Sequence<double> > SAL_CALL fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+	Sequence<Sequence<double> > SAL_CALL fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
-	Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException, lang::IllegalArgumentException);
+	Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException);
 
 	//XAddIn
 	OUString SAL_CALL getProgrammaticFuntionName( const OUString& aDisplayName ) throw (RuntimeException);
@@ -101,7 +101,7 @@ namespace _ASIMaths_impl_
 	return -m * log( (double)(1+(unsigned int)rand()) / (2+(unsigned int)RAND_MAX) );
     }    
 
-    Sequence<Sequence<double> > ASIMaths_impl::projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -116,7 +116,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
     
-    Sequence<Sequence<double> > ASIMaths_impl::dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -134,7 +134,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::svdSolve( const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -149,7 +149,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::fastExp( double t, const Sequence<Sequence<double> > & a, sal_Int32 method, double theta) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -174,7 +174,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    double ASIMaths_impl::finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException, lang::IllegalArgumentException)
+    double ASIMaths_impl::finiteDifference( const Sequence<Sequence<double> > & xa, const Sequence<Sequence<double> > & ya, double x, sal_Int32 order) throw (RuntimeException)
     {
  	WRAP_BEGIN;
 
@@ -188,7 +188,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    double ASIMaths_impl::heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException, lang::IllegalArgumentException)
+    double ASIMaths_impl::heston( double strike, double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 points) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -198,7 +198,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    double ASIMaths_impl::black( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException)
+    double ASIMaths_impl::black( double strike, double time, double sigma) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -210,7 +210,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    double ASIMaths_impl::impliedVolatility( double price, double strike, double time ) throw (RuntimeException, lang::IllegalArgumentException)
+    double ASIMaths_impl::impliedVolatility( double price, double strike, double time ) throw (RuntimeException)
     {
  	WRAP_BEGIN;
 
@@ -220,7 +220,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::variousBS( double strike, double time, double sigma) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::variousBS( double strike, double time, double sigma) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -230,7 +230,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::fft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::fft( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -241,7 +241,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -253,7 +253,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -265,7 +265,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -276,7 +276,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-    Sequence<Sequence<double> > ASIMaths_impl::hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException, lang::IllegalArgumentException)
+    Sequence<Sequence<double> > ASIMaths_impl::hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException)
     {
 	WRAP_BEGIN;
 
@@ -294,7 +294,7 @@ namespace _ASIMaths_impl_
 	WRAP_END;
     }
 
-#define _serviceName_ "org.asi.Service"
+#define _serviceName_ "org.asi.Maths"
     
     static const sal_Char *_serviceName = _serviceName_;
 
