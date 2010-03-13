@@ -1,4 +1,4 @@
-.PHONY = all headers lib clean asml libs
+.PHONY : all headers lib clean asml libs
 
 OO_SDK_HOME=/usr/lib/openoffice.org/basis3.1/sdk
 OFFICE_HOME=/usr/lib/openoffice.org
@@ -55,20 +55,19 @@ ASIMaths.oxt: libs
 	cp libASIMaths.so oxt/Linux_x86
 	cd oxt && zip ../ASIMaths.oxt -r .
 
+# there is a circular dependency here...
 libs: ASIMaths.rdb libASIMaths.so
 	LD_LIBRARY_PATH=. $(REGCOMP) -register -r ASIMaths.rdb -c libASIMaths.so
 
 asml:
 	$(MAKE) -C ../asml $(MAKECMDGOALS)
 
-headers: ASIMaths.rdb
-	$(CPPUMAKER) -BUCR $(FORCPPUMAKER) $(OO_SDK_URE_HOME)/share/misc/types.rdb $(OFFICE_BASE_HOME)/program/offapi.rdb $<
-
 %.urd: %.idl
 	$(IDLC) -w -C -I$(OO_SDK_HOME)/idl $<
 
 %.rdb: %.urd
 	$(REGMERGE) $@ /UCR $<
+	$(CPPUMAKER) -BUCR $(FORCPPUMAKER) $(OO_SDK_URE_HOME)/share/misc/types.rdb $(OFFICE_BASE_HOME)/program/offapi.rdb $@
 
 libASIMaths.so: asml $(OBJFILES)
 	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
@@ -83,7 +82,7 @@ clean: asml
 	-rm -r com org oxt/Linux_x86
 
 #### dependencies
-ooutils.h: headers
+ooutils.h: ASIMaths.idl
 
 %.d: %.cpp
 	@set -e; rm -f $@; \
