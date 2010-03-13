@@ -9,18 +9,17 @@
 namespace ASI
 {
     using namespace ::com::sun::star::uno;
+    
+    template <typename T, typename S>
+	void ooConvert(const T & t, S & s);
 
-    MatrixPtr matrixFromOOArgument(const Sequence<Sequence<double> >& mat);
-    Sequence<Sequence<double> > matrixToOOArgument(const CMatrixPtr & mat);
-
-    VectorPtr vectorFromOOArgument(const Sequence<Sequence<double> >& vect);
-    Sequence<Sequence<double> > vectorToOOArgument(const CVectorPtr & vect);
-
-    std::vector<double> stdVectorFromOOArgument(const Sequence<Sequence<double> >& vect);
-    Sequence<Sequence<double> > stdVectorToOOArgument(const std::vector<double> & vect);
-
-    std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect);
-    Sequence<Sequence<double> > stdVectorComplexToOOArgument(const std::vector<cpl> & vect);
+    template <typename S, typename T>
+	S ooDirectConvert(const T & t)
+    {
+	S s;
+	ooConvert(t, s);
+	return s;
+    }
 
     void appendStdVectorToOOArgument(Sequence<Sequence<double> > & seq, const std::vector<double> & vect);
 }

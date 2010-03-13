@@ -105,13 +105,18 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	VectorPtr  xVect = vectorFromOOArgument(x);
-	CMatrixPtr aMat  = matrixFromOOArgument(a);
-	CVectorPtr bVect = vectorFromOOArgument(b);
+	VectorPtr  xVect;
+	ooConvert(x, xVect);
+
+	MatrixPtr aMat;
+	ooConvert(a, aMat);
+
+	VectorPtr bVect;
+	ooConvert(b, bVect);
 
 	projectOnSubspace(xVect.get(), aMat.get(), bVect.get());
 	
-	return vectorToOOArgument(xVect);
+	return ooDirectConvert<Sequence<Sequence<double> >, VectorPtr >(xVect);
 
 	WRAP_END;
     }
@@ -120,16 +125,21 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	VectorPtr  xVect = vectorFromOOArgument(x);
-	CMatrixPtr aMat  = matrixFromOOArgument(a);
-	CVectorPtr bVect = vectorFromOOArgument(b);
+	VectorPtr  xVect;
+	ooConvert(x, xVect);
+
+	MatrixPtr aMat;
+	ooConvert(a, aMat);
+
+	VectorPtr bVect;
+	ooConvert(b, bVect);
 
 	const size_t iter = 100;
 	const double tol = 1.0e-10;
 
 	dykstraProjection(xVect.get(), aMat.get(), bVect.get(), iter, tol);
 	
-	return vectorToOOArgument(xVect);
+	return ooDirectConvert<Sequence<Sequence<double> >, VectorPtr >(xVect);
 
 	WRAP_END;
     }
@@ -138,13 +148,17 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	MatrixPtr aMat  = matrixFromOOArgument(a);
-	CVectorPtr bVect = vectorFromOOArgument(b);
+	MatrixPtr aMat;
+	ooConvert(a, aMat);
+
+	VectorPtr bVect;
+	ooConvert(b, bVect);
+
 	VectorPtr xVect;
 
 	ASI::svdSolve(aMat, bVect, xVect);
 	
-	return vectorToOOArgument(xVect);
+	return ooDirectConvert<Sequence<Sequence<double> >, VectorPtr >(xVect);
 
 	WRAP_END;
     }
@@ -153,7 +167,9 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	MatrixPtr aMat = matrixFromOOArgument(a);
+	MatrixPtr aMat;
+	ooConvert(a, aMat);
+
 	MatrixPtr exptA;
 
 	switch (method)
@@ -169,7 +185,7 @@ namespace _ASIMaths_impl_
 	    break;
 	}
 
-	return matrixToOOArgument(exptA);
+	return ooDirectConvert<Sequence<Sequence<double> >, MatrixPtr >(exptA);
 
 	WRAP_END;
     }
@@ -178,8 +194,11 @@ namespace _ASIMaths_impl_
     {
  	WRAP_BEGIN;
 
-	const std::vector<double> xVect = stdVectorFromOOArgument(xa);
-	const std::vector<double> yVect = stdVectorFromOOArgument(ya);
+	std::vector<double> xVect;
+	ooConvert(xa, xVect);
+
+	std::vector<double> yVect;
+	ooConvert(ya, yVect);
 	
 	const double result = ASI::finiteDifference(xVect, yVect, x, order);
 
@@ -225,7 +244,7 @@ namespace _ASIMaths_impl_
 	WRAP_BEGIN;
 
 	const std::vector<double> res = ASI::variousBS(1.0, strike, time, sigma, 1.0);
-	return stdVectorToOOArgument(res);
+	return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(res);
 
 	WRAP_END;
     }
@@ -234,9 +253,10 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	std::vector<double> dataVect;
+	ooConvert(data, dataVect);
 	ASI::FFT_Real(dataVect, true);
-	return stdVectorToOOArgument(dataVect);
+	return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(dataVect);
 	
 	WRAP_END;
     }
@@ -245,10 +265,11 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	const std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	std::vector<double> dataVect;
+	ooConvert(data, dataVect);
 	std::vector<cpl> result;
 	ASI::FFT_Unpack(dataVect, result);
-	return stdVectorComplexToOOArgument(result);
+	return ooDirectConvert<Sequence<Sequence<double> >, std::vector<cpl> >(result);
 	
 	WRAP_END;
     }
@@ -257,10 +278,11 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	const std::vector<cpl> dataVect = stdVectorcomplexFromOOArgument(data);
+	std::vector<cpl> dataVect;
+	ooConvert(data, dataVect);
 	std::vector<double> result;
 	ASI::FFT_Pack(dataVect, result);
-	return stdVectorToOOArgument(result);
+	return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(result);
 	
 	WRAP_END;
     }
@@ -269,9 +291,10 @@ namespace _ASIMaths_impl_
     {
 	WRAP_BEGIN;
 
-	std::vector<double> dataVect = stdVectorFromOOArgument(data);
+	std::vector<double> dataVect;
+	ooConvert(data, dataVect);
 	ASI::FFT_Real(dataVect, false);
-	return stdVectorToOOArgument(dataVect);
+	return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(dataVect);
 	
 	WRAP_END;
     }

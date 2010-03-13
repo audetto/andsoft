@@ -2,7 +2,8 @@
 
 namespace ASI
 {
-    MatrixPtr matrixFromOOArgument(const Sequence<Sequence<double> >& mat)
+    template <>
+    void ooConvert(const Sequence<Sequence<double> >& mat, MatrixPtr & matPtr)
     {
 	const size_t rows = mat.getLength();
 
@@ -13,60 +14,58 @@ namespace ASI
 	    cols = std::max(cols, size_t(mat[i].getLength()));
 	}
 
-	MatrixPtr result(gsl_matrix_calloc(rows, cols), MatrixDeleter());
+	matPtr.reset(gsl_matrix_calloc(rows, cols), MatrixDeleter());
 
 	for (size_t i = 0; i < rows; ++i)
 	{
 	    size_t thisCols = mat[i].getLength();
 	    for (size_t j = 0; j < thisCols; ++j)
 	    {
-		gsl_matrix_set (result.get(), i, j, mat[i][j]);
+		gsl_matrix_set (matPtr.get(), i, j, mat[i][j]);
 	    }
 	    
 	}
-
-	return result;
     }
 
-    Sequence<Sequence<double> > matrixToOOArgument(const CMatrixPtr & mat)
+    template <>
+    void ooConvert(const MatrixPtr & matPtr, Sequence<Sequence<double> > & mat)
     {
-	const size_t rows = mat->size1;
-	const size_t cols = mat->size2;
+	const size_t rows = matPtr->size1;
+	const size_t cols = matPtr->size2;
 
-	Sequence<Sequence<double> > result(rows);
+	mat = Sequence<Sequence<double> >(rows);
 	
 	for (size_t i = 0; i < rows; ++i)
 	{
-	    result[i].realloc(cols);
+	    mat[i].realloc(cols);
 	    for (size_t j = 0; j < cols; ++j)
 	    {
-		result[i][j] = gsl_matrix_get(mat.get(), i, j);
+		mat[i][j] = gsl_matrix_get(matPtr.get(), i, j);
 	    }
 	}
-
-	return result;
-	
     }
 
-    VectorPtr vectorFromOOArgument(const Sequence<Sequence<double> >& vect)
+    template <>
+    void ooConvert(const Sequence<Sequence<double> >& vect, VectorPtr & vectPtr)
     {
-	CMatrixPtr matrix = matrixFromOOArgument(vect);
+	MatrixPtr matrix;
+	ooConvert(vect, matrix);
 
 	if (matrix->size1 == 1)
 	{
 	    // row vector
 	    const size_t len = matrix->size2;
-	    VectorPtr result(gsl_vector_calloc(len), VectorDeleter());
-	    gsl_matrix_get_row (result.get(), matrix.get(), 0);
-	    return result;
+	    vectPtr.reset(gsl_vector_calloc(len), VectorDeleter());
+	    gsl_matrix_get_row (vectPtr.get(), matrix.get(), 0);
+	    return;
 	}
 	else if (matrix->size2 == 1)
 	{
 	    // column vector
 	    const size_t len = matrix->size1;
-	    VectorPtr result(gsl_vector_calloc(len), VectorDeleter());
-	    gsl_matrix_get_col (result.get(), matrix.get(), 0);
-	    return result;
+	    vectPtr.reset(gsl_vector_calloc(len), VectorDeleter());
+	    gsl_matrix_get_col (vectPtr.get(), matrix.get(), 0);
+	    return;
 	}
 	else
 	{
@@ -74,52 +73,50 @@ namespace ASI
 	}
     }
 
-    Sequence<Sequence<double> > vectorToOOArgument(const CVectorPtr & vect)
+    template <>
+    void ooConvert(const VectorPtr & vectPtr, Sequence<Sequence<double> >& vect)
     {
-	const size_t rows = vect->size;
+	const size_t rows = vectPtr->size;
 	const size_t cols = 1;
 
-	Sequence<Sequence<double> > result(rows);
+	vect = Sequence<Sequence<double> > (rows);
 	
 	for (size_t i = 0; i < rows; ++i)
 	{
-	    result[i].realloc(cols);
-	    result[i][0] = gsl_vector_get(vect.get(), i);
+	    vect[i].realloc(cols);
+	    vect[i][0] = gsl_vector_get(vectPtr.get(), i);
 	}
-
-	return result;
     }
 
-    std::vector<double> stdVectorFromOOArgument(const Sequence<Sequence<double> >& vect)
+    template <>
+    void ooConvert(const Sequence<Sequence<double> >& vect, std::vector<double> & stdVect)
     {
-	CVectorPtr vector = vectorFromOOArgument(vect);
+	VectorPtr vector;
+	ooConvert(vect, vector);
 
 	const size_t dim = vector->size;
 
-	std::vector<double> res(dim);
+	stdVect.resize(dim);
 
 	for (size_t i = 0; i < dim; ++i)
 	{
-	    res[i] = gsl_vector_get(vector.get(), i);
+	    stdVect[i] = gsl_vector_get(vector.get(), i);
 	}
-
-	return res;
     }
 
-    Sequence<Sequence<double> > stdVectorToOOArgument(const std::vector<double> & vect)
+    template <>
+    void ooConvert(const std::vector<double> & stdVect, Sequence<Sequence<double> >& vect)
     {
-	const size_t rows = vect.size();
+	const size_t rows = stdVect.size();
 	const size_t cols = 1;
 
-	Sequence<Sequence<double> > result(rows);
+	vect = Sequence<Sequence<double> > (rows);
 	
 	for (size_t i = 0; i < rows; ++i)
 	{
-	    result[i].realloc(cols);
-	    result[i][0] = vect[i];
+	    vect[i].realloc(cols);
+	    vect[i][0] = stdVect[i];
 	}
-
-	return result;
     }
 
     void appendStdVectorToOOArgument(Sequence<Sequence<double> > & seq, const std::vector<double> & vect)
@@ -141,9 +138,11 @@ namespace ASI
 	}
     }
 
-    std::vector<cpl> stdVectorcomplexFromOOArgument(const Sequence<Sequence<double> >& vect)
+    template <>
+    void ooConvert(const Sequence<Sequence<double> >& vect, std::vector<cpl> & stdCplVect)
     {
-	CMatrixPtr matrix = matrixFromOOArgument(vect);
+	MatrixPtr matrix;
+	ooConvert(vect, matrix);
 
 	const size_t rows = matrix->size1;
 	const size_t cols = matrix->size2;
@@ -151,30 +150,27 @@ namespace ASI
 	if (cols != 2)
 	    error("For complex data, there must be 2 columns");
 
-	std::vector<cpl> res(rows);
+	stdCplVect.resize(rows);
 
 	for (size_t i = 0; i < rows; ++i)
 	{
-	    res[i] = cpl(gsl_matrix_get(matrix.get(), i, 0), gsl_matrix_get(matrix.get(), i, 1));
+	    stdCplVect[i] = cpl(gsl_matrix_get(matrix.get(), i, 0), gsl_matrix_get(matrix.get(), i, 1));
 	}
-
-	return res;
     }
 
-    Sequence<Sequence<double> > stdVectorComplexToOOArgument(const std::vector<std::complex<double> > & vect)
+    template <>
+    void ooConvert(const std::vector<std::complex<double> > & stdCplVect, Sequence<Sequence<double> > & vect)
     {
-	const size_t rows = vect.size();
+	const size_t rows = stdCplVect.size();
 	const size_t cols = 2;
 
-	Sequence<Sequence<double> > result(rows);
+	vect = Sequence<Sequence<double> > (rows);
 	
 	for (size_t i = 0; i < rows; ++i)
 	{
-	    result[i].realloc(cols);
-	    result[i][0] = vect[i].real();
-	    result[i][1] = vect[i].imag();
+	    vect[i].realloc(cols);
+	    vect[i][0] = stdCplVect[i].real();
+	    vect[i][1] = stdCplVect[i].imag();
 	}
-
-	return result;
     }
 }
