@@ -1,4 +1,4 @@
-.PHONY : all headers lib clean asml libs
+.PHONY : all headers lib clean asml libs install
 
 OO_SDK_HOME=/usr/lib/openoffice.org/basis3.1/sdk
 OFFICE_HOME=/usr/lib/openoffice.org
@@ -48,6 +48,10 @@ FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.reflection.XIdlReflection
 
 all: ASIMaths.oxt
+
+install:
+	-unopkg remove inc.andsoft.ASIMaths
+	unopkg add ASIMaths.oxt
 
 ASIMaths.oxt: libs
 	-mkdir oxt/Linux_x86
