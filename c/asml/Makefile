@@ -1,6 +1,6 @@
 .PHONY = all lib clean headers
 
-OBJFILES = utils.o projection.o linear.o heston.o implied.o numerics.o distribution.o fourierpricing.o fastexp.o hypermatrix.o generator.o brownianmotionwithdrift.o pde.o
+OBJFILES = asml/utils.o asml/projection.o asml/linear.o asml/heston.o asml/implied.o asml/numerics.o asml/distribution.o asml/fourierpricing.o asml/fastexp.o asml/hypermatrix.o asml/generator.o asml/brownianmotionwithdrift.o asml/pde.o
 DEPENDS = $(OBJFILES:.o=.d)
 
 ## It seems QuantLib has been compiled without D_GLIBCXX_DEBUG
@@ -13,10 +13,7 @@ LDLIBS = -lgsl -lgslcblas -lm -lQuantLib
 AR = ar
 RANLIB = ranlib
 
-all: headers libasml.a
-
-headers:
-	$(MAKE) -C asi $(MAKECMDGOALS)
+all: libasml.a
 
 libasml.a: $(OBJFILES)
 	$(AR) cr $@ $^
@@ -25,7 +22,7 @@ libasml.a: $(OBJFILES)
 dummy: all dummy.o
 	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ dummy.o -L. -lasml $(LDLIBS)
 
-clean: headers
+clean:
 	rm -rf dummy *.o *.a *.d
 
 #### dependencies
@@ -39,4 +36,3 @@ clean: headers
 ifneq ($(MAKECMDGOALS),clean)
 include $(DEPENDS)
 endif
-

@@ -1,9 +1,9 @@
 .PHONY : all headers lib clean asml libs install
 
-OO_SDK_HOME=/usr/lib/openoffice.org/basis3.1/sdk
-OFFICE_HOME=/usr/lib/openoffice.org
-OFFICE_BASE_HOME=/usr/lib/openoffice.org/basis3.1
-OO_SDK_URE_HOME=/usr/lib/openoffice.org/ure
+OFFICE_HOME=/usr/lib/openoffice
+OFFICE_BASE_HOME=$(OFFICE_HOME)/basis3.2
+OO_SDK_HOME=$(OFFICE_HOME)/basis3.2/sdk
+OO_SDK_URE_HOME=/usr/lib/ure
 
 OO_SDK_URE_BIN_DIR=$(OO_SDK_URE_HOME)/bin
 OO_SDK_URE_LIB_DIR=$(OO_SDK_URE_HOME)/lib
@@ -75,7 +75,7 @@ asml:
 
 libASIMaths.so: asml $(OBJFILES)
 	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
-	chcon -t textrel_shlib_t libASIMaths.so
+#	chcon -t textrel_shlib_t libASIMaths.so
 
 dummy: dummy.o $(OBJFILES)
 	g++ -o $@ $^ $(LIB_DIR) $(LDLIBS) -luno_sal -luno_salhelpergcc3 -luno_cppu -lstlport_gcc
