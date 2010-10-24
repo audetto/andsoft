@@ -7,12 +7,14 @@
 
 #include "AmericanLookback.h"
 #include "GenericPathOption.h"
+#include "JSPayoff.h"
 
 #include <boost/timer.hpp>
 #include <iostream>
 #include <iomanip>
 
 using namespace QuantLib;
+using namespace std;
 
 namespace AndSoft
 {
@@ -72,7 +74,8 @@ namespace AndSoft
         
         // options
         
-        boost::shared_ptr<PathPayoff> lookbackPayoff(new AmericanLookback());
+        boost::shared_ptr<PathPayoff> lookbackPayoff1(new AmericanLookback());
+        boost::shared_ptr<PathPayoff> lookbackPayoff2(new JSPayoff("script.js"));
         std::vector<Date> fixings;
         
         Date firstFixing(17, May, 2000);
@@ -81,7 +84,8 @@ namespace AndSoft
         for (Size i = 0; i < 5; ++i)
             fixings.push_back(fixings.back() + annual);
         
-        GenericPathOption lookbackOption(lookbackPayoff, fixings);
+        GenericPathOption lookbackOption1(lookbackPayoff1, fixings);
+        GenericPathOption lookbackOption2(lookbackPayoff2, fixings);
         
         // Monte Carlo Method
         
@@ -94,12 +98,15 @@ namespace AndSoft
         boost::shared_ptr<PricingEngine> mcengine;
         
         mcengine = MakeMCPathBasketEngine<LowDiscrepancy>(mdProcess).withSteps(timeSteps).withSamples(nSamples);
-        lookbackOption.setPricingEngine(mcengine);
-        std::cout << method << " E " << nSamples << " iterations: " << lookbackOption.NPV() << std::endl;
+        lookbackOption1.setPricingEngine(mcengine);
+        std::cout << method << " E [C++]  " << nSamples << " iterations: " << lookbackOption1.NPV() << std::endl;
+
+        lookbackOption2.setPricingEngine(mcengine);
+        std::cout << method << " E [JSV8] " << nSamples << " iterations: " << lookbackOption2.NPV() << std::endl;
         
         mcengine = MakeMCAmericanPathEngine<LowDiscrepancy>(mdProcess).withSteps(timeSteps).withSamples(nSamples).withCalibrationSamples(calibSamples);
-        lookbackOption.setPricingEngine(mcengine);
-        std::cout << method << " A " << nSamples << " iterations: " << lookbackOption.NPV() << std::endl;
+        lookbackOption1.setPricingEngine(mcengine);
+        std::cout << method << " A [C++]  " << nSamples << " iterations: " << lookbackOption1.NPV() << std::endl;
     }
-    
+
 }

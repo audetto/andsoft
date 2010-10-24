@@ -35,14 +35,19 @@ int main(int, char* [])
         mcTest();
         return 0;
     }
-    catch (Error& err)
+    catch (const Error & err)
     {
         std::cout << "QuantLib::Error: " << err.what() << std::endl;
         return 1;
     }
-    catch (std::exception& e)
+    catch (const std::exception & e)
     {
         std::cout << "std::exception: " << e.what() << std::endl;
+        return 2;
+    } 
+    catch (const char * e)
+    {
+        std::cout << "char * : " << e << std::endl;
         return 2;
     } 
     catch (...)

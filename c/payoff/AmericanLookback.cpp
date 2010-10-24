@@ -50,8 +50,8 @@ namespace AndSoft
                 thisSum += data.getAssetValue(i, j);
             thisSum /= numberOfAssets;
             
-            if (data.getAssetValue(i, 0) < 1)
-                break; // if low euribor, weigh more this date
+            //            if (data.getAssetValue(i, 0) < 1)
+            //                break;
             
             runningMaximum = std::max(runningMaximum, thisSum);
             

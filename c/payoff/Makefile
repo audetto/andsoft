@@ -1,7 +1,7 @@
 
-LDFLAGS = -g
-LDLIBS =  -lQuantLib
-CXXFLAGS = -g
+LDFLAGS = -g -L/home/andrea/projects/cvs/3rdParty/v8
+LDLIBS =  -lQuantLib -lv8
+CXXFLAGS = -g -I/home/andrea/projects/cvs/3rdParty/v8/include
 
 OBJECTS = example.o AmericanLookback.o GenericPathOption.o JSPayoff.o MCTest.o
 

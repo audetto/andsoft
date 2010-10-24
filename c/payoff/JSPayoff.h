@@ -13,7 +13,8 @@ namespace AndSoft
     class JSPayoff : public QuantLib::PathPayoff
     {
     public:
-        JSPayoff();
+        JSPayoff(const std::string & filename);
+
         virtual std::string name() const;
         virtual std::string description() const;
         virtual void value(const QuantLib::Matrix                                             & path, 
@@ -23,6 +24,9 @@ namespace AndSoft
                            std::vector<QuantLib::Array>                                       & states) const;
         virtual QuantLib::Size basisSystemDimension() const;
     private:
+
+        struct PImpl;
+        std::auto_ptr<PImpl> m_pimpl;
     };
     
 }
