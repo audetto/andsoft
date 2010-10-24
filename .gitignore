@@ -8,8 +8,9 @@
 *.rdb
 *.oxt
 *.jj
+moc_*.cpp
+*.d.*
 
-/c/asml/asi/*.h
 /c/ooASML/com/*
 /c/ooASML/org/*
 
@@ -25,3 +26,4 @@
 /java/jamaica/src/com/judoscript/jamaica/parser/ParseException.java
 /java/jamaica/src/com/judoscript/jamaica/parser/Token.java
 /java/jamaica/src/com/judoscript/jamaica/parser/TokenMgrError.java
+
