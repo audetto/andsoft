@@ -1,9 +1,9 @@
-#include <asml/pde.h>
+#include <asml/pde/pde.h>
 
-#include <asml/generator.h>
-#include <asml/fastexp.h>
-#include <asml/implied.h>
-#include <asml/brownianmotionwithdrift.h>
+#include <asml/pde/generator.h>
+#include <asml/linearalgebra/fastexp.h>
+#include <asml/analytics/implied.h>
+#include <asml/process/brownianmotionwithdrift.h>
 #include <functional>
 
 #include <gsl/gsl_blas.h>

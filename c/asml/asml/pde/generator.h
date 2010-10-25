@@ -1,7 +1,7 @@
 #ifndef ASI_GENERATOR_H
 #define ASI_GENERATOR_H
 
-#include <asml/hypermatrix.h>
+#include <asml/linearalgebra/hypermatrix.h>
 
 #include <ql/stochasticprocess.hpp>
 

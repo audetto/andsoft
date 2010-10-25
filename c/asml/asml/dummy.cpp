@@ -1,8 +1,8 @@
-#include <asml/projection.h>
-#include <asml/heston.h>
-#include <asml/numerics.h>
-#include <asml/fastexp.h>
-#include <asml/pde.h>
+#include <asml/linearalgebra/projection.h>
+#include <asml/distribution/heston.h>
+#include <asml/analytics/numerics.h>
+#include <asml/linearalgebra/fastexp.h>
+#include <asml/pde/pde.h>
 
 using namespace ASI;
 

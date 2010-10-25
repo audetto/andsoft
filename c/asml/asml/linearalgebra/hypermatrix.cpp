@@ -1,4 +1,4 @@
-#include <asml/hypermatrix.h>
+#include <asml/linearalgebra/hypermatrix.h>
 
 #include <numeric>
 #include <functional>

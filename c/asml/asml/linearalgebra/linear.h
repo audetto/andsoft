@@ -1,7 +1,7 @@
 #ifndef ASI_LINEAR_H
 #define ASI_LINEAR_H
 
-#include <asml/utils.h>
+#include <asml/utils/utils.h>
 
 namespace ASI
 {

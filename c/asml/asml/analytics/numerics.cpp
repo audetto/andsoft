@@ -1,5 +1,5 @@
-#include <asml/numerics.h>
-#include <asml/utils.h>
+#include <asml/analytics/numerics.h>
+#include <asml/utils/utils.h>
 
 #include <math.h>
 #include <limits>

@@ -1,6 +1,6 @@
 .PHONY = all lib clean headers
 
-OBJFILES = asml/utils.o asml/projection.o asml/linear.o asml/heston.o asml/implied.o asml/numerics.o asml/distribution.o asml/fourierpricing.o asml/fastexp.o asml/hypermatrix.o asml/generator.o asml/brownianmotionwithdrift.o asml/pde.o
+OBJFILES = asml/utils/utils.o asml/linearalgebra/projection.o asml/linearalgebra/linear.o asml/distribution/heston.o asml/analytics/implied.o asml/analytics/numerics.o asml/distribution/distribution.o asml/distribution/fourierpricing.o asml/linearalgebra/fastexp.o asml/linearalgebra/hypermatrix.o asml/pde/generator.o asml/process/brownianmotionwithdrift.o asml/pde/pde.o
 DEPENDS = $(OBJFILES:.o=.d)
 
 ## It seems QuantLib has been compiled without D_GLIBCXX_DEBUG
@@ -19,8 +19,8 @@ libasml.a: $(OBJFILES)
 	$(AR) cr $@ $^
 	$(RANLIB) $@
 
-dummy: all dummy.o
-	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ dummy.o -L. -lasml $(LDLIBS)
+dummy: all asml/dummy.o
+	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ asml/dummy.o -L. -lasml $(LDLIBS)
 
 clean:
 	rm -rf dummy *.o *.a *.d

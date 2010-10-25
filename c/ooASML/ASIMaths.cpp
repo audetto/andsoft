@@ -1,12 +1,12 @@
 #include "ASIMaths.h"
 
-#include <asml/projection.h>
-#include <asml/linear.h>
-#include <asml/heston.h>
-#include <asml/implied.h>
-#include <asml/numerics.h>
-#include <asml/fourierpricing.h>
-#include <asml/fastexp.h>
+#include <asml/linearalgebra/projection.h>
+#include <asml/linearalgebra/linear.h>
+#include <asml/distribution/heston.h>
+#include <asml/analytics/implied.h>
+#include <asml/analytics/numerics.h>
+#include <asml/distribution/fourierpricing.h>
+#include <asml/linearalgebra/fastexp.h>
 
 #include "ooutils.h"
 #include "conversion.h"

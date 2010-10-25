@@ -1,7 +1,7 @@
 #ifndef ASI_FAST_EXP_H
 #define ASI_FAST_EXP_H
 
-#include <asml/utils.h>
+#include <asml/utils/utils.h>
 
 namespace ASI
 {

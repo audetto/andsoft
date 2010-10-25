@@ -1,4 +1,4 @@
-#include <asml/linear.h>
+#include <asml/linearalgebra/linear.h>
 
 #include <gsl/gsl_linalg.h>
 

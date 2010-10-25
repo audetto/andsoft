@@ -1,4 +1,4 @@
-#include <asml/fastexp.h>
+#include <asml/linearalgebra/fastexp.h>
 
 #include <assert.h>
 

@@ -1,7 +1,7 @@
 #ifndef ASI_HYPER_MATRIX_H
 #define ASI_HYPER_MATRIX_H
 
-#include <asml/utils.h>
+#include <asml/utils/utils.h>
 #include <vector>
 
 namespace ASI

@@ -1,6 +1,6 @@
-#include <asml/heston.h>
-#include <asml/numerics.h>
-#include <asml/fourierpricing.h>
+#include <asml/distribution/heston.h>
+#include <asml/analytics/numerics.h>
+#include <asml/distribution/fourierpricing.h>
 
 #include <math.h>
 

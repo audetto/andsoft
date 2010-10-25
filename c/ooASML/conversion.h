@@ -1,7 +1,7 @@
 #ifndef ASI_CONVERSION_H
 #define ASI_CONVERSION_H
 
-#include <asml/utils.h>
+#include <asml/utils/utils.h>
 
 #include <com/sun/star/uno/Sequence.hxx>
 #include <vector>

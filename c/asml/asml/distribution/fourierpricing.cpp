@@ -1,6 +1,6 @@
-#include <asml/fourierpricing.h>
-#include <asml/distribution.h>
-#include <asml/implied.h>
+#include <asml/distribution/fourierpricing.h>
+#include <asml/distribution/distribution.h>
+#include <asml/analytics/implied.h>
 
 #include <gsl/gsl_fft_real.h>
 #include <gsl/gsl_fft_halfcomplex.h>

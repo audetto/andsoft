@@ -1,8 +1,8 @@
 #ifndef ASI_HESTON_H
 #define ASI_HESTON_H
 
-#include <asml/utils.h>
-#include <asml/distribution.h>
+#include <asml/utils/utils.h>
+#include <asml/distribution/distribution.h>
 #include <vector>
 
 namespace ASI
