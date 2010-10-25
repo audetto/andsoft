@@ -1,9 +1,7 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 // the only header you need to use QuantLib
-#define BOOST_LIB_DIAGNOSTIC
-#  include <ql/quantlib.hpp>
-#undef BOOST_LIB_DIAGNOSTIC
+#include <ql/quantlib.hpp>
 
 #include "MCTest.h"
 
@@ -11,7 +9,7 @@
 #include <iomanip>
 
 using namespace QuantLib;
-using namespace AndSoft;
+using namespace ASI;
 
 #if defined(QL_ENABLE_SESSIONS)
 namespace QuantLib

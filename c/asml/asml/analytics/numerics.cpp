@@ -1,9 +1,9 @@
 #include <asml/analytics/numerics.h>
 #include <asml/utils/utils.h>
 
-#include <math.h>
+#include <cmath>
 #include <limits>
-#include <stdio.h>
+#include <cstdio>
 
 #include <gsl/gsl_interp.h>
 

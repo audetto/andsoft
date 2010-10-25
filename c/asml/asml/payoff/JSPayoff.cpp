@@ -1,6 +1,6 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
-#include "JSPayoff.h"
+#include <asml/payoff/JSPayoff.h>
 #include <v8.h>
 #include <stdexcept>
 #include <fcntl.h>
@@ -94,7 +94,7 @@ namespace
     }
 }
 
-namespace AndSoft
+namespace ASI
 {
 
     struct JSPayoff::PImpl

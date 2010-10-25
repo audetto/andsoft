@@ -1,17 +1,23 @@
+.PHONY: asml run clean
 
-LDFLAGS = -g -L/home/andrea/projects/cvs/3rdParty/v8
-LDLIBS =  -lQuantLib -lv8
-CXXFLAGS = -g -I/home/andrea/projects/cvs/3rdParty/v8/include
+ASMLDIR = ../asml
 
-OBJECTS = example.o AmericanLookback.o GenericPathOption.o JSPayoff.o MCTest.o
+LDFLAGS = -g -L../../../3rdParty/v8 -L$(ASMLDIR)
+LDLIBS =  -lasml -lQuantLib -lv8
+CXXFLAGS = -g -I$(ASMLDIR)
 
-example: $(OBJECTS)
-	$(CC) $(LDFLAGS) $+ $(LOADLIBES) $(LDLIBS) -o $@
+OBJECTS = example.o MCTest.o
+
+example: asml $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
+
+asml:
+	$(MAKE) -C $(ASMLDIR)
 
 run: example
 	./example
 
-clean:
+clean: asml
 	rm -f *.o example
 
  %.d: %.cpp
@@ -20,4 +26,6 @@ clean:
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
+ifneq ($(MAKECMDGOALS),clean)
 include $(OBJECTS:.o=.d)
+endif

@@ -3,11 +3,9 @@
 #ifndef JS_PAYOFF_H
 #define JS_PAYOFF_H
 
-#define BOOST_LIB_DIAGNOSTIC
-#  include <ql/quantlib.hpp>
-#undef BOOST_LIB_DIAGNOSTIC
+#include <ql/quantlib.hpp>
 
-namespace AndSoft
+namespace ASI
 {
     
     class JSPayoff : public QuantLib::PathPayoff

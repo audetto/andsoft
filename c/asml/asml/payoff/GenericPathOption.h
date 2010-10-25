@@ -3,11 +3,9 @@
 #ifndef GENERIC_PATH_OPTION_H
 #define GENERIC_PATH_OPTION_H
 
-#define BOOST_LIB_DIAGNOSTIC
-#  include <ql/quantlib.hpp>
-#undef BOOST_LIB_DIAGNOSTIC
+#include <ql/quantlib.hpp>
 
-namespace AndSoft
+namespace ASI
 {
 
     // The option

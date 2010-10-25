@@ -1,6 +1,6 @@
 #include <asml/pde/generator.h>
 
-#include <assert.h>
+#include <cassert>
 
 namespace ASI
 {

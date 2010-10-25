@@ -3,11 +3,9 @@
 #ifndef AMERICAN_LOOKBACK_H
 #define AMERICAN_LOOKBACK_H
 
-#define BOOST_LIB_DIAGNOSTIC
-#  include <ql/quantlib.hpp>
-#undef BOOST_LIB_DIAGNOSTIC
+#include <ql/quantlib.hpp>
 
-namespace AndSoft
+namespace ASI
 {
 
     class AmericanLookback : public QuantLib::AdaptedPathPayoff

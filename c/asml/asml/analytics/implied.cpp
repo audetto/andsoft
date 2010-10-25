@@ -1,6 +1,6 @@
 #include <asml/analytics/implied.h>
 
-#include <math.h>
+#include <cmath>
 #include <gsl/gsl_cdf.h>
 #include <gsl/gsl_randist.h>
 

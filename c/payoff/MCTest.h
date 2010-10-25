@@ -3,7 +3,7 @@
 #ifndef MC_TEST_H
 #define MC_TEST_H
 
-namespace AndSoft
+namespace ASI
 {
     void mcTest();
 }

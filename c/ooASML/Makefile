@@ -64,7 +64,7 @@ libs: ASIMaths.rdb libASIMaths.so
 	LD_LIBRARY_PATH=. $(REGCOMP) -register -r ASIMaths.rdb -c libASIMaths.so
 
 asml:
-	$(MAKE) -C ../asml $(MAKECMDGOALS)
+	$(MAKE) -C $(ASMLDIR)
 
 %.urd: %.idl
 	$(IDLC) -w -C -I$(OO_SDK_HOME)/idl $<

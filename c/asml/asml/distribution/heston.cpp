@@ -2,7 +2,7 @@
 #include <asml/analytics/numerics.h>
 #include <asml/distribution/fourierpricing.h>
 
-#include <math.h>
+#include <cmath>
 
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_cdf.h>

@@ -1,6 +1,6 @@
 #include <asml/linearalgebra/fastexp.h>
 
-#include <assert.h>
+#include <cassert>
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>

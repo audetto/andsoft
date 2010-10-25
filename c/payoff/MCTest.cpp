@@ -1,13 +1,11 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 // the only header you need to use QuantLib
-#define BOOST_LIB_DIAGNOSTIC
-#  include <ql/quantlib.hpp>
-#undef BOOST_LIB_DIAGNOSTIC
+#include <ql/quantlib.hpp>
 
-#include "AmericanLookback.h"
-#include "GenericPathOption.h"
-#include "JSPayoff.h"
+#include <asml/payoff/AmericanLookback.h>
+#include <asml/payoff/GenericPathOption.h>
+#include <asml/payoff/JSPayoff.h>
 
 #include <boost/timer.hpp>
 #include <iostream>
@@ -16,7 +14,7 @@
 using namespace QuantLib;
 using namespace std;
 
-namespace AndSoft
+namespace ASI
 {
   
     void mcTest()

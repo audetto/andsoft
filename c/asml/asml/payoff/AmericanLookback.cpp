@@ -1,10 +1,10 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
-#include "AmericanLookback.h"
+#include <asml/payoff/AmericanLookback.h>
 
 using namespace QuantLib;
 
-namespace AndSoft
+namespace ASI
 {
     
     AmericanLookback::AmericanLookback() : m_euribor3m(new Euribor3M(m_termStructure))

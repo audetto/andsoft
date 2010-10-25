@@ -1,10 +1,10 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
-#include "GenericPathOption.h"
+#include <asml/payoff/GenericPathOption.h>
 
 using namespace QuantLib;
 
-namespace AndSoft
+namespace ASI
 {
     
     GenericPathOption::GenericPathOption(const boost::shared_ptr<PathPayoff>        & pathPayoff,
