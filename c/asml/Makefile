@@ -1,6 +1,6 @@
 .PHONY: all lib clean headers
 
-OBJFILES += asml/utils/utils.o 
+OBJFILES += asml/utils/utils.o asml/utils/error.o
 OBJFILES += asml/linearalgebra/projection.o asml/linearalgebra/linear.o  asml/linearalgebra/fastexp.o asml/linearalgebra/hypermatrix.o
 OBJFILES += asml/analytics/implied.o asml/analytics/numerics.o 
 OBJFILES += asml/distribution/distribution.o asml/distribution/fourierpricing.o  asml/distribution/heston.o

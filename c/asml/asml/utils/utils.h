@@ -1,3 +1,5 @@
+/* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+
 #ifndef ASI_UTILS_H
 #define ASI_UTILS_H
 
@@ -26,8 +28,6 @@ namespace ASI
 
     typedef boost::shared_ptr<gsl_vector> VectorPtr;
     typedef boost::shared_ptr<const gsl_vector> CVectorPtr;
-
-    void __attribute__ ((__noreturn__)) error(const std::string & msg);
 
     void handler (const char * reason, const char * file, int line, int gsl_errno);
 

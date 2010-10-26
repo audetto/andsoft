@@ -1,5 +1,6 @@
 #include <asml/analytics/numerics.h>
 #include <asml/utils/utils.h>
+#include <asml/utils/error.h>
 
 #include <cmath>
 #include <limits>

@@ -1,4 +1,5 @@
 #include <asml/linearalgebra/linear.h>
+#include <asml/utils/error.h>
 
 #include <gsl/gsl_linalg.h>
 

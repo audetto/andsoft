@@ -1,12 +1,13 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 #include <asml/payoff/JSPayoff.h>
+#include <asml/utils/error.h>
 #include <v8.h>
-#include <stdexcept>
 #include <fcntl.h>
 
 using namespace v8;
 using namespace std;
+using namespace ASI;
 
 namespace
 {
@@ -15,7 +16,7 @@ namespace
     {
         FILE* file = fopen(name.c_str(), "rb");
         if (file == NULL)
-            throw "WTF1";
+            THROW_EXCEPTION("Cannot read file: " << name);
         
         fseek(file, 0, SEEK_END);
         int size = ftell(file);
@@ -39,14 +40,18 @@ namespace
         if (!tryCatch.HasCaught())
             return;
         String::Utf8Value stack_trace(tryCatch.StackTrace());
+
         if (stack_trace.length() > 0)
         {
             const char* stack_trace_string = *stack_trace;
-            cerr << stack_trace_string << endl;
+            THROW_EXCEPTION(stack_trace_string);
         }
-        Handle<Value> exception = tryCatch.Exception();
-        String::AsciiValue exception_str(exception);
-        throw std::runtime_error(*exception_str);
+        else
+        {
+            Handle<Value> exception = tryCatch.Exception();
+            String::AsciiValue exception_str(exception);
+            THROW_EXCEPTION(*exception_str);
+        }
     }
 
     Handle<Array> convertMatrixToV8(const QuantLib::Matrix & mat)
@@ -79,7 +84,7 @@ namespace
         const size_t resultSize = arr->Length();
 
         if (resultSize != numberOfTimes)
-            throw "Wrong Number of Times";
+            THROW_EXCEPTION("Wrong Number of Times: " << resultSize << " != " << numberOfTimes);
 
         for (size_t i = 0; i < numberOfTimes; ++i)
         {
@@ -145,7 +150,7 @@ namespace ASI
         // If there is no Payoff function, or if it is not a function,
         // bail out
         if (!payoff_val->IsFunction()) 
-            throw "Missing payoff";
+            THROW_EXCEPTION("payoff is not a function");
 
         // It is a function; cast it to a Function
         Handle<Function> payoff_fun = Handle<Function>::Cast(payoff_val);

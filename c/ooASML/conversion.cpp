@@ -1,3 +1,4 @@
+#include <asml/utils/error.h>
 #include "conversion.h"
 
 namespace ASI

@@ -1,5 +1,5 @@
 #include <asml/linearalgebra/projection.h>
-
+#include <asml/utils/error.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 

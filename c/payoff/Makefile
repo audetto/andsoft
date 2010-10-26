@@ -12,7 +12,7 @@ example: asml $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
 
 asml:
-	$(MAKE) -C $(ASMLDIR)
+	$(MAKE) -C $(ASMLDIR) $(MAKECMDGOALS)
 
 run: example
 	./example

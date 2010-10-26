@@ -1,6 +1,7 @@
 #include <asml/distribution/fourierpricing.h>
 #include <asml/distribution/distribution.h>
 #include <asml/analytics/implied.h>
+#include <asml/utils/error.h>
 
 #include <gsl/gsl_fft_real.h>
 #include <gsl/gsl_fft_halfcomplex.h>
@@ -88,7 +89,7 @@ namespace ASI
     void priceViaFFT(const size_t N, const double std_dev, const Distribution & dist, vector<double> & strikes, vector<double> & prices)
     {
 	if (!isPowerOfTwo(N))
-	    error("Not a power of 2!");
+	  THROW_EXCEPTION(N << " is not a power of 2!");
 
 	const double varSwap = varianceSwap(dist);
 	const double sigmaSqrtT = sqrt(varSwap);
