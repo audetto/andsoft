@@ -1,6 +1,7 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 #include <asml/payoff/AmericanLookback.h>
+#include <ql/indexes/ibor/euribor.hpp>
 
 using namespace QuantLib;
 

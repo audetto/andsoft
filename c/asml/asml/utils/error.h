@@ -3,7 +3,6 @@
 #ifndef ASI_ERROR_H
 #define ASI_ERROR_H
 
-#include <asml/utils/utils.h>
 #include <sstream>
 
 #define THROW_EXCEPTION(MSG) do { std::ostringstream out; out << MSG; ASI::error(out); } while (false)

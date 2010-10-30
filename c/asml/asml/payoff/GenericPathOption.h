@@ -3,7 +3,7 @@
 #ifndef GENERIC_PATH_OPTION_H
 #define GENERIC_PATH_OPTION_H
 
-#include <ql/quantlib.hpp>
+#include <ql/experimental/mcbasket/pathmultiassetoption.hpp>
 
 namespace ASI
 {

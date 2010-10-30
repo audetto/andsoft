@@ -3,7 +3,7 @@
 #ifndef JS_PAYOFF_H
 #define JS_PAYOFF_H
 
-#include <ql/quantlib.hpp>
+#include <ql/experimental/mcbasket/pathpayoff.hpp>
 
 namespace ASI
 {

@@ -3,7 +3,8 @@
 #ifndef AMERICAN_LOOKBACK_H
 #define AMERICAN_LOOKBACK_H
 
-#include <ql/quantlib.hpp>
+#include <ql/experimental/mcbasket/adaptedpathpayoff.hpp>
+#include <ql/indexes/iborindex.hpp>
 
 namespace ASI
 {

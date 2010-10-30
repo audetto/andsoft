@@ -6,6 +6,7 @@
 #include <asml/payoff/AmericanLookback.h>
 #include <asml/payoff/GenericPathOption.h>
 #include <asml/payoff/JSPayoff.h>
+#include <asml/marketdata/MarketData.h>
 
 #include <boost/timer.hpp>
 #include <iostream>
@@ -24,51 +25,34 @@ namespace ASI
         std::cout << std::endl;
         
         // our options
-        Calendar calendar = TARGET();
         Real underlying = 1.0;
         Spread dividendYield = 0.00;
         Rate riskFreeRate = 0.05;
         Volatility volatility = 0.20;
         
-        Date todaysDate(15, May, 1998);
-        Date settlementDate(17, May, 1998);
-        Settings::instance().evaluationDate() = todaysDate;
-        
-        DayCounter dayCounter = Actual365Fixed();
-        
-        std::cout << "Underlying price = "        << underlying << std::endl;
-        std::cout << "Risk-free interest rate = " << io::rate(riskFreeRate)
-                  << std::endl;
-        std::cout << "Dividend yield = " << io::rate(dividendYield)
-                  << std::endl;
-        std::cout << "Volatility = " << io::volatility(volatility)
-                  << std::endl;
-        std::cout << std::endl;
-        
-        std::string method;
-        
-        std::cout << std::endl ;
-        
-        Handle<Quote> underlyingH(boost::shared_ptr<Quote>(new SimpleQuote(underlying)));
-        
-        // bootstrap the yield/dividend/vol curves
-        Handle<YieldTermStructure> flatTermStructure(
-                                                     boost::shared_ptr<YieldTermStructure>(
-                                                                                           new FlatForward(settlementDate, riskFreeRate, dayCounter)));
-        Handle<YieldTermStructure> flatDividendTS(
-                                                  boost::shared_ptr<YieldTermStructure>(
-                                                                                        new FlatForward(settlementDate, dividendYield, dayCounter)));
-        Handle<BlackVolTermStructure> flatVolTS(
-                                                boost::shared_ptr<BlackVolTermStructure>(new BlackConstantVol(settlementDate, calendar, volatility, dayCounter)));
-        
-        boost::shared_ptr<StochasticProcess1D> stochasticProcess(
-                                                                 new BlackScholesMertonProcess(underlyingH, flatDividendTS, flatTermStructure, flatVolTS));
-        std::vector<boost::shared_ptr<StochasticProcess1D> > arrayOfProcesses;
-        arrayOfProcesses.push_back(stochasticProcess);
-        
+        const string name = "ABC";
+
+        EURCurrency ccy;
+
+        RawMarketData::StockMap_t stocks;
+        stocks[name].reset(new Stock(underlying, dividendYield, volatility, ccy));
+
+        RawMarketData::RateMap_t rates;
+        rates[ccy.code()] = riskFreeRate;
+
         Matrix corr(1, 1);
         corr[0][0] = 1;
-        boost::shared_ptr<StochasticProcessArray> mdProcess(new StochasticProcessArray(arrayOfProcesses, corr));
+        vector<string> names(1, name);
+        boost::shared_ptr<const Correlation> correlation(new Correlation(names, corr));
+
+        Date todaysDate(15, May, 1998);
+        Settings::instance().evaluationDate() = todaysDate;
+
+        boost::shared_ptr<const RawMarketData> rawMarketData(new RawMarketData(todaysDate, stocks, rates, correlation));
+
+        MarketData marketData(rawMarketData);
+
+        boost::shared_ptr<StochasticProcessArray> mdProcess(marketData.stockProcess(ccy, names));
         
         // options
         
@@ -89,7 +73,7 @@ namespace ASI
         
         Size timeSteps = 10;
         
-        method = "MC (Sobol)";
+        const string method = "MC (Sobol)";
         Size nSamples = 1 << 15;
         Size calibSamples = 1 << 10;
         
