@@ -1,4 +1,4 @@
-.PHONY : all headers lib clean asml libs install
+.PHONY : all clean asml libs install
 
 OFFICE_HOME=/usr/lib/openoffice
 OFFICE_BASE_HOME=$(OFFICE_HOME)/basis3.2
@@ -21,7 +21,6 @@ IDLC = $(OOoSDK_PATH)/idlc
 CPPUMAKER = $(OOoSDK_PATH)/cppumaker
 
 OBJFILES = ASIMaths_impl.o ASIMaths.o conversion.o ooutils.o
-DEPENDS = $(OBJFILES:.o=.d)
 
 CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(ASMLDIR) -Wall
 # -D_GLIBCXX_DEBUG
@@ -49,7 +48,7 @@ FORCPPUMAKER = -Torg.asi.XMaths \
 
 all: ASIMaths.oxt
 
-install:
+install: ASIMaths.oxt
 	-unopkg remove inc.andsoft.ASIMaths
 	unopkg add ASIMaths.oxt
 
@@ -66,6 +65,9 @@ libs: ASIMaths.rdb libASIMaths.so
 asml:
 	$(MAKE) -C $(ASMLDIR) $(MAKECMDGOALS)
 
+$(ASMLDIR)/libasml.a:
+	$(MAKE) -C $(ASMLDIR) libasml.a
+
 %.urd: %.idl
 	$(IDLC) -w -C -I$(OO_SDK_HOME)/idl $<
 
@@ -73,7 +75,7 @@ asml:
 	$(REGMERGE) $@ /UCR $<
 	$(CPPUMAKER) -BUCR $(FORCPPUMAKER) $(OO_SDK_URE_HOME)/share/misc/types.rdb $(OFFICE_BASE_HOME)/program/offapi.rdb $@
 
-libASIMaths.so: asml $(OBJFILES)
+libASIMaths.so: $(ASMLDIR)/libasml.a $(OBJFILES)
 	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
 #	chcon -t textrel_shlib_t libASIMaths.so
 
@@ -82,18 +84,12 @@ dummy: dummy.o $(OBJFILES)
 	$(SET_LD) ./$@
 
 clean: asml
-	-rm -r dummy *.o *.so *.urd *.rdb *.d *.oxt
-	-rm -r com org oxt/Linux_x86
+	rm -f dummy
+	rm -f $(OBJFILES)
+	rm -f $(DEPENDS)
+	rm -f *.so *.urd *.rdb *.oxt
+	rm -fr com org oxt/Linux_x86
 
-#### dependencies
 ooutils.h: ASIMaths.idl
 
-%.d: %.cpp
-	@set -e; rm -f $@; \
-	$(CXX) -MM -MP $(CPPFLAGS) $< > $@.$$$$; \
-	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-ifneq ($(MAKECMDGOALS),clean)
-include $(DEPENDS)
-endif
+include ../build/depend.mk
