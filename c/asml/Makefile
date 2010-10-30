@@ -31,7 +31,6 @@ dummy: all asml/dummy.o
 clean:
 	rm -f dummy 
 	rm -f $(OBJFILES)
-	rm -f $(DEPENDS)
 	rm -f *.a 
 
 include ../build/depend.mk

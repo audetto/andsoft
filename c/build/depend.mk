@@ -6,6 +6,11 @@ DEPENDS = $(OBJFILES:.o=.d)
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
+clean: cleandep
+
+cleandep:
+	rm -f $(DEPENDS)
+
 ifneq ($(MAKECMDGOALS),clean)
 include $(DEPENDS)
 endif

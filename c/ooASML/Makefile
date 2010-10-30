@@ -86,7 +86,6 @@ dummy: dummy.o $(OBJFILES)
 clean: asml
 	rm -f dummy
 	rm -f $(OBJFILES)
-	rm -f $(DEPENDS)
 	rm -f *.so *.urd *.rdb *.oxt
 	rm -fr com org oxt/Linux_x86
 
