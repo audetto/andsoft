@@ -52,15 +52,13 @@ install: ASIMaths.oxt
 	-unopkg remove inc.andsoft.ASIMaths
 	unopkg add ASIMaths.oxt
 
-ASIMaths.oxt: libs
+ASIMaths.oxt: ASIMaths.rdb libASIMaths.so
 	-mkdir oxt/Linux_x86
-	cp ASIMaths.rdb oxt/Linux_x86
-	cp libASIMaths.so oxt/Linux_x86
-	cd oxt && zip ../ASIMaths.oxt -r .
-
-# there is a circular dependency here...
-libs: ASIMaths.rdb libASIMaths.so
+# does this step change ASIMaths.rdb??? 
 	LD_LIBRARY_PATH=. $(REGCOMP) -register -r ASIMaths.rdb -c libASIMaths.so
+	cp libASIMaths.so oxt/Linux_x86
+	cp ASIMaths.rdb oxt/Linux_x86
+	cd oxt && zip ../ASIMaths.oxt -r .
 
 asml:
 	$(MAKE) -C $(ASMLDIR) $(MAKECMDGOALS)
