@@ -12,7 +12,7 @@ OBJFILES += asml/marketdata/Stock.o asml/marketdata/RawMarketData.o asml/marketd
 ## It seems QuantLib has been compiled without D_GLIBCXX_DEBUG
 CPPFLAGS = -Wall -I. -I../../../3rdParty/v8/include
 ##  -D_GLIBCXX_DEBUG
-CXXFLAGS = -gdwarf-2
+CXXFLAGS = -g
 
 LDLIBS = -lgsl -lgslcblas -lm -lQuantLib
 
@@ -25,8 +25,7 @@ libasml.a: $(OBJFILES)
 	$(AR) cr $@ $^
 	$(RANLIB) $@
 
-dummy: all asml/dummy.o
-	g++ $(CPPFLAGS) $(CXXFLAGS) -o $@ asml/dummy.o -L. -lasml $(LDLIBS)
+dummy: asml/dummy.o libasml.a
 
 clean:
 	rm -f dummy 

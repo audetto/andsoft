@@ -9,7 +9,6 @@ CXXFLAGS = -g -I$(ASMLDIR)
 OBJECTS = example.o MCTest.o
 
 example: $(ASMLDIR)/libasml.a $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
 
 $(ASMLDIR)/libasml.a:
 	$(MAKE) -C $(ASMLDIR) libasml.a

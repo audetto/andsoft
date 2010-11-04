@@ -24,7 +24,7 @@ OBJFILES = ASIMaths_impl.o ASIMaths.o conversion.o ooutils.o
 
 CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(ASMLDIR) -Wall
 # -D_GLIBCXX_DEBUG
-CXXFLAGS = -gdwarf-2
+CXXFLAGS = -g
 
 LIB_DIR = -L$(OO_SDK_HOME)/lib -L$(OO_SDK_URE_LIB_DIR) -L$(ASMLDIR)
 LDLIBS = -luno_cppuhelpergcc3 -lasml -lgsl -lgslcblas -lm
