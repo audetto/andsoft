@@ -5,6 +5,11 @@ static Reference< XIdlClass > ourIDLClass;
 //XMaths
 double SAL_CALL expo( double m ) throw (RuntimeException); //expo(mean)
 
+OUString SAL_CALL getType( const Any& data ) throw (RuntimeException);
+
+OUString SAL_CALL saveValue( const OUString & name, double value ) throw (RuntimeException);
+double SAL_CALL getValue( const OUString & name ) throw (RuntimeException);
+
 Sequence<Sequence<double> > SAL_CALL projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException);
 
 Sequence<Sequence<double> > SAL_CALL dykstra( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException);
@@ -27,8 +32,8 @@ Sequence<Sequence<double> > SAL_CALL fft( const Sequence<Sequence<double> > & da
 
 Sequence<Sequence<double> > SAL_CALL ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
-Sequence<Sequence<double> > SAL_CALL fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+Sequence<Sequence<double> > SAL_CALL fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
-Sequence<Sequence<double> > SAL_CALL fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+Sequence<Sequence<double> > SAL_CALL fftPack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
 Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException);

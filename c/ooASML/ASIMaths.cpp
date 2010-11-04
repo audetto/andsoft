@@ -10,14 +10,17 @@
 #include <asml/distribution/fourierpricing.h>
 #include <asml/linearalgebra/fastexp.h>
 
+
 #include "ooutils.h"
 #include "conversion.h"
+#include "Cache.h"
 
 using namespace ::rtl;
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::reflection;
 using namespace ::com::sun::star::uno;
 using namespace ASI;
+using namespace std;
 
 namespace _ASIMaths_impl_
 {
@@ -27,7 +30,38 @@ namespace _ASIMaths_impl_
     {
         return -m * log( (double)(1+(unsigned int)rand()) / (2+(unsigned int)RAND_MAX) );
     }    
-    
+
+    OUString SAL_CALL ASIMaths_impl::getType( const Any& data ) throw (RuntimeException)
+    {
+        OUString typeName = data.getValueTypeName();
+
+        return typeName;
+    }
+
+    OUString SAL_CALL ASIMaths_impl::saveValue( const OUString & name, double value ) throw (RuntimeException)
+    {
+        string str;
+        ooConvert(name, str);
+        
+        boost::shared_ptr<const double> v(new double(1));
+        
+        const std::string key = ObjectCache::instance().store(str, v);
+        
+        OUString ooKey = OUString::createFromAscii(key.c_str());
+        
+        return ooKey;
+    }
+
+    double SAL_CALL ASIMaths_impl::getValue( const OUString & name ) throw (RuntimeException)
+    {
+        std::string str;
+        ooConvert(name, str);
+
+        const boost::shared_ptr<const double> v = ObjectCache::instance().get<double>(str);
+
+        return *v;
+    }
+
     Sequence<Sequence<double> > ASIMaths_impl::projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException)
     {
         WRAP_BEGIN;
@@ -188,7 +222,7 @@ namespace _ASIMaths_impl_
         WRAP_END;
     }
     
-    Sequence<Sequence<double> > ASIMaths_impl::fft_unpack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
+    Sequence<Sequence<double> > ASIMaths_impl::fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
         WRAP_BEGIN;
         
@@ -201,7 +235,7 @@ namespace _ASIMaths_impl_
         WRAP_END;
     }
     
-    Sequence<Sequence<double> > ASIMaths_impl::fft_pack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
+    Sequence<Sequence<double> > ASIMaths_impl::fftPack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
         WRAP_BEGIN;
         
@@ -238,6 +272,7 @@ namespace _ASIMaths_impl_
         
         appendStdVectorToOOArgument(result, strikes);
         appendStdVectorToOOArgument(result, prices);
+
         
         return result;
         

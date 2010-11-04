@@ -20,7 +20,7 @@ REGMERGE = $(OO_SDK_URE_BIN_DIR)/regmerge
 IDLC = $(OOoSDK_PATH)/idlc
 CPPUMAKER = $(OOoSDK_PATH)/cppumaker
 
-OBJFILES = ASIMaths_impl.o ASIMaths.o conversion.o ooutils.o
+OBJFILES = ASIMaths_impl.o ASIMaths.o conversion.o ooutils.o Cache.o
 
 CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(ASMLDIR) -Wall
 # -D_GLIBCXX_DEBUG

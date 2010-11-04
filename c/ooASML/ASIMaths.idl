@@ -18,6 +18,16 @@ module org
         {
             double expo( [in] double m );
 
+            string getType( [in] any data )
+                raises (com::sun::star::uno::RuntimeException);
+
+            string saveValue( [in] string name,
+                            [in] double value )
+                raises (com::sun::star::uno::RuntimeException);
+
+            double getValue( [in] string name )
+                raises (com::sun::star::uno::RuntimeException);
+
             sequence<sequence<double> > projection([in] sequence< sequence < double > > x, 
                                                    [in] sequence< sequence < double > > a,
                                                    [in] sequence< sequence < double > > b)
@@ -76,10 +86,10 @@ module org
             sequence<sequence<double> > fft([in] sequence<sequence<double> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
-            sequence<sequence<double> > fft_unpack([in] sequence<sequence<double> > data) 
+            sequence<sequence<double> > fftUnpack([in] sequence<sequence<double> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
-            sequence<sequence<double> > fft_pack([in] sequence<sequence<double> > data) 
+            sequence<sequence<double> > fftPack([in] sequence<sequence<double> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
             sequence<sequence<double> > ifft([in] sequence<sequence<double> > data) 
