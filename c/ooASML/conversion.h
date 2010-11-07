@@ -11,9 +11,20 @@
 namespace ASI
 {
     
-    template <typename T, typename S>
-	void ooConvert(const T & t, S & s);
-    
+    void ooConvert(const ::rtl::OUString & s1, std::string & str);
+    void ooConvert(const ::com::sun::star::uno::Sequence<double> & vect, cpl & cplNum);
+
+    void ooConvert(const std::string & str, ::rtl::OUString & s1);
+    void ooConvert(const cpl & cplNum, ::com::sun::star::uno::Sequence<double> & vect);
+
+    void ooConvert(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& mat, MatrixPtr & matPtr);
+    void ooConvert(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect, VectorPtr & vectPtr);
+    void ooConvert(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect, std::vector<double> & stdVect);
+
+    void ooConvert(const MatrixPtr & matPtr, ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> > & mat);
+    void ooConvert(const VectorPtr & vectPtr, ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect);
+    void ooConvert(double val, ::com::sun::star::uno::Sequence<double> & vect);
+
     template <typename T>
 	void ooConvert(const T & t, T & s)
     {
@@ -46,19 +57,6 @@ namespace ASI
         }
     }
 
-    template <>
-    void ooConvert(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect, std::vector<double> & stdVect);
-
-    template <>
-    void ooConvert(const std::vector<double> & stdVect, ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect);
-
-    template <>
-    void ooConvert(const ::com::sun::star::uno::Sequence<double> & vect, cpl & cplNum);
-
-    template <>
-    void ooConvert(const cpl & cplNum, ::com::sun::star::uno::Sequence<double> & vect);
-
-
     template <typename S, typename T>
 	S ooDirectConvert(const T & t)
     {
@@ -69,7 +67,6 @@ namespace ASI
 
     void appendStdVectorToOOArgument(::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> > & seq, const std::vector<double> & vect);
 
-    
 }
 
 #endif

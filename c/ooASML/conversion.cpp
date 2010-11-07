@@ -8,7 +8,6 @@ using namespace ::rtl;
 
 namespace ASI
 {
-    template<>
     void ooConvert(const OUString & s1, std::string & str)
     {
         OString s2;
@@ -22,13 +21,11 @@ namespace ASI
         }
     }
 
-    template <>
     void ooConvert(const std::string & str, OUString & s1)
     {
         s1 = OUString::createFromAscii(str.c_str());
     }
 
-    template <>
     void ooConvert(const Sequence<Sequence<double> >& mat, MatrixPtr & matPtr)
     {
         const size_t rows = mat.getLength();
@@ -53,7 +50,6 @@ namespace ASI
         }
     }
     
-    template <>
     void ooConvert(const MatrixPtr & matPtr, Sequence<Sequence<double> > & mat)
     {
         const size_t rows = matPtr->size1;
@@ -71,7 +67,6 @@ namespace ASI
         }
     }
     
-    template <>
     void ooConvert(const Sequence<Sequence<double> >& vect, VectorPtr & vectPtr)
     {
         MatrixPtr matrix;
@@ -99,7 +94,6 @@ namespace ASI
         }
     }
     
-    template <>
     void ooConvert(const VectorPtr & vectPtr, Sequence<Sequence<double> >& vect)
     {
         const size_t rows = vectPtr->size;
@@ -114,7 +108,6 @@ namespace ASI
         }
     }
     
-    template <>
     void ooConvert(const Sequence<Sequence<double> >& vect, std::vector<double> & stdVect)
     {
         VectorPtr vector;
@@ -130,19 +123,11 @@ namespace ASI
         }
     }
     
-    template <>
-    void ooConvert(const std::vector<double> & stdVect, Sequence<Sequence<double> >& vect)
+    void ooConvert(double val, Sequence<double> & vect)
     {
-        const size_t rows = stdVect.size();
-        const size_t cols = 1;
-        
-        vect = Sequence<Sequence<double> > (rows);
-        
-        for (size_t i = 0; i < rows; ++i)
-        {
-            vect[i].realloc(cols);
-            vect[i][0] = stdVect[i];
-        }
+        std::vector<double> tmp(1, val);
+
+        ooConvert(tmp, vect);
     }
     
     void appendStdVectorToOOArgument(Sequence<Sequence<double> > & seq, const std::vector<double> & vect)
@@ -164,7 +149,6 @@ namespace ASI
         }
     }
     
-    template <>
     void ooConvert(const Sequence<double> & vect, cpl & cplNum)
     {
         std::vector<double> v;
@@ -178,7 +162,6 @@ namespace ASI
         cplNum = cpl(v[0], v[1]);
     }
     
-    template <>
     void ooConvert(const cpl & cplNum, Sequence<double> & vect)
     {
         vect = Sequence<double> (2);
