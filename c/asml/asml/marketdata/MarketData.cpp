@@ -30,11 +30,11 @@ namespace ASI
 
         BOOST_FOREACH(const RawMarketData::RateMap_t::value_type & it, rateMap)
         {
-            const std::string & code = it.first;
+            const QuantLib::Currency & ccy = it.first;
             const double rate = it.second;
             Handle<YieldTermStructure> yc(boost::shared_ptr<YieldTermStructure>(new FlatForward(valuationDate, rate, dayCounter)));
             
-            m_rateMap[code] = yc;
+            m_rateMap[ccy] = yc;
         }
 
         BOOST_FOREACH(const RawMarketData::StockMap_t::value_type & it, stockMap)
@@ -63,7 +63,7 @@ namespace ASI
 
     const Handle<YieldTermStructure> & MarketData::yieldCurve(const QuantLib::Currency & currency) const
     {
-        const Handle<YieldTermStructure> & yieldCurve = findInMap(m_rateMap, currency.code());
+        const Handle<YieldTermStructure> & yieldCurve = findInMap(m_rateMap, currency);
         return yieldCurve;
     }
    

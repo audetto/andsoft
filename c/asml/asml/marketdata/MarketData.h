@@ -27,7 +27,7 @@ namespace ASI
 
         const boost::shared_ptr<const RawMarketData> m_rawData;
 
-        std::map<std::string, QuantLib::Handle<QuantLib::YieldTermStructure> >        m_rateMap;
+        std::map<QuantLib::Currency, QuantLib::Handle<QuantLib::YieldTermStructure> > m_rateMap;
         std::map<std::string, QuantLib::Handle<QuantLib::YieldTermStructure> >        m_dividendMap;
         std::map<std::string, QuantLib::Handle<QuantLib::BlackVolTermStructure> >     m_volatilityMap;
         std::map<std::string, double>                                                 m_spotMap;

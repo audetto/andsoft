@@ -38,7 +38,7 @@ namespace ASI
         stocks[name].reset(new Stock(underlying, dividendYield, volatility, ccy));
 
         RawMarketData::RateMap_t rates;
-        rates[ccy.code()] = riskFreeRate;
+        rates[ccy] = riskFreeRate;
 
         Matrix corr(1, 1);
         corr[0][0] = 1;

@@ -5,6 +5,7 @@
 
 #include <asml/marketdata/Stock.h>
 #include <asml/marketdata/Correlation.h>
+#include <asml/utils/Operators.h>
 #include <ql/time/date.hpp>
 #include <ql/currency.hpp>
 #include <map>
@@ -15,7 +16,7 @@ namespace ASI
     {
     public:
         typedef std::map<std::string, boost::shared_ptr<const Stock> > StockMap_t;
-        typedef std::map<std::string, double> RateMap_t;
+        typedef std::map<QuantLib::Currency, double> RateMap_t;
 
         RawMarketData(const QuantLib::Date & valuationDate,
                       const StockMap_t & rawStocks,
