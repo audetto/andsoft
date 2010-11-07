@@ -37,3 +37,5 @@ Sequence<Sequence<double> > SAL_CALL fftUnpack( const Sequence<Sequence<double> 
 Sequence<Sequence<double> > SAL_CALL fftPack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
 Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException);
+
+Sequence<Sequence<OUString > > SAL_CALL regExp( const OUString& regexp, const OUString& text ) throw (RuntimeException);

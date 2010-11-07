@@ -105,6 +105,12 @@ module org
                                                   [in] long N, 
                                                   [in] double stddev)
                 raises (com::sun::star::uno::RuntimeException);
+
+
+            sequence<sequence<string> > regExp([in] string regexp,
+                                               [in] string text)
+                raises (com::sun::star::uno::RuntimeException);
+                
             
         };
         

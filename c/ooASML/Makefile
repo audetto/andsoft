@@ -27,7 +27,7 @@ CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(
 CXXFLAGS = -g
 
 LIB_DIR = -L$(OO_SDK_HOME)/lib -L$(OO_SDK_URE_LIB_DIR) -L$(ASMLDIR)
-LDLIBS = -luno_cppuhelpergcc3 -lasml -lgsl -lgslcblas -lm
+LDLIBS = -luno_cppuhelpergcc3 -lasml -lgsl -lgslcblas -lboost_regex -lm
 
 FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.sheet.XAddIn \

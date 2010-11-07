@@ -10,6 +10,7 @@
 #include <asml/distribution/fourierpricing.h>
 #include <asml/linearalgebra/fastexp.h>
 
+#include <boost/regex.hpp> 
 
 #include "ooutils.h"
 #include "conversion.h"
@@ -276,5 +277,33 @@ namespace _ASIMaths_impl_
         
         WRAP_END;
     }
+
+    Sequence<Sequence<OUString > > SAL_CALL ASIMaths_impl::regExp( const OUString& ooRegexp, const OUString& ooText ) throw (RuntimeException)
+    {
+        std::string regexp;
+        ooConvert(ooRegexp, regexp);
+
+        std::string text;
+        ooConvert(ooText, text);
+
+        boost::regex expression(regexp); 
+
+        vector<vector<string> > result;
+
+        boost::smatch what;
+        boost::regex_match(text, what, expression);
+
+        const size_t numberOfResults = what.size();
+
+        result.resize(numberOfResults);
+        for (size_t i = 0; i < numberOfResults; ++i)
+        {
+            result[i].resize(1);
+            if (what[i].matched)
+                result[i][0] = what[i];
+        }
+        
+        return ooDirectConvert<Sequence<Sequence<OUString > > >(result);
+   } 
     
 }
