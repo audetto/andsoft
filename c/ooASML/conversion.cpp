@@ -23,6 +23,12 @@ namespace ASI
     }
 
     template <>
+    void ooConvert(const std::string & str, OUString & s1)
+    {
+        s1 = OUString::createFromAscii(str.c_str());
+    }
+
+    template <>
     void ooConvert(const Sequence<Sequence<double> >& mat, MatrixPtr & matPtr)
     {
         const size_t rows = mat.getLength();
@@ -159,38 +165,25 @@ namespace ASI
     }
     
     template <>
-    void ooConvert(const Sequence<Sequence<double> >& vect, std::vector<cpl> & stdCplVect)
+    void ooConvert(const Sequence<double> & vect, cpl & cplNum)
     {
-        MatrixPtr matrix;
-        ooConvert(vect, matrix);
+        std::vector<double> v;
+        ooConvert(vect, v);
         
-        const size_t rows = matrix->size1;
-        const size_t cols = matrix->size2;
+        const size_t cols = v.size();
         
         if (cols != 2)
             error("For complex data, there must be 2 columns");
         
-        stdCplVect.resize(rows);
-        
-        for (size_t i = 0; i < rows; ++i)
-        {
-            stdCplVect[i] = cpl(gsl_matrix_get(matrix.get(), i, 0), gsl_matrix_get(matrix.get(), i, 1));
-        }
+        cplNum = cpl(v[0], v[1]);
     }
     
     template <>
-    void ooConvert(const std::vector<std::complex<double> > & stdCplVect, Sequence<Sequence<double> > & vect)
+    void ooConvert(const cpl & cplNum, Sequence<double> & vect)
     {
-        const size_t rows = stdCplVect.size();
-        const size_t cols = 2;
+        vect = Sequence<double> (2);
         
-        vect = Sequence<Sequence<double> > (rows);
-        
-        for (size_t i = 0; i < rows; ++i)
-        {
-            vect[i].realloc(cols);
-            vect[i][0] = stdCplVect[i].real();
-            vect[i][1] = stdCplVect[i].imag();
-        }
+        vect[0] = cplNum.real();
+        vect[1] = cplNum.imag();
     }
 }

@@ -47,9 +47,7 @@ namespace _ASIMaths_impl_
         
         const std::string key = ObjectCache::instance().store(str, v);
         
-        OUString ooKey = OUString::createFromAscii(key.c_str());
-        
-        return ooKey;
+        return ooDirectConvert<OUString>(key);
     }
 
     double SAL_CALL ASIMaths_impl::getValue( const OUString & name ) throw (RuntimeException)
