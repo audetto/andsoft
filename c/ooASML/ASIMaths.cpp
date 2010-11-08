@@ -13,7 +13,8 @@
 #include <boost/regex.hpp> 
 
 #include "ooutils.h"
-#include "conversion.h"
+#include "ConversionOut.h"
+#include "ConversionIn.h"
 #include "Cache.h"
 
 using namespace ::rtl;
@@ -42,7 +43,7 @@ namespace _ASIMaths_impl_
     OUString SAL_CALL ASIMaths_impl::saveValue( const OUString & name, double value ) throw (RuntimeException)
     {
         string str;
-        ooConvert(name, str);
+        ooConvertIn(name, str);
         
         boost::shared_ptr<const double> v(new double(1));
         
@@ -54,7 +55,7 @@ namespace _ASIMaths_impl_
     double SAL_CALL ASIMaths_impl::getValue( const OUString & name ) throw (RuntimeException)
     {
         std::string str;
-        ooConvert(name, str);
+        ooConvertIn(name, str);
 
         const boost::shared_ptr<const double> v = ObjectCache::instance().get<double>(str);
 
@@ -66,13 +67,13 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         VectorPtr  xVect;
-        ooConvert(x, xVect);
+        ooConvertIn(x, xVect);
         
         MatrixPtr aMat;
-        ooConvert(a, aMat);
+        ooConvertIn(a, aMat);
         
         VectorPtr bVect;
-        ooConvert(b, bVect);
+        ooConvertIn(b, bVect);
         
         projectOnSubspace(xVect.get(), aMat.get(), bVect.get());
         
@@ -86,13 +87,13 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         VectorPtr  xVect;
-        ooConvert(x, xVect);
+        ooConvertIn(x, xVect);
 
         MatrixPtr aMat;
-        ooConvert(a, aMat);
+        ooConvertIn(a, aMat);
         
         VectorPtr bVect;
-        ooConvert(b, bVect);
+        ooConvertIn(b, bVect);
         
         const size_t iter = 100;
         const double tol = 1.0e-10;
@@ -109,10 +110,10 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         MatrixPtr aMat;
-        ooConvert(a, aMat);
+        ooConvertIn(a, aMat);
         
         VectorPtr bVect;
-        ooConvert(b, bVect);
+        ooConvertIn(b, bVect);
         
         VectorPtr xVect;
         
@@ -128,7 +129,7 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         MatrixPtr aMat;
-        ooConvert(a, aMat);
+        ooConvertIn(a, aMat);
         
         MatrixPtr exptA;
         
@@ -155,10 +156,10 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         std::vector<double> xVect;
-        ooConvert(xa, xVect);
+        ooConvertIn(xa, xVect);
         
         std::vector<double> yVect;
-        ooConvert(ya, yVect);
+        ooConvertIn(ya, yVect);
         
         const double result = ASI::finiteDifference(xVect, yVect, x, order);
         
@@ -214,32 +215,32 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         std::vector<double> dataVect;
-        ooConvert(data, dataVect);
+        ooConvertIn(data, dataVect);
         ASI::FFT_Real(dataVect, true);
         return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(dataVect);
         
         WRAP_END;
     }
     
-    Sequence<Sequence<double> > ASIMaths_impl::fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
+    Sequence<Sequence<OUString> > ASIMaths_impl::fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
     {
         WRAP_BEGIN;
         
         std::vector<double> dataVect;
-        ooConvert(data, dataVect);
+        ooConvertIn(data, dataVect);
         std::vector<cpl> result;
         ASI::FFT_Unpack(dataVect, result);
-        return ooDirectConvert<Sequence<Sequence<double> >, std::vector<cpl> >(result);
+        return ooDirectConvert<Sequence<Sequence<OUString> >, std::vector<cpl> >(result);
         
         WRAP_END;
     }
     
-    Sequence<Sequence<double> > ASIMaths_impl::fftPack( const Sequence<Sequence<double> > & data) throw (RuntimeException)
+    Sequence<Sequence<double> > ASIMaths_impl::fftPack( const Sequence<Sequence<OUString> > & data) throw (RuntimeException)
     {
         WRAP_BEGIN;
         
         std::vector<cpl> dataVect;
-        ooConvert(data, dataVect);
+        ooConvertIn(data, dataVect);
         std::vector<double> result;
         ASI::FFT_Pack(dataVect, result);
         return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(result);
@@ -252,7 +253,7 @@ namespace _ASIMaths_impl_
         WRAP_BEGIN;
         
         std::vector<double> dataVect;
-        ooConvert(data, dataVect);
+        ooConvertIn(data, dataVect);
         ASI::FFT_Real(dataVect, false);
         return ooDirectConvert<Sequence<Sequence<double> >, std::vector<double> >(dataVect);
         
@@ -281,10 +282,10 @@ namespace _ASIMaths_impl_
     Sequence<Sequence<OUString > > SAL_CALL ASIMaths_impl::regExp( const OUString& ooRegexp, const OUString& ooText ) throw (RuntimeException)
     {
         std::string regexp;
-        ooConvert(ooRegexp, regexp);
+        ooConvertIn(ooRegexp, regexp);
 
         std::string text;
-        ooConvert(ooText, text);
+        ooConvertIn(ooText, text);
 
         boost::regex expression(regexp); 
 
@@ -305,5 +306,58 @@ namespace _ASIMaths_impl_
         
         return ooDirectConvert<Sequence<Sequence<OUString > > >(result);
    } 
+
+    OUString SAL_CALL ASIMaths_impl::createMarketData( const OUString& name, 
+                                                       double date, 
+                                                       const Sequence< Sequence< OUString > >& ooCcys, 
+                                                       const Sequence< Sequence< double > >& ooRates, 
+                                                       const Sequence< Sequence< OUString > >& ooStocks, 
+                                                       const Sequence< Sequence< double > >& ooSpots, 
+                                                       const Sequence< Sequence< OUString > >& ooDomestics, 
+                                                       const Sequence< Sequence< double > >& ooRepos, 
+                                                       const Sequence< Sequence< double > >& ooVols, 
+                                                       const Sequence< Sequence< double > >& ooCorrelations ) throw (RuntimeException)
+    {
+        std::vector<std::string> ccys;
+        ooConvertIn(ooCcys, ccys);
+
+        std::vector<double> rates;
+        ooConvertIn(ooRates, rates);
+
+        std::vector<std::string> stocks;
+        ooConvertIn(ooStocks, stocks);
+
+        std::vector<double> spots;
+        ooConvertIn(ooSpots, spots);
+
+        std::vector<std::string> domestics;
+        ooConvertIn(ooDomestics, domestics);
+
+        std::vector<double> repos;
+        ooConvertIn(ooRepos, repos);
+
+        std::vector<double> vols;
+        ooConvertIn(ooVols, vols);
+
+        std::vector<std::vector<double> > correlations;
+
+        const size_t numberOfRates = ccys.size();
+
+        if (numberOfRates != rates.size())
+            THROW_EXCEPTION("Invalid size of ccy/rates");
+
+        const size_t numberOfStocks = stocks.size();
+
+        if (numberOfStocks != spots.size() || 
+            numberOfStocks != domestics.size() || 
+            numberOfStocks != repos.size() ||
+            numberOfStocks != vols.size())
+            THROW_EXCEPTION("Invalid size of stocks/domestics/repos/vols");
+
+        if (correlations.size() != numberOfStocks)
+            THROW_EXCEPTION("Invalid size of correlation");
+
+        
+    }
     
 }

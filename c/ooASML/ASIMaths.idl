@@ -86,10 +86,10 @@ module org
             sequence<sequence<double> > fft([in] sequence<sequence<double> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
-            sequence<sequence<double> > fftUnpack([in] sequence<sequence<double> > data) 
+            sequence<sequence<string> > fftUnpack([in] sequence<sequence<double> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
-            sequence<sequence<double> > fftPack([in] sequence<sequence<double> > data) 
+            sequence<sequence<double> > fftPack([in] sequence<sequence<string> > data) 
                 raises (com::sun::star::uno::RuntimeException);
             
             sequence<sequence<double> > ifft([in] sequence<sequence<double> > data) 
@@ -111,6 +111,19 @@ module org
                                                [in] string text)
                 raises (com::sun::star::uno::RuntimeException);
                 
+
+            string createMarketData([in] string name,
+                                    [in] double date,
+                                    [in] sequence<sequence<string> > ccys,
+                                    [in] sequence<sequence<double> > rates,
+                                    [in] sequence<sequence<string> > stocks,
+                                    [in] sequence<sequence<double> > spots,
+                                    [in] sequence<sequence<string> > domestics,
+                                    [in] sequence<sequence<double> > repos,
+                                    [in] sequence<sequence<double> > vols,
+                                    [in] sequence<sequence<double> > correlations)
+                raises (com::sun::star::uno::RuntimeException);
+                                    
             
         };
         

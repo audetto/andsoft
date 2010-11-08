@@ -20,7 +20,7 @@ REGMERGE = $(OO_SDK_URE_BIN_DIR)/regmerge
 IDLC = $(OOoSDK_PATH)/idlc
 CPPUMAKER = $(OOoSDK_PATH)/cppumaker
 
-OBJFILES = ASIMaths_impl.o ASIMaths.o conversion.o ooutils.o Cache.o
+OBJFILES = ASIMaths_impl.o ASIMaths.o ConversionIn.o ConversionOut.o ooutils.o Cache.o
 
 CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(ASMLDIR) -Wall
 # -D_GLIBCXX_DEBUG
@@ -74,11 +74,11 @@ $(ASMLDIR)/libasml.a:
 	$(CPPUMAKER) -BUCR $(FORCPPUMAKER) $(OO_SDK_URE_HOME)/share/misc/types.rdb $(OFFICE_BASE_HOME)/program/offapi.rdb $@
 
 libASIMaths.so: $(ASMLDIR)/libasml.a $(OBJFILES)
-	g++ $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o $@ -Wl,--version-script,component.uno.map -shared $(LIB_DIR) -L$(ASMLDIR) $(OBJFILES) $(LDLIBS)
 #	chcon -t textrel_shlib_t libASIMaths.so
 
 dummy: dummy.o $(OBJFILES)
-	g++ -o $@ $^ $(LIB_DIR) $(LDLIBS) -luno_sal -luno_salhelpergcc3 -luno_cppu -lstlport_gcc
+	$(CXX) -o $@ $^ $(LIB_DIR) $(LDLIBS) -luno_sal -luno_salhelpergcc3 -luno_cppu -lstlport_gcc
 	$(SET_LD) ./$@
 
 clean: asml

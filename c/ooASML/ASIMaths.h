@@ -32,10 +32,12 @@ Sequence<Sequence<double> > SAL_CALL fft( const Sequence<Sequence<double> > & da
 
 Sequence<Sequence<double> > SAL_CALL ifft( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
-Sequence<Sequence<double> > SAL_CALL fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+Sequence<Sequence<OUString> > SAL_CALL fftUnpack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
 
-Sequence<Sequence<double> > SAL_CALL fftPack( const Sequence<Sequence<double> > & data) throw (RuntimeException);
+Sequence<Sequence<double> > SAL_CALL fftPack( const Sequence<Sequence<OUString> > & data) throw (RuntimeException);
 
 Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, double sigma, double kappa, double theta, double alpha, double rho, sal_Int32 N, double stdDev) throw (RuntimeException);
 
 Sequence<Sequence<OUString > > SAL_CALL regExp( const OUString& regexp, const OUString& text ) throw (RuntimeException);
+
+OUString SAL_CALL createMarketData( const OUString& name, double date, const Sequence< Sequence< OUString > >& ccys, const Sequence< Sequence< double > >& rates, const Sequence< Sequence< OUString > >& stocks, const Sequence< Sequence< double > >& spots, const Sequence< Sequence< OUString > >& domestics, const Sequence< Sequence< double > >& repos, const Sequence< Sequence< double > >& vols, const Sequence< Sequence< double > >& correlations ) throw (RuntimeException);
