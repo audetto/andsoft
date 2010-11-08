@@ -15,7 +15,6 @@
 #include "ooutils.h"
 #include "ConversionOut.h"
 #include "ConversionIn.h"
-#include "Cache.h"
 
 using namespace ::rtl;
 using namespace ::com::sun::star;
@@ -35,31 +34,39 @@ namespace _ASIMaths_impl_
 
     OUString SAL_CALL ASIMaths_impl::getType( const Any& data ) throw (RuntimeException)
     {
+        WRAP_BEGIN;
+
         OUString typeName = data.getValueTypeName();
 
         return typeName;
+
+        WRAP_END;
     }
 
     OUString SAL_CALL ASIMaths_impl::saveValue( const OUString & name, double value ) throw (RuntimeException)
     {
+        WRAP_BEGIN;
+
         string str;
         ooConvertIn(name, str);
         
-        boost::shared_ptr<const double> v(new double(1));
+        boost::shared_ptr<const double> v(new double(value));
         
-        const std::string key = ObjectCache::instance().store(str, v);
-        
-        return ooDirectConvert<OUString>(key);
+        return ooDirectConvert<OUString>(std::make_pair(str, v));
+
+        WRAP_END;
     }
 
     double SAL_CALL ASIMaths_impl::getValue( const OUString & name ) throw (RuntimeException)
     {
-        std::string str;
-        ooConvertIn(name, str);
+        WRAP_BEGIN;
 
-        const boost::shared_ptr<const double> v = ObjectCache::instance().get<double>(str);
+        boost::shared_ptr<const double> v;
+        ooConvertIn(name, v);
 
         return *v;
+
+        WRAP_END;
     }
 
     Sequence<Sequence<double> > ASIMaths_impl::projection( const Sequence<Sequence<double> > & x, const Sequence<Sequence<double> > & a, const Sequence<Sequence<double> > & b) throw (RuntimeException)

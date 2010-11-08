@@ -4,6 +4,7 @@
 #define ASI_CONVERSION_OUT_H
 
 #include <asml/utils/utils.h>
+#include "Cache.h"
 
 #include <com/sun/star/uno/Sequence.hxx>
 #include <vector>
@@ -21,6 +22,13 @@ namespace ASI
 	void ooConvertOut(const T & t, T & s)
     {
         s = t;
+    }
+
+    template <typename T>
+    void ooConvertOut(const std::pair<std::string, boost::shared_ptr<const T> > & p, ::rtl::OUString & s)
+    {
+        const std::string key = ObjectCache::instance().store(p.first, p.second);
+        ooConvertOut(key, s);
     }
 
     // forward declared since this is used by the T -> Sequence<S> conversion

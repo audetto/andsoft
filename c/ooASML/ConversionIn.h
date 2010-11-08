@@ -4,6 +4,7 @@
 #define ASI_CONVERSION_IN_H
 
 #include <asml/utils/utils.h>
+#include "Cache.h"
 
 #include <com/sun/star/uno/Sequence.hxx>
 #include <vector>
@@ -21,6 +22,15 @@ namespace ASI
 	void ooConvertIn(const T & t, T & s)
     {
         s = t;
+    }
+
+    template <typename T>
+    void ooConvertIn(const ::rtl::OUString & s, boost::shared_ptr<const T> & p)
+    {
+        std::string str;
+        ooConvertIn(s, str);
+
+        p = ObjectCache::instance().get<T>(str);
     }
 
     template <typename T, typename S>
