@@ -20,14 +20,14 @@ REGMERGE = $(OO_SDK_URE_BIN_DIR)/regmerge
 IDLC = $(OOoSDK_PATH)/idlc
 CPPUMAKER = $(OOoSDK_PATH)/cppumaker
 
-OBJFILES = ASIMaths_impl.o ASIMaths.o ConversionIn.o ConversionOut.o ooutils.o Cache.o
+OBJFILES = ASIMaths_impl.o ASIMaths.o ConversionIn.o ConversionOut.o ooutils.o Cache.o ASIMarketData.o
 
 CPPFLAGS = -DUNX -DGCC -DLINUX -DCPPU_ENV=gcc3 -I. -I$(OO_SDK_HOME)/include -I$(ASMLDIR) -Wall
 # -D_GLIBCXX_DEBUG
 CXXFLAGS = -g
 
 LIB_DIR = -L$(OO_SDK_HOME)/lib -L$(OO_SDK_URE_LIB_DIR) -L$(ASMLDIR)
-LDLIBS = -luno_cppuhelpergcc3 -lasml -lgsl -lgslcblas -lboost_regex -lm
+LDLIBS = -luno_cppuhelpergcc3 -lasml -lQuantLib -lgsl -lgslcblas -lboost_regex -lm
 
 FORCPPUMAKER = -Torg.asi.XMaths \
 	-Tcom.sun.star.sheet.XAddIn \

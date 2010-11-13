@@ -16,9 +16,10 @@ module org
     {
         interface XMaths : com::sun::star::uno::XInterface
         {
-            double expo( [in] double m );
-
             string getType( [in] any data )
+                raises (com::sun::star::uno::RuntimeException);
+
+            sequence<sequence<string> > getExceptions( [in] any dummy )
                 raises (com::sun::star::uno::RuntimeException);
 
             string saveValue( [in] string name,

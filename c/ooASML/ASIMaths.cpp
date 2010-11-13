@@ -26,12 +26,6 @@ using namespace std;
 namespace _ASIMaths_impl_
 {
     
-    //expo(mean)
-    double ASIMaths_impl::expo( double m ) throw (RuntimeException)
-    {
-        return -m * log( (double)(1+(unsigned int)rand()) / (2+(unsigned int)RAND_MAX) );
-    }    
-
     OUString SAL_CALL ASIMaths_impl::getType( const Any& data ) throw (RuntimeException)
     {
         WRAP_BEGIN;
@@ -39,6 +33,18 @@ namespace _ASIMaths_impl_
         OUString typeName = data.getValueTypeName();
 
         return typeName;
+
+        WRAP_END;
+    }
+
+    Sequence< Sequence< OUString > > SAL_CALL ASIMaths_impl::getExceptions( const Any & ) throw (RuntimeException)
+    {
+        WRAP_BEGIN;
+
+        vector<string> e;
+        ASI::getExceptions(e);
+
+        return ooDirectConvert<Sequence< Sequence< OUString > > >(e);
 
         WRAP_END;
     }
@@ -280,7 +286,6 @@ namespace _ASIMaths_impl_
         appendStdVectorToOOArgument(result, strikes);
         appendStdVectorToOOArgument(result, prices);
 
-        
         return result;
         
         WRAP_END;
@@ -288,6 +293,8 @@ namespace _ASIMaths_impl_
 
     Sequence<Sequence<OUString > > SAL_CALL ASIMaths_impl::regExp( const OUString& ooRegexp, const OUString& ooText ) throw (RuntimeException)
     {
+        WRAP_BEGIN;
+
         std::string regexp;
         ooConvertIn(ooRegexp, regexp);
 
@@ -312,59 +319,8 @@ namespace _ASIMaths_impl_
         }
         
         return ooDirectConvert<Sequence<Sequence<OUString > > >(result);
+
+        WRAP_END;
    } 
 
-    OUString SAL_CALL ASIMaths_impl::createMarketData( const OUString& name, 
-                                                       double date, 
-                                                       const Sequence< Sequence< OUString > >& ooCcys, 
-                                                       const Sequence< Sequence< double > >& ooRates, 
-                                                       const Sequence< Sequence< OUString > >& ooStocks, 
-                                                       const Sequence< Sequence< double > >& ooSpots, 
-                                                       const Sequence< Sequence< OUString > >& ooDomestics, 
-                                                       const Sequence< Sequence< double > >& ooRepos, 
-                                                       const Sequence< Sequence< double > >& ooVols, 
-                                                       const Sequence< Sequence< double > >& ooCorrelations ) throw (RuntimeException)
-    {
-        std::vector<std::string> ccys;
-        ooConvertIn(ooCcys, ccys);
-
-        std::vector<double> rates;
-        ooConvertIn(ooRates, rates);
-
-        std::vector<std::string> stocks;
-        ooConvertIn(ooStocks, stocks);
-
-        std::vector<double> spots;
-        ooConvertIn(ooSpots, spots);
-
-        std::vector<std::string> domestics;
-        ooConvertIn(ooDomestics, domestics);
-
-        std::vector<double> repos;
-        ooConvertIn(ooRepos, repos);
-
-        std::vector<double> vols;
-        ooConvertIn(ooVols, vols);
-
-        std::vector<std::vector<double> > correlations;
-
-        const size_t numberOfRates = ccys.size();
-
-        if (numberOfRates != rates.size())
-            THROW_EXCEPTION("Invalid size of ccy/rates");
-
-        const size_t numberOfStocks = stocks.size();
-
-        if (numberOfStocks != spots.size() || 
-            numberOfStocks != domestics.size() || 
-            numberOfStocks != repos.size() ||
-            numberOfStocks != vols.size())
-            THROW_EXCEPTION("Invalid size of stocks/domestics/repos/vols");
-
-        if (correlations.size() != numberOfStocks)
-            THROW_EXCEPTION("Invalid size of correlation");
-
-        
-    }
-    
 }

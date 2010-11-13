@@ -3,9 +3,9 @@
 static Reference< XIdlClass > ourIDLClass;
 
 //XMaths
-double SAL_CALL expo( double m ) throw (RuntimeException); //expo(mean)
-
 OUString SAL_CALL getType( const Any& data ) throw (RuntimeException);
+
+Sequence< Sequence< OUString > > SAL_CALL getExceptions( const Any &  ) throw (RuntimeException);
 
 OUString SAL_CALL saveValue( const OUString & name, double value ) throw (RuntimeException);
 double SAL_CALL getValue( const OUString & name ) throw (RuntimeException);
