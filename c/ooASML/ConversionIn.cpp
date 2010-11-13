@@ -23,6 +23,11 @@ namespace ASI
         }
     }
 
+    void ooConvertIn(double val, QuantLib::Date & date)
+    {
+        date = QuantLib::Date(val);
+    }
+
     void ooConvertIn(const Sequence<Sequence<double> >& mat, MatrixPtr & matPtr)
     {
         const size_t rows = mat.getLength();

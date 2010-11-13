@@ -3,6 +3,8 @@
 #include "ASIMaths_impl.h"
 
 #include <asml/marketdata/MarketData.h>
+#include <asml/payoff/JSPayoff.h>
+#include <asml/payoff/GenericPathOption.h>
 
 #include <ql/currencies/europe.hpp>
 
@@ -32,6 +34,8 @@ namespace _ASIMaths_impl_
                                                        const Sequence< Sequence< double > >& ooCorrelations ) throw (RuntimeException)
     {
         WRAP_BEGIN;
+
+        const QuantLib::Date valuationDate(date);
 
         std::vector<std::string> ccys;
         ooConvertIn(ooCcys, ccys);
@@ -73,8 +77,6 @@ namespace _ASIMaths_impl_
         if (numberOfStocks != correlations.size())
             THROW_EXCEPTION("Invalid size of correlation: " << numberOfStocks << " != " << correlations.size());
 
-        const QuantLib::Date valuationDate(date);
-
         QuantLib::EURCurrency ccy;
 
         RawMarketData::RateMap_t ratesMap;
@@ -103,12 +105,35 @@ namespace _ASIMaths_impl_
 
         boost::shared_ptr<const RawMarketData> rawData(new RawMarketData(valuationDate, stocksMap, ratesMap, correl));
 
+        boost::shared_ptr<const MarketData> marketData(new MarketData(rawData));
+
         string str;
         ooConvertIn(name, str);
         
-        return ooDirectConvert<OUString>(std::make_pair(str, rawData));
+        return ooDirectConvert<OUString>(std::make_pair(str, marketData));
 
         WRAP_END;
     }
     
+    OUString SAL_CALL ASIMaths_impl::createPayoff( const OUString& name, const Sequence< Sequence< double > >& ooDates, const OUString& ooFilename ) throw (RuntimeException)
+    {
+        WRAP_BEGIN;
+
+        vector<QuantLib::Date> dates;
+        ooConvertIn(ooDates, dates);
+
+        string filename;
+        ooConvertIn(ooFilename, filename);
+
+        boost::shared_ptr<QuantLib::PathPayoff> jsPayoff(new JSPayoff(filename));
+        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option(new GenericPathOption(jsPayoff, dates));
+
+        string str;
+        ooConvertIn(name, str);
+        
+        return ooDirectConvert<OUString>(std::make_pair(str, option));
+        
+        WRAP_END;
+    }
 }
+

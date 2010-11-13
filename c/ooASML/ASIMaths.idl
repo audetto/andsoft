@@ -125,7 +125,10 @@ module org
                                     [in] sequence<sequence<double> > correlations)
                 raises (com::sun::star::uno::RuntimeException);
                                     
-            
+            string createPayoff([in] string name,
+                                [in] sequence<sequence<double> > dates,
+                                [in] string filename)
+                raises (com::sun::star::uno::RuntimeException);
         };
         
         service Maths

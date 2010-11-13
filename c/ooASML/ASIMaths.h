@@ -41,3 +41,5 @@ Sequence<Sequence<double> > SAL_CALL hestonFFT( double time1, double time2, doub
 Sequence<Sequence<OUString > > SAL_CALL regExp( const OUString& regexp, const OUString& text ) throw (RuntimeException);
 
 OUString SAL_CALL createMarketData( const OUString& name, double date, const Sequence< Sequence< OUString > >& ccys, const Sequence< Sequence< double > >& rates, const Sequence< Sequence< OUString > >& stocks, const Sequence< Sequence< double > >& spots, const Sequence< Sequence< OUString > >& domestics, const Sequence< Sequence< double > >& repos, const Sequence< Sequence< double > >& vols, const Sequence< Sequence< double > >& correlations ) throw (RuntimeException);
+
+OUString SAL_CALL createPayoff( const OUString& name, const Sequence< Sequence< double > >& dates, const OUString& filename ) throw (RuntimeException);

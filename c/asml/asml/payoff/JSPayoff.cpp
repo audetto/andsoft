@@ -16,7 +16,7 @@ namespace
     {
         FILE* file = fopen(name.c_str(), "rb");
         if (file == NULL)
-            THROW_EXCEPTION("Cannot read file: " << name);
+            THROW_EXCEPTION("V8: Cannot read file: " << name);
         
         fseek(file, 0, SEEK_END);
         int size = ftell(file);
@@ -28,6 +28,8 @@ namespace
         {
             int read = fread(&chars[i], 1, size - i, file);
             i += read;
+            if (read == 0)
+                THROW_EXCEPTION("V8: While reading " << name << ", stopped after " << i << " out of " << size);
         }
         fclose(file);
         Handle<v8::String> result = String::New(chars, size);
@@ -77,14 +79,14 @@ namespace
     void convertIfPresent(Handle<Value> result, QuantLib::Array & payments)
     {
         if (!result->IsArray())
-            throw "Not an array";
+            THROW_EXCEPTION("V8: Not an array");
 
         Handle<Array> arr = Handle<Array>::Cast(result);
         const size_t numberOfTimes = payments.size();
         const size_t resultSize = arr->Length();
 
         if (resultSize != numberOfTimes)
-            THROW_EXCEPTION("Wrong Number of Times: " << resultSize << " != " << numberOfTimes);
+            THROW_EXCEPTION("V8: Wrong Number of Times: " << resultSize << " != " << numberOfTimes);
 
         for (size_t i = 0; i < numberOfTimes; ++i)
         {
@@ -150,7 +152,7 @@ namespace ASI
         // If there is no Payoff function, or if it is not a function,
         // bail out
         if (!payoff_val->IsFunction()) 
-            THROW_EXCEPTION("payoff is not a function");
+            THROW_EXCEPTION("V8: payoff is not a function");
 
         // It is a function; cast it to a Function
         Handle<Function> payoff_fun = Handle<Function>::Cast(payoff_val);

@@ -6,6 +6,8 @@
 #include <asml/utils/utils.h>
 #include "Cache.h"
 
+#include <ql/time/date.hpp>
+
 #include <com/sun/star/uno/Sequence.hxx>
 #include <vector>
 
@@ -14,6 +16,7 @@ namespace ASI
     
     void ooConvertIn(const ::rtl::OUString & s1, std::string & str);
     void ooConvertIn(const ::rtl::OUString & cplStr, cpl & cplNum);
+    void ooConvertIn(double val, QuantLib::Date & date);
 
     void ooConvertIn(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& mat, MatrixPtr & matPtr);
     void ooConvertIn(const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Sequence<double> >& vect, VectorPtr & vectPtr);
