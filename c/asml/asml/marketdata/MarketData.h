@@ -15,6 +15,8 @@ namespace ASI
     public:
         MarketData(const boost::shared_ptr<const RawMarketData> & rawData);
 
+        const QuantLib::Date & valuationDate() const;
+
         const QuantLib::Currency & currency(const std::string & name) const;
         const QuantLib::Handle<QuantLib::YieldTermStructure> & yieldCurve(const QuantLib::Currency & currency) const;
 

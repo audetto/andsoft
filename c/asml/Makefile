@@ -8,6 +8,7 @@ OBJFILES += asml/pde/generator.o asml/pde/pde.o
 OBJFILES += asml/process/brownianmotionwithdrift.o
 OBJFILES += asml/payoff/AmericanLookback.o asml/payoff/GenericPathOption.o asml/payoff/JSPayoff.o
 OBJFILES += asml/marketdata/Stock.o asml/marketdata/RawMarketData.o asml/marketdata/MarketData.o asml/marketdata/Correlation.o
+OBJFILES += asml/montecarlo/Montecarlo.o
 
 ## It seems QuantLib has been compiled without D_GLIBCXX_DEBUG
 CPPFLAGS = -Wall -I. -I../../../3rdParty/v8/include

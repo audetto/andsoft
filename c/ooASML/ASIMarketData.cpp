@@ -5,6 +5,7 @@
 #include <asml/marketdata/MarketData.h>
 #include <asml/payoff/JSPayoff.h>
 #include <asml/payoff/GenericPathOption.h>
+#include <asml/montecarlo/Montecarlo.h>
 
 #include <ql/currencies/europe.hpp>
 
@@ -133,6 +134,38 @@ namespace _ASIMaths_impl_
         
         return ooDirectConvert<OUString>(std::make_pair(str, option));
         
+        WRAP_END;
+    }
+
+    Sequence<Sequence<double> > SAL_CALL ASIMaths_impl::mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData ) throw (RuntimeException)
+    {
+        WRAP_BEGIN;
+
+        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option;
+        ooConvertIn(ooPayoff, option);
+
+        QuantLib::EURCurrency ccy;
+
+        vector<string> names;
+        ooConvertIn(ooNames, names);
+
+        boost::shared_ptr<const MarketData> marketData;
+        ooConvertIn(ooMarketData, marketData);
+
+        MCDetails details;
+        details.timeSteps = 1;
+        details.paths = 1023;
+
+        QuantLib::PathMultiAssetOption & ins = const_cast<QuantLib::PathMultiAssetOption &>(*option);
+
+        MCResult result = priceViaMC(ins, ccy, names, marketData, details);
+
+        vector<double> res(2);
+        res[0] = result.price;
+        res[1] = result.error;
+
+        return ooDirectConvert<Sequence<Sequence<double> > >(res);
+
         WRAP_END;
     }
 }

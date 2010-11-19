@@ -103,5 +103,11 @@ namespace ASI
         return mdProcess;
 
     }
+    
+    const QuantLib::Date & MarketData::valuationDate() const
+    {
+        const Date & valuationDate = m_rawData->valuationDate();
+        return valuationDate;
+    }
 
 }
