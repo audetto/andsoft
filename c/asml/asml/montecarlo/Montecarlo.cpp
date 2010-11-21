@@ -24,7 +24,15 @@ namespace ASI
 
         MCResult result;
         result.price = instrument.NPV();
-        result.error = 0.0; //instrument.errorEstimate();
+
+        typedef QuantLib::MCPathBasketEngine<QuantLib::LowDiscrepancy> PathEngine_type;
+
+        // access std dev from the stats, since it is not normally available for Sobol numbers.
+        boost::shared_ptr<PathEngine_type> pathengine = boost::dynamic_pointer_cast<PathEngine_type>(mcengine);
+        const PathEngine_type::stats_type & stats = pathengine->sampleAccumulator();
+
+        result.error = stats.errorEstimate();
+        
 
         return result;
     }
