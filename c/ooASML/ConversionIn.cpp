@@ -100,5 +100,65 @@ namespace ASI
 
         cplNum = cpl(real, img);
     }
+
+    void ooConvertIn(const Sequence< Sequence< Any> > & a, LVB_t & lvb)
+    {
+        lvb.clear();
+        const size_t rows = a.getLength();
+        if (rows == 0)
+            return;
+
+        const size_t cols = a[0].getLength();
+        if (cols != 2)
+            THROW_EXCEPTION("LVB must contain 2 columns. Found " << cols);
+
+        for (size_t i = 0; i < rows; ++i)
+        {
+            const Any & label = a[i][0];
+            OUString ooLabel;
+            if (!(label >>= ooLabel))
+            {
+                THROW_EXCEPTION("Cannot convert label to string");
+            }
+
+            std::string labelStr;
+            ooConvertIn(ooLabel, labelStr);
+
+            ASIVariant var;
+            ooConvertIn(a[i][0], lvb[labelStr]);
+        }
+    }
+
+    void ooConvertIn(const Any & a, ASIVariant & var)
+    {
+        const OUString ooTypeName = a.getValueTypeName();
+
+        std::string typeName;
+        ooConvertIn(ooTypeName, typeName);
+
+        if (typeName == "string")
+        {
+            OUString ooS;
+            if (!(a >>= ooS))
+                THROW_EXCEPTION("any of type string cannot be converted to OUString.");
+
+            std::string & str = boost::get<std::string>(var);
+            ooConvertIn(ooS, str);
+        }
+        else if (typeName == "double")
+        {
+            double val;
+            if (!(a >>= val))
+                THROW_EXCEPTION("any of type double cannot be converted.");
+
+            var = val;
+        }
+        else
+        {
+            THROW_EXCEPTION("Unknown Any type: " << typeName);
+        }
+
+    }
+
     
 }

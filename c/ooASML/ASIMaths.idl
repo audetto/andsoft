@@ -133,7 +133,8 @@ module org
             sequence<sequence<double> > mcPricer( [in] string payoff, 
                                                   [in] string ccy, 
                                                   [in] sequence< sequence< string > > names, 
-                                                  [in] string marketData ) 
+                                                  [in] string marketData,
+                                                  [in] sequence< sequence< any > > details) 
                 raises (com::sun::star::uno::RuntimeException);
             
         };

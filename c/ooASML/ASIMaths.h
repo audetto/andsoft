@@ -44,4 +44,4 @@ OUString SAL_CALL createMarketData( const OUString& name, double date, const Seq
 
 OUString SAL_CALL createPayoff( const OUString& name, const Sequence< Sequence< double > >& dates, const OUString& filename ) throw (RuntimeException);
 
-Sequence<Sequence<double> > SAL_CALL mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData ) throw (RuntimeException);
+Sequence<Sequence<double> > SAL_CALL mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData, const Sequence< Sequence< Any > >& details ) throw (RuntimeException);

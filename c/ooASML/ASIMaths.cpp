@@ -30,7 +30,7 @@ namespace _ASIMaths_impl_
     {
         WRAP_BEGIN;
 
-        OUString typeName = data.getValueTypeName();
+        const OUString typeName = data.getValueTypeName();
 
         return typeName;
 

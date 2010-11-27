@@ -137,7 +137,7 @@ namespace _ASIMaths_impl_
         WRAP_END;
     }
 
-    Sequence<Sequence<double> > SAL_CALL ASIMaths_impl::mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData ) throw (RuntimeException)
+    Sequence<Sequence<double> > SAL_CALL ASIMaths_impl::mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData, const Sequence< Sequence< Any > >& ooDetails ) throw (RuntimeException)
     {
         WRAP_BEGIN;
 
@@ -151,6 +151,9 @@ namespace _ASIMaths_impl_
 
         boost::shared_ptr<const MarketData> marketData;
         ooConvertIn(ooMarketData, marketData);
+
+        LVB_t lvb;
+        ooConvertIn(ooDetails, lvb);
 
         MCDetails details;
         details.timeSteps = 1;
