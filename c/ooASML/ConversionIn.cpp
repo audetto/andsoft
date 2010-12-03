@@ -125,7 +125,7 @@ namespace ASI
             ooConvertIn(ooLabel, labelStr);
 
             ASIVariant var;
-            ooConvertIn(a[i][0], lvb[labelStr]);
+            ooConvertIn(a[i][1], lvb[labelStr]);
         }
     }
 
@@ -142,8 +142,10 @@ namespace ASI
             if (!(a >>= ooS))
                 THROW_EXCEPTION("any of type string cannot be converted to OUString.");
 
-            std::string & str = boost::get<std::string>(var);
+            std::string str;
             ooConvertIn(ooS, str);
+
+            var = str;
         }
         else if (typeName == "double")
         {

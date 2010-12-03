@@ -6,8 +6,31 @@
 
 using namespace std;
 
+namespace
+{
+
+    using namespace ASI;
+
+    LabelValueBlock<MCDetails> createLVBMCDetails()
+    {
+        LabelValueBlock<MCDetails> lvb_details;
+        lvb_details.add("timeSteps", makeConverter(&MCDetails::timeSteps));
+        lvb_details.add("paths",     makeConverter(&MCDetails::paths));
+        return lvb_details;
+    }
+    
+}
+
+
 namespace ASI
 {
+
+    MCDetails::MCDetails(const LVB_t & lvb)
+    {
+        static LabelValueBlock<MCDetails> lvb_details = createLVBMCDetails();
+
+        lvb_details.process(lvb, *this);        
+    }
 
     MCResult priceViaMC(QuantLib::Instrument                      & instrument,
                         const QuantLib::Currency                  & ccy,

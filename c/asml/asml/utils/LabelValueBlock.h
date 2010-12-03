@@ -12,12 +12,19 @@ namespace ASI
 {
     typedef boost::variant<long, double, std::string> ASIVariant;
 
+    void fromASIVariant(const ASIVariant & var, long & out);
+    void fromASIVariant(const ASIVariant & var, std::string & out);
+    void fromASIVariant(const ASIVariant & var, double & out);
+    void fromASIVariant(const ASIVariant & var, size_t & out);
+
     template <typename C>
     class LVBConvert
     {
     public:
         virtual void convert(const ASIVariant & input, C & container) const = 0;
-        virtual ~LVBConvert();
+        virtual ~LVBConvert()
+        {
+        }
     };
 
     template <typename C, typename T>
@@ -30,7 +37,7 @@ namespace ASI
 
         virtual void convert(const ASIVariant & input, C & container) const
         {
-            container.*m_Element = T();
+            fromASIVariant(input, container.*m_Element);
         }
     private:
         T C::* m_Element;

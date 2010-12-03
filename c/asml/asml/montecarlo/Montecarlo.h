@@ -5,6 +5,7 @@
 
 #include <ql/instrument.hpp>
 #include <asml/marketdata/MarketData.h>
+#include <asml/utils/LabelValueBlock.h>
 
 namespace ASI
 {
@@ -19,6 +20,8 @@ namespace ASI
     {
         size_t timeSteps;
         size_t paths;
+
+        MCDetails(const LVB_t & lvb);
     };
 
     MCResult priceViaMC(QuantLib::Instrument                      & instrument,

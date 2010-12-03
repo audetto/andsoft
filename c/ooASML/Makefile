@@ -53,7 +53,7 @@ install: ASIMaths.oxt
 	unopkg add ASIMaths.oxt
 
 ASIMaths.oxt: ASIMaths.rdb libASIMaths.so
-	-mkdir oxt/Linux_x86
+	mkdir -p oxt/Linux_x86
 # does this step change ASIMaths.rdb??? 
 	LD_LIBRARY_PATH=. $(REGCOMP) -register -r ASIMaths.rdb -c libASIMaths.so
 	cp libASIMaths.so oxt/Linux_x86

@@ -155,9 +155,7 @@ namespace _ASIMaths_impl_
         LVB_t lvb;
         ooConvertIn(ooDetails, lvb);
 
-        MCDetails details;
-        details.timeSteps = 1;
-        details.paths = 1023;
+        MCDetails details(lvb);
 
         QuantLib::PathMultiAssetOption & ins = const_cast<QuantLib::PathMultiAssetOption &>(*option);
 
