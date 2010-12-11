@@ -1,3 +1,14 @@
+function dates()
+{
+    var d = Array(4);
+    d[0] = 40523;
+    d[1] = 40623;
+    d[2] = 40723;
+    d[3] = 40823;
+
+    return d;
+}
+
 function payoff(data)
 {
     var numOfAssets = data.length;

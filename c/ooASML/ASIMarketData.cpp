@@ -4,7 +4,7 @@
 
 #include <asml/marketdata/MarketData.h>
 #include <asml/payoff/JSPayoff.h>
-#include <asml/payoff/GenericPathOption.h>
+#include <asml/payoff/JSPathOption.h>
 #include <asml/montecarlo/Montecarlo.h>
 
 #include <ql/currencies/europe.hpp>
@@ -116,18 +116,15 @@ namespace _ASIMaths_impl_
         WRAP_END;
     }
     
-    OUString SAL_CALL ASIMaths_impl::createPayoff( const OUString& name, const Sequence< Sequence< double > >& ooDates, const OUString& ooFilename ) throw (RuntimeException)
+    OUString SAL_CALL ASIMaths_impl::createPayoff( const OUString& name, const OUString& ooFilename ) throw (RuntimeException)
     {
         WRAP_BEGIN;
-
-        vector<QuantLib::Date> dates;
-        ooConvertIn(ooDates, dates);
 
         string filename;
         ooConvertIn(ooFilename, filename);
 
-        boost::shared_ptr<QuantLib::PathPayoff> jsPayoff(new JSPayoff(filename));
-        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option(new GenericPathOption(jsPayoff, dates));
+        boost::shared_ptr<JSPayoff> jsPayoff(new JSPayoff(filename));
+        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option(new JSPathOption(jsPayoff));
 
         string str;
         ooConvertIn(name, str);

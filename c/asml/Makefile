@@ -6,7 +6,7 @@ OBJFILES += asml/analytics/implied.o asml/analytics/numerics.o
 OBJFILES += asml/distribution/distribution.o asml/distribution/fourierpricing.o  asml/distribution/heston.o
 OBJFILES += asml/pde/generator.o asml/pde/pde.o
 OBJFILES += asml/process/brownianmotionwithdrift.o
-OBJFILES += asml/payoff/AmericanLookback.o asml/payoff/GenericPathOption.o asml/payoff/JSPayoff.o
+OBJFILES += asml/payoff/AmericanLookback.o asml/payoff/GenericPathOption.o asml/payoff/JSPayoff.o asml/payoff/JSPathOption.o asml/payoff/V8Utils.o
 OBJFILES += asml/marketdata/Stock.o asml/marketdata/RawMarketData.o asml/marketdata/MarketData.o asml/marketdata/Correlation.o
 OBJFILES += asml/montecarlo/Montecarlo.o
 

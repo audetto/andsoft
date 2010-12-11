@@ -21,6 +21,9 @@ namespace ASI
                            QuantLib::Array                                                    & exercises, 
                            std::vector<QuantLib::Array>                                       & states) const;
         virtual QuantLib::Size basisSystemDimension() const;
+
+        std::vector<QuantLib::Date> fixingDates() const;
+
     private:
 
         struct PImpl;

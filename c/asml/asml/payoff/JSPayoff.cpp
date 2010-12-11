@@ -1,6 +1,7 @@
 /* -*- mode: c++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 #include <asml/payoff/JSPayoff.h>
+#include <asml/payoff/V8Utils.h>
 #include <asml/utils/error.h>
 #include <v8.h>
 #include <fcntl.h>
@@ -99,6 +100,23 @@ namespace
         }
 
     }
+
+    Handle<Function> extractFunction(Handle<Context> context, const string & name)
+    {
+        Handle<String> payoff_name = String::New(name.c_str());
+        Handle<Value> payoff_val = context->Global()->Get(payoff_name);
+
+        // If there is no Payoff function, or if it is not a function,
+        // bail out
+        if (!payoff_val->IsFunction()) 
+            THROW_EXCEPTION("V8: " << name << " is not a function");
+
+        // It is a function; cast it to a Function
+        Handle<Function> payoff_fun = Handle<Function>::Cast(payoff_val);
+        
+        return payoff_fun;
+    }    
+
 }
 
 namespace ASI
@@ -107,6 +125,7 @@ namespace ASI
     struct JSPayoff::PImpl
     {
         Persistent<Context>  context;
+        Persistent<Function> dates;
         Persistent<Function> payoff;
 
         ~PImpl();
@@ -115,6 +134,7 @@ namespace ASI
     JSPayoff::PImpl::~PImpl()
     {
         payoff.Dispose();
+        dates.Dispose();
         context.Dispose();
     }
     
@@ -146,20 +166,13 @@ namespace ASI
 
         // The script compiled and ran correctly.  Now we fetch out the
         // Payoff function from the global object.
-        Handle<String> payoff_name = String::New("payoff");
-        Handle<Value> payoff_val = m_pimpl->context->Global()->Get(payoff_name);
-
-        // If there is no Payoff function, or if it is not a function,
-        // bail out
-        if (!payoff_val->IsFunction()) 
-            THROW_EXCEPTION("V8: payoff is not a function");
-
-        // It is a function; cast it to a Function
-        Handle<Function> payoff_fun = Handle<Function>::Cast(payoff_val);
+        Handle<Function> payoff_fun = extractFunction(m_pimpl->context, "payoff");
+        Handle<Function> dates_fun = extractFunction(m_pimpl->context, "dates");
 
         // Store the function in a Persistent handle, since we also want
         // that to remain after this call returns
         m_pimpl->payoff = Persistent<Function>::New(payoff_fun);
+        m_pimpl->dates  = Persistent<Function>::New(dates_fun);
     }
 
     std::string JSPayoff::name() const
@@ -186,7 +199,6 @@ namespace ASI
         // Create a stack-allocated handle scope.
         HandleScope handle_scope;
 
-        // running the hello world script. 
         Context::Scope context_scope(m_pimpl->context);
 
         TryCatch tryCatch;
@@ -202,5 +214,23 @@ namespace ASI
 
         convertIfPresent(result, payments);
     }
-    
+
+    vector<QuantLib::Date> JSPayoff::fixingDates() const
+    {
+        // Create a stack-allocated handle scope.
+        HandleScope handle_scope;
+
+        Context::Scope context_scope(m_pimpl->context);
+
+        TryCatch tryCatch;
+
+        // Run the script to get the result.
+        Handle<Value> result = m_pimpl->dates->Call(m_pimpl->context->Global(), 0, NULL); 
+        throwException(tryCatch);
+
+        vector<QuantLib::Date> dates;
+        v8ConvertIn(result, dates);
+
+        return dates;
+    }
 }

@@ -42,6 +42,6 @@ Sequence<Sequence<OUString > > SAL_CALL regExp( const OUString& regexp, const OU
 
 OUString SAL_CALL createMarketData( const OUString& name, double date, const Sequence< Sequence< OUString > >& ccys, const Sequence< Sequence< double > >& rates, const Sequence< Sequence< OUString > >& stocks, const Sequence< Sequence< double > >& spots, const Sequence< Sequence< OUString > >& domestics, const Sequence< Sequence< double > >& repos, const Sequence< Sequence< double > >& vols, const Sequence< Sequence< double > >& correlations ) throw (RuntimeException);
 
-OUString SAL_CALL createPayoff( const OUString& name, const Sequence< Sequence< double > >& dates, const OUString& filename ) throw (RuntimeException);
+OUString SAL_CALL createPayoff( const OUString& name, const OUString& filename ) throw (RuntimeException);
 
 Sequence<Sequence<double> > SAL_CALL mcPricer( const OUString& ooPayoff, const OUString & ooCcy, const Sequence< Sequence< OUString > >& ooNames, const OUString & ooMarketData, const Sequence< Sequence< Any > >& details ) throw (RuntimeException);
