@@ -7,10 +7,10 @@ using namespace QuantLib;
 namespace ASI
 {
     
-    JSPathOption::JSPathOption(const boost::shared_ptr<JSPayoff>        & jsPayoff,
-			       const boost::shared_ptr<PricingEngine>   & engine) :
+    JSPathOption::JSPathOption(const std::string                        & jsPayoff,
+                               const boost::shared_ptr<PricingEngine>   & engine) :
         PathMultiAssetOption(engine),
-        m_jsPayoff(jsPayoff)
+        m_jsPayoff(new JSPayoff(jsPayoff))
     {
     }
     
@@ -21,7 +21,7 @@ namespace ASI
     
     std::vector<Date>             JSPathOption::fixingDates() const
     {
-      return m_jsPayoff->fixingDates();
+        return m_jsPayoff->fixingDates();
     }
     
 }

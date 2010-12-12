@@ -3,7 +3,6 @@
 #include "ASIMaths_impl.h"
 
 #include <asml/marketdata/MarketData.h>
-#include <asml/payoff/JSPayoff.h>
 #include <asml/payoff/JSPathOption.h>
 #include <asml/montecarlo/Montecarlo.h>
 
@@ -123,8 +122,7 @@ namespace _ASIMaths_impl_
         string filename;
         ooConvertIn(ooFilename, filename);
 
-        boost::shared_ptr<JSPayoff> jsPayoff(new JSPayoff(filename));
-        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option(new JSPathOption(jsPayoff));
+        boost::shared_ptr<const JSPathOption> option(new JSPathOption(filename));
 
         string str;
         ooConvertIn(name, str);

@@ -115,7 +115,38 @@ namespace
         Handle<Function> payoff_fun = Handle<Function>::Cast(payoff_val);
         
         return payoff_fun;
-    }    
+    }
+
+    Handle<Value> TS_DF_Method(const Arguments& args)
+    {
+        Local<Object> self = args.Holder();
+        Local<External> wrap = Local<External>::Cast(self->GetInternalField(0));
+        void* ptr = wrap->Value();
+        
+        typedef std::vector<QuantLib::Handle<QuantLib::YieldTermStructure> > VectorTS_t;
+
+        const VectorTS_t * forwardTermStructures = (const VectorTS_t *)ptr;
+
+        if (args.Length() != 2)
+            return ThrowException(String::New("Invalid number of arguments"));
+        
+        const uint32_t datePos = args[0]->Uint32Value();
+        const uint32_t dateMat = args[1]->Uint32Value();
+        
+        try
+        {
+            QuantLib::Date expiry(dateMat);
+            if (datePos >= forwardTermStructures->size())
+                return ThrowException(String::New("Invalid date pos"));
+            
+            const double df = (*forwardTermStructures)[datePos]->discount(expiry);
+            return Number::New(df);
+        }
+        catch (const exception & e)
+        {
+            return ThrowException(String::New(e.what()));
+        }
+    }
 
 }
 
@@ -127,12 +158,14 @@ namespace ASI
         Persistent<Context>  context;
         Persistent<Function> dates;
         Persistent<Function> payoff;
+        Persistent<Function> yieldCurve;
 
         ~PImpl();
     };
 
     JSPayoff::PImpl::~PImpl()
     {
+        yieldCurve.Dispose();
         payoff.Dispose();
         dates.Dispose();
         context.Dispose();
@@ -173,6 +206,17 @@ namespace ASI
         // that to remain after this call returns
         m_pimpl->payoff = Persistent<Function>::New(payoff_fun);
         m_pimpl->dates  = Persistent<Function>::New(dates_fun);
+
+        Handle<FunctionTemplate> ts_templ = FunctionTemplate::New();
+        ts_templ->SetClassName(String::New("TS"));
+        Handle<ObjectTemplate> ts_proto = ts_templ->PrototypeTemplate();
+        ts_proto->Set("df", FunctionTemplate::New(TS_DF_Method));
+        Handle<ObjectTemplate> ts_inst = ts_templ->InstanceTemplate();
+        ts_inst->SetInternalFieldCount(1);
+
+        Handle<Function> yieldCurve = ts_templ->GetFunction();
+
+        m_pimpl->yieldCurve = Persistent<Function>::New(yieldCurve);
     }
 
     std::string JSPayoff::name() const
@@ -203,10 +247,13 @@ namespace ASI
 
         TryCatch tryCatch;
 
-        Handle<Object> arg = convertMatrixToV8(path);
+        Handle<Object> v8Path = convertMatrixToV8(path);
 
-        const int argc = 1;
-        Handle<Value> argv[argc] = { arg };
+        Local<Object> yc = m_pimpl->yieldCurve->NewInstance();
+        yc->SetInternalField(0, External::New((void *)&forwardTermStructures));
+
+        const int argc = 2;
+        Handle<Value> argv[argc] = { v8Path, yc };
 
         // Run the script to get the result.
         Handle<Value> result = m_pimpl->payoff->Call(m_pimpl->context->Global(), argc, argv); 

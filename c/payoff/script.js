@@ -1,4 +1,4 @@
-function dates()
+function theDates()
 {
     var d = Array(4);
     d[0] = 40523;
@@ -9,7 +9,14 @@ function dates()
     return d;
 }
 
-function payoff(data)
+var d = theDates();
+
+function dates()
+{
+    return d;
+}
+
+function payoff(data, ts)
 {
     var numOfAssets = data.length;
     var numOfTimes  = data[0].length;

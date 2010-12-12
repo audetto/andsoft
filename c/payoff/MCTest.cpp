@@ -5,7 +5,7 @@
 
 #include <asml/payoff/AmericanLookback.h>
 #include <asml/payoff/GenericPathOption.h>
-#include <asml/payoff/JSPayoff.h>
+#include <asml/payoff/JSPathOption.h>
 #include <asml/marketdata/MarketData.h>
 
 #include <boost/timer.hpp>
@@ -57,7 +57,6 @@ namespace ASI
         // options
         
         boost::shared_ptr<PathPayoff> lookbackPayoff1(new AmericanLookback());
-        boost::shared_ptr<PathPayoff> lookbackPayoff2(new JSPayoff("script.js"));
         std::vector<Date> fixings;
         
         Date firstFixing(17, May, 2000);
@@ -67,7 +66,7 @@ namespace ASI
             fixings.push_back(fixings.back() + annual);
         
         GenericPathOption lookbackOption1(lookbackPayoff1, fixings);
-        GenericPathOption lookbackOption2(lookbackPayoff2, fixings);
+        JSPathOption lookbackOption2("script.js");
         
         // Monte Carlo Method
         
