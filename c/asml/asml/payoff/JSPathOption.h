@@ -14,7 +14,8 @@ namespace ASI
     class JSPathOption : public QuantLib::PathMultiAssetOption
     {
     public:
-        JSPathOption(const std::string                                 & jsPayoff,
+        JSPathOption(const std::vector<std::string>                    & includes,
+                     const std::string                                 & jsPayoff,
                      const boost::shared_ptr< QuantLib::PricingEngine> & engine = boost::shared_ptr< QuantLib::PricingEngine>() );
         
         virtual boost::shared_ptr< QuantLib::PathPayoff> pathPayoff()     const;

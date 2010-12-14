@@ -126,7 +126,14 @@ module org
                 raises (com::sun::star::uno::RuntimeException);
                                     
             string createPayoff([in] string name,
+                                [in] sequence<sequence<string> > includes,
                                 [in] string filename)
+                raises (com::sun::star::uno::RuntimeException);
+
+            string createEventPayoff([in] string name,
+                                     [in] sequence<sequence<string> > includes,
+                                     [in] sequence<sequence<double> > dates,
+                                     [in] sequence<sequence<string> > events)
                 raises (com::sun::star::uno::RuntimeException);
 
             sequence<sequence<double> > mcPricer( [in] string payoff, 

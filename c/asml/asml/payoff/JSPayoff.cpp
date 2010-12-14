@@ -5,6 +5,7 @@
 #include <asml/utils/error.h>
 #include <v8.h>
 #include <fcntl.h>
+#include <boost/foreach.hpp>
 
 using namespace v8;
 using namespace std;
@@ -19,23 +20,30 @@ namespace
         if (file == NULL)
             THROW_EXCEPTION("V8: Cannot read file: " << name);
         
-        fseek(file, 0, SEEK_END);
-        int size = ftell(file);
-        rewind(file);
-        
-        char* chars = new char[size + 1];
-        chars[size] = '\0';
-        for (int i = 0; i < size;)
+        try
         {
-            int read = fread(&chars[i], 1, size - i, file);
-            i += read;
-            if (read == 0)
-                THROW_EXCEPTION("V8: While reading " << name << ", stopped after " << i << " out of " << size);
+            fseek(file, 0, SEEK_END);
+            int size = ftell(file);
+            rewind(file);
+        
+            vector<char> chars(size + 1);
+            chars[size] = '\0';
+            for (int i = 0; i < size;)
+            {
+                int read = fread(&chars[i], 1, size - i, file);
+                i += read;
+                if (read == 0)
+                    THROW_EXCEPTION("V8: While reading " << name << ", stopped after " << i << " out of " << size);
+            }
+            fclose(file);
+            Handle<v8::String> result = String::New(&chars[0], size);
+            return result;
         }
-        fclose(file);
-        Handle<v8::String> result = String::New(chars, size);
-        delete[] chars;
-        return result;
+        catch (...)
+        {
+            fclose(file);
+            throw;
+        }
     }
 
     void throwException(const TryCatch & tryCatch)
@@ -148,6 +156,18 @@ namespace
         }
     }
 
+    void loadFile(const TryCatch & tryCatch, const string & filename)
+    {
+        // Create a string containing the JavaScript source code.
+        Handle<String> source = ReadFile(filename);
+        
+        // Compile the source code.
+        Handle<Script> script = Script::Compile(source, String::New(filename.c_str()));
+        throwException(tryCatch);
+
+        Handle<Value> result = script->Run();
+        throwException(tryCatch);
+    }
 }
 
 namespace ASI
@@ -171,7 +191,8 @@ namespace ASI
         context.Dispose();
     }
     
-    JSPayoff::JSPayoff(const string & filename)
+    JSPayoff::JSPayoff(const vector<string>   & includes,
+                       const string           & filename)
     {
         m_pimpl.reset(new PImpl);
 
@@ -186,16 +207,14 @@ namespace ASI
         Context::Scope context_scope(m_pimpl->context);
 
         TryCatch tryCatch;
-      
-        // Create a string containing the JavaScript source code.
-        Handle<String> source = ReadFile(filename);
-        
-        // Compile the source code.
-        Handle<Script> script = Script::Compile(source, String::New(filename.c_str()));
-        throwException(tryCatch);
 
-        Handle<Value> result = script->Run();
-        throwException(tryCatch);
+        BOOST_FOREACH(const string & inc, includes)
+        {
+            if (!inc.empty())
+                loadFile(tryCatch, inc);
+        }
+      
+        loadFile(tryCatch, filename);
 
         // The script compiled and ran correctly.  Now we fetch out the
         // Payoff function from the global object.

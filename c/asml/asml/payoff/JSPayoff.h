@@ -11,7 +11,8 @@ namespace ASI
     class JSPayoff : public QuantLib::PathPayoff
     {
     public:
-        JSPayoff(const std::string & filename);
+        JSPayoff(const std::vector<std::string> & includes,
+                 const std::string              & filename);
 
         virtual std::string name() const;
         virtual std::string description() const;

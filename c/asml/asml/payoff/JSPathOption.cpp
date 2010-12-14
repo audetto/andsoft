@@ -3,14 +3,16 @@
 #include <asml/payoff/JSPathOption.h>
 
 using namespace QuantLib;
+using namespace std;
 
 namespace ASI
 {
     
-    JSPathOption::JSPathOption(const std::string                        & jsPayoff,
+    JSPathOption::JSPathOption(const vector<string>                     & includes,
+                               const string                             & jsPayoff,
                                const boost::shared_ptr<PricingEngine>   & engine) :
         PathMultiAssetOption(engine),
-        m_jsPayoff(new JSPayoff(jsPayoff))
+        m_jsPayoff(new JSPayoff(includes, jsPayoff))
     {
     }
     
@@ -19,7 +21,7 @@ namespace ASI
         return m_jsPayoff;
     }
     
-    std::vector<Date>             JSPathOption::fixingDates() const
+    vector<Date>                  JSPathOption::fixingDates() const
     {
         return m_jsPayoff->fixingDates();
     }

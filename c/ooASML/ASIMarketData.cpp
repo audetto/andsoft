@@ -4,6 +4,7 @@
 
 #include <asml/marketdata/MarketData.h>
 #include <asml/payoff/JSPathOption.h>
+#include <asml/payoff/EventPayoff.h>
 #include <asml/montecarlo/Montecarlo.h>
 
 #include <ql/currencies/europe.hpp>
@@ -115,14 +116,17 @@ namespace _ASIMaths_impl_
         WRAP_END;
     }
     
-    OUString SAL_CALL ASIMaths_impl::createPayoff( const OUString& name, const OUString& ooFilename ) throw (RuntimeException)
+    OUString SAL_CALL ASIMaths_impl::createPayoff( const OUString& name, const Sequence< Sequence< OUString > >& ooIncludes, const OUString& ooFilename ) throw (RuntimeException)
     {
         WRAP_BEGIN;
+
+        vector<string> includes;
+        ooConvertIn(ooIncludes, includes);
 
         string filename;
         ooConvertIn(ooFilename, filename);
 
-        boost::shared_ptr<const JSPathOption> option(new JSPathOption(filename));
+        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option(new JSPathOption(includes, filename));
 
         string str;
         ooConvertIn(name, str);
@@ -164,5 +168,29 @@ namespace _ASIMaths_impl_
 
         WRAP_END;
     }
+
+    OUString SAL_CALL ASIMaths_impl::createEventPayoff( const OUString& ooName, const Sequence< Sequence< OUString > >& ooIncludes, const Sequence< Sequence< double > >& ooDates, const Sequence< Sequence< OUString > >& ooEvents ) throw (RuntimeException)
+    {
+        WRAP_BEGIN;
+
+        vector<string> includes;
+        ooConvertIn(ooIncludes, includes);
+
+        vector<QuantLib::Date> dates;
+        ooConvertIn(ooDates, dates);
+
+        vector<vector<string> > events;
+        ooConvertIn(ooEvents, events);
+
+        boost::shared_ptr<const QuantLib::PathMultiAssetOption> option = createEventBasedPayoff(includes, dates, events);
+        
+        string name;
+        ooConvertIn(ooName, name);
+        
+        return ooDirectConvert<OUString>(std::make_pair(name, option));
+
+        WRAP_END;
+    }
+
 }
 

@@ -1,10 +1,10 @@
 function theDates()
 {
     var d = Array(4);
-    d[0] = 40523;
-    d[1] = 40623;
-    d[2] = 40723;
-    d[3] = 40823;
+    d[0] = 40823;
+    d[1] = 40923;
+    d[2] = 41023;
+    d[3] = 41123;
 
     return d;
 }
@@ -22,6 +22,23 @@ function payoff(data, ts)
     var numOfTimes  = data[0].length;
 
     var payments = Array(numOfTimes);
+
+    var n2;
+
+    function s(i)
+    {
+	return data[i][n];
+    }
+
+    function pay(val)
+    {
+	payments[n] = val;
+    }
+
+    function df(mat)
+    {
+	return ts.df(n, mat);
+    }
 
     var runningMaximum = 1.0;
     var thisSum;
