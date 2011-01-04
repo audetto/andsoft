@@ -15,16 +15,14 @@ createSchedule first inc =
 
 type Schedule = [Day]
 
--- Value is a time series defined on the relevant schedule (getSchedule)
--- Here, Value is always single valued,
--- but in the target language it could be multivalued (e.g. to implement sort)
--- we need to introduce the "metadata" number of values
--- but then we need to check the size in Constructors that take single valued Value (e.g. Asian)
-
 -- this is pure Data Representation, no code exists behind a Value
 -- a Value is *never* executed in Haskell
 -- only in the backends that support code execution
 -- (e.g. Javascript, but not in LaTeX)
+
+data Node = Val Value
+          | Vec Vector
+            deriving (Show, Eq)
 
 data Value = Number Schedule Double        -- primitive
            | Stock Schedule String         -- primitive
@@ -35,43 +33,36 @@ data Value = Number Schedule Double        -- primitive
                                            --    (C++, Javascript, LaTeX...) (is it possible????)
                                            --    maybe we should use an enum of valid functions instead.
            | Resched Schedule Value        -- take the last value on or before the new schedule
-           | Array Int [Value]             -- values[i]
+           | VecVal Int Vector             -- values[i]
            | Shift Value                   -- move values down 1 date (first date disappears)
-           | Sort [Value]                  -- FIXME, it should return a multivalued Value (not supported yet)
              deriving (Show, Eq)
 
--- linearize the tree checking, skipping duplicate nodes
-flatten root =
-    let prependIfNotIn e l = if elem e l 
-                             then l 
-                             else e:l
-        flat :: [Value] -> Value -> [Value]
-        flat list n@(Number _ _)    = prependIfNotIn n list
-        flat list s@(Stock  _ _)    = prependIfNotIn s list
-        flat list a@(Asian  _ v)    = prependIfNotIn a (flat list v)
-        flat list h@(HorizOp _ v)   = prependIfNotIn h (foldl flat list v)
-        flat list t@(VertOp _ v)    = prependIfNotIn t (flat list v)
-        flat list r@(Resched _ v)   = prependIfNotIn r (flat list v)
-        flat list s@(Shift v)       = prependIfNotIn s (flat list v)
-        flat list a@(Array _ v)     = prependIfNotIn a (foldl flat list v)
-    in reverse (flat [] root)
+data Vector = Sort [Value]
+            deriving (Show, Eq)
+
+-- direct children
+getChildren (Val (Number _ _))     = []
+getChildren (Val (Stock _ _))      = []
+getChildren (Val (Asian _ v))      = [Val v]
+getChildren (Val (HorizOp _ v))    = map Val v
+getChildren (Val (VertOp _ v))     = [Val v]
+getChildren (Val (Resched _ v))    = [Val v]
+getChildren (Val (Shift v))        = [Val v]
+getChildren (Val (VecVal _ v))     = [Vec v]
+getChildren (Vec (Sort v))         = map Val v
 
 -- get schedule on which this node is defined
-getSchedule (Number s _)  = s
-getSchedule (Stock s _)   = s
-getSchedule (Asian s _)   = s
-getSchedule (HorizOp _ v) = let n = nub (map getSchedule v)
-                            in if length n == 1
-                               then head n
-                               else []
-getSchedule (Array _ v)   = let n = nub (map getSchedule v)
-                            in if length n == 1
-                               then head n
-                               else []
-getSchedule (VertOp _ v)  = getSchedule v
-getSchedule (Resched s _) = s
-getSchedule (Shift v)     = drop 1 (getSchedule v)
+getSchedule (Val (Number s _))  = s
+getSchedule (Val (Stock s _))   = s
+getSchedule (Val (Asian s _))   = s
+getSchedule (Val (Resched s _)) = s
+getSchedule (Val (Shift v))     = drop 1 (getSchedule (Val v))
+getSchedule v                   = let n = nub (map getSchedule (getChildren v))
+                                  in if length n == 1
+                                     then head n
+                                     else []
 
+{-
 -- check is not the same as "not null getSchedule" since Asian and Reschedule reset the schedule
 -- we need to check all arguments
 check (Number _ _)        = True
@@ -79,9 +70,18 @@ check (Stock _ _)         = True
 check (Asian _ v)         = check v
 check (VertOp _ v)        = check v
 check h@(HorizOp _ _)     = not (null (getSchedule h)) -- they must be defined on the same schedule
-check a@(Array _ _)       = not (null (getSchedule a)) -- they must be defined on the same schedule
 check (Resched _ v)       = check v
 check (Shift v)           = check v
+-}
+
+-- linearize the tree skipping duplicate nodes
+flatten root =
+    let prependIfNotIn e l = if elem e l 
+                             then l 
+                             else e:l
+        flat :: [Node] -> Node -> [Node]
+        flat list n = prependIfNotIn n (foldl flat list (getChildren n))
+    in reverse (flat [] root)
 
 -- merge all schedules of all nodes
 allSchedule r = sort (nub (concat (map getSchedule (flatten r))))
@@ -104,11 +104,10 @@ n2 = Number dates 5
 n3 = Number expiry 5
 s = HorizOp "+" [n12, n2, n3]
 p = Asian expiry s
-a = Array 3 [n1,n2,n3,p]
+a = Sort [n1, n2, n3]
 
+r = VecVal 1 a
 
-r = a
-
-f = flatten r
+f = flatten (Val r)
 
 main = putStrLn (showLinear f)
