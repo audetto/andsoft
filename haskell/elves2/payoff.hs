@@ -62,25 +62,13 @@ getSchedule v                   = let n = nub (map getSchedule (getChildren v))
                                      then head n
                                      else []
 
-{-
--- check is not the same as "not null getSchedule" since Asian and Reschedule reset the schedule
--- we need to check all arguments
-check (Number _ _)        = True
-check (Stock _ _)         = True
-check (Asian _ v)         = check v
-check (VertOp _ v)        = check v
-check h@(HorizOp _ _)     = not (null (getSchedule h)) -- they must be defined on the same schedule
-check (Resched _ v)       = check v
-check (Shift v)           = check v
--}
+check n = not (null (getSchedule n)) && all check (getChildren n)
 
 -- linearize the tree skipping duplicate nodes
 flatten root =
-    let prependIfNotIn e l = if elem e l 
-                             then l 
-                             else e:l
-        flat :: [Node] -> Node -> [Node]
-        flat list n = prependIfNotIn n (foldl flat list (getChildren n))
+    let flat list n = if elem n list 
+                      then list
+                      else n : (foldl flat list (getChildren n))
     in reverse (flat [] root)
 
 -- merge all schedules of all nodes
