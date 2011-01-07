@@ -1,7 +1,10 @@
 import Data.Time.Calendar
 import Data.List
 
-data Period = Days Integer | Months Integer | Years Integer deriving (Show, Read, Eq)
+data Period = Days Integer
+            | Months Integer 
+            | Years Integer 
+              deriving (Show, Read, Eq)
 
 -- addPeriod :: Period -> Day -> Day
 addPeriod (Days   dd) d = addDays dd d
@@ -41,8 +44,6 @@ data Vector = Sort [Value]
             deriving (Show, Eq)
 
 -- direct children
-getChildren (Val (Number _ _))     = []
-getChildren (Val (Stock _ _))      = []
 getChildren (Val (Asian _ v))      = [Val v]
 getChildren (Val (HorizOp _ v))    = map Val v
 getChildren (Val (VertOp _ v))     = [Val v]
@@ -50,18 +51,27 @@ getChildren (Val (Resched _ v))    = [Val v]
 getChildren (Val (Shift v))        = [Val v]
 getChildren (Val (VecVal _ v))     = [Vec v]
 getChildren (Vec (Sort v))         = map Val v
+getChildren _                      = []
 
--- get schedule on which this node is defined
-getSchedule (Val (Number s _))  = s
-getSchedule (Val (Stock s _))   = s
-getSchedule (Val (Asian s _))   = s
-getSchedule (Val (Resched s _)) = s
-getSchedule (Val (Shift v))     = drop 1 (getSchedule (Val v))
-getSchedule v                   = let n = nub (map getSchedule (getChildren v))
-                                  in if length n == 1
-                                     then head n
-                                     else []
+-- get the new schedule of this node
+getNewSchedule (Val (Number s _))  = s
+getNewSchedule (Val (Stock s _))   = s
+getNewSchedule (Val (Asian s _))   = s
+getNewSchedule (Val (Resched s _)) = s
+getNewSchedule (Val (Shift v))     = drop 1 (getSchedule (Val v))
+getNewSchedule _                   = []
 
+-- get the schedule on which it is defined
+getSchedule n = 
+    let s = getNewSchedule n
+    in if not (null s)
+       then s
+       else let as = nub (map getSchedule (getChildren n))
+            in if length as == 1
+               then head as
+               else []
+
+-- if every node has a schedule, then it is valid
 check n = not (null (getSchedule n)) && all check (getChildren n)
 
 -- linearize the tree skipping duplicate nodes
@@ -72,7 +82,7 @@ flatten root =
     in reverse (flat [] root)
 
 -- merge all schedules of all nodes
-allSchedule r = sort (nub (concat (map getSchedule (flatten r))))
+allSchedule r = sort (nub (concat (map getNewSchedule (flatten r))))
 
 -- helper to print linear list of values
 showLinear f = concat (intersperse "\n" (map show f))
