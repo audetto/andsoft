@@ -43,6 +43,15 @@ data Value = Number Schedule Double        -- primitive
 data Vector = Sort [Value]
             deriving (Show, Eq)
 
+instance Num Value where
+    (+) a b       = HorizOp "%d + %d" [a,b]
+    (*) a b       = HorizOp "%d * %d" [a,b]
+    (-) a b       = HorizOp "%d - %d" [a,b]
+    negate a      = HorizOp "%d * %d" [a,Number (getSchedule (Val a)) (-1)]
+    abs a         = HorizOp "abs(%d)" [a]
+    signum a      = error "Not yet implemented"
+    fromInteger x = Number [] (fromInteger x :: Double)
+
 -- direct children
 getChildren (Val (Asian _ v))      = [Val v]
 getChildren (Val (HorizOp _ v))    = map Val v
@@ -66,10 +75,10 @@ getSchedule n =
     let s = getNewSchedule n
     in if not (null s)
        then s
-       else let as = nub (map getSchedule (getChildren n))
-            in if length as == 1
-               then head as
-               else []
+       else let as = nub (filter (not . null) (map getSchedule (getChildren n)))
+            in case length as of 0 -> []
+                                 1 -> head as
+                                 _ -> error "Inconsistent schedules"
 
 -- if every node has a schedule, then it is valid
 check n = not (null (getSchedule n)) && all check (getChildren n)
@@ -95,16 +104,18 @@ dates = take 3 (createSchedule today (Months 6))
 expiry = [addPeriod (Months 3) (last dates)]
 
 -- example of payoff (not even valid)
-n1 = Number dates 4
+n1 = Number [] 4
 n11 = VertOp "max" n1
 n12 = Shift n11
-n2 = Number dates 5
-n3 = Number expiry 5
-s = HorizOp "+" [n12, n2, n3]
+n2 = Number [] 5
+n3 = Number [] 5
+s = -(n12 + n2 + n3)
 p = Asian expiry s
 a = Sort [n1, n2, n3]
 
-r = VecVal 1 a
+j = Number dates 6
+
+r = (VecVal 1 a) + j
 
 f = flatten (Val r)
 
