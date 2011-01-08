@@ -52,6 +52,17 @@ instance Num Value where
     signum a      = error "Not yet implemented"
     fromInteger x = Number [] (fromInteger x :: Double)
 
+regenerateSchedules v = 
+    let recreateFromSelf sched (VertOp str v)  = VertOp str (recreateFromSelf sched v)
+        recreateFromSelf sched (Number [] d)   = Number sched d
+        recreateFromSelf sched (HorizOp str v) = HorizOp str (map (recreateFromSelf sched) v)
+        recreateFromSelf sched (Asian s v)     = Asian s (regenerateSchedules v)
+        recreateFromSelf sched (Resched s v)   = Resched s (regenerateSchedules v)
+        recreateFromSelf sched (Shift v)       = Shift (regenerateSchedules v)
+        recreateFromSelf sched (Stock [] n)    = Stock sched n
+        recreateFromSelf _ v                   = v
+    in recreateFromSelf (getSchedule (Val v)) v
+
 -- direct children
 getChildren (Val (Asian _ v))      = [Val v]
 getChildren (Val (HorizOp _ v))    = map Val v
@@ -109,14 +120,16 @@ n11 = VertOp "max" n1
 n12 = Shift n11
 n2 = Number [] 5
 n3 = Number [] 5
-s = -(n12 + n2 + n3)
+s = -(n1 + n2 + n3)
 p = Asian expiry s
-a = Sort [n1, n2, n3]
-
 j = Number dates 6
+jj = s + j
+jjj = regenerateSchedules jj
+
+a = Sort [n1, n2, n3]
 
 r = (VecVal 1 a) + j
 
-f = flatten (Val r)
+f = flatten (Val jj)
 
 main = putStrLn (showLinear f)
