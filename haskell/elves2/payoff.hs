@@ -47,20 +47,25 @@ instance Num Value where
     (+) a b       = HorizOp "%d + %d" [a,b]
     (*) a b       = HorizOp "%d * %d" [a,b]
     (-) a b       = HorizOp "%d - %d" [a,b]
-    negate a      = HorizOp "%d * %d" [a,Number (getSchedule (Val a)) (-1)]
+    negate a      = HorizOp "%d * %d" [a,Number [] (-1)]
     abs a         = HorizOp "abs(%d)" [a]
     signum a      = error "Not yet implemented"
     fromInteger x = Number [] (fromInteger x :: Double)
 
+-- attempt to propagate schedules from one sibling to the next and down to the children
+-- Asian, Resched & Shift cannot pass the schedule down since they introduce a new one
+-- and they require their argument to have their own independent schedule
 regenerateSchedules v = 
-    let recreateFromSelf sched (VertOp str v)  = VertOp str (recreateFromSelf sched v)
-        recreateFromSelf sched (Number [] d)   = Number sched d
+    let recreateFromSelf sched (Number [] d)   = Number sched d
+        recreateFromSelf sched (VertOp str v)  = VertOp str (recreateFromSelf sched v)
         recreateFromSelf sched (HorizOp str v) = HorizOp str (map (recreateFromSelf sched) v)
-        recreateFromSelf sched (Asian s v)     = Asian s (regenerateSchedules v)
-        recreateFromSelf sched (Resched s v)   = Resched s (regenerateSchedules v)
-        recreateFromSelf sched (Shift v)       = Shift (regenerateSchedules v)
         recreateFromSelf sched (Stock [] n)    = Stock sched n
+        recreateFromSelf sched (VecVal i v)    = VecVal i (recreateFromSelf1 sched v)
+        recreateFromSelf _     (Asian s v)     = Asian s (regenerateSchedules v)
+        recreateFromSelf _     (Resched s v)   = Resched s (regenerateSchedules v)
+        recreateFromSelf _     (Shift v)       = Shift (regenerateSchedules v)
         recreateFromSelf _ v                   = v
+        recreateFromSelf1 sched (Sort v)       = Sort (map (recreateFromSelf sched) v)
     in recreateFromSelf (getSchedule (Val v)) v
 
 -- direct children
@@ -130,6 +135,6 @@ a = Sort [n1, n2, n3]
 
 r = (VecVal 1 a) + j
 
-f = flatten (Val jj)
+f = flatten (Val jjj)
 
 main = putStrLn (showLinear f)
