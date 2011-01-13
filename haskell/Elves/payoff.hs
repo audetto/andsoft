@@ -56,17 +56,17 @@ instance Num Value where
 -- Asian, Resched & Shift cannot pass the schedule down since they introduce a new one
 -- and they require their argument to have their own independent schedule
 regenerateSchedules v = 
-    let recreateFromSelf sched (Number [] d)   = Number sched d
-        recreateFromSelf sched (VertOp str v)  = VertOp str (recreateFromSelf sched v)
-        recreateFromSelf sched (HorizOp str v) = HorizOp str (map (recreateFromSelf sched) v)
-        recreateFromSelf sched (Stock [] n)    = Stock sched n
-        recreateFromSelf sched (VecVal i v)    = VecVal i (recreateFromSelf1 sched v)
-        recreateFromSelf _     (Asian s v)     = Asian s (regenerateSchedules v)
-        recreateFromSelf _     (Resched s v)   = Resched s (regenerateSchedules v)
-        recreateFromSelf _     (Shift v)       = Shift (regenerateSchedules v)
-        recreateFromSelf _ v                   = v
-        recreateFromSelf1 sched (Sort v)       = Sort (map (recreateFromSelf sched) v)
-    in recreateFromSelf (getSchedule (Val v)) v
+    let recreateValue  sched (Number [] d)   = Number sched d
+        recreateValue  sched (VertOp str v)  = VertOp str (recreateValue sched v)
+        recreateValue  sched (HorizOp str v) = HorizOp str (map (recreateValue sched) v)
+        recreateValue  sched (Stock [] n)    = Stock sched n
+        recreateValue  sched (VecVal i v)    = VecVal i (recreateVector sched v)
+        recreateValue  _     (Asian s v)     = Asian s (regenerateSchedules v)
+        recreateValue  _     (Resched s v)   = Resched s (regenerateSchedules v)
+        recreateValue  _     (Shift v)       = Shift (regenerateSchedules v)
+        recreateValue  _ v                   = v
+        recreateVector sched (Sort v)       = Sort (map (recreateValue sched) v)
+    in recreateValue (getSchedule (Val v)) v
 
 -- direct children
 getChildren (Val (Asian _ v))      = [Val v]
@@ -83,7 +83,7 @@ getNewSchedule (Val (Number s _))  = s
 getNewSchedule (Val (Stock s _))   = s
 getNewSchedule (Val (Asian s _))   = s
 getNewSchedule (Val (Resched s _)) = s
-getNewSchedule (Val (Shift v))     = drop 1 (getSchedule (Val v))
+getNewSchedule (Val (Shift v))     = drop 1 (getSchedule (Val v))  -- does not throw if the schedule is empty
 getNewSchedule _                   = []
 
 -- get the schedule on which it is defined
@@ -126,14 +126,9 @@ n12 = Shift n11
 n2 = Number [] 5
 n3 = Number [] 5
 s = -(n1 + n2 + n3)
-p = Asian expiry s
 j = Number dates 6
 jj = s + j
 jjj = regenerateSchedules jj
-
-a = Sort [n1, n2, n3]
-
-r = (VecVal 1 a) + j
 
 f = flatten (Val jjj)
 
