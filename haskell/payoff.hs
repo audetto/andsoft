@@ -1,20 +1,7 @@
 import Data.Time.Calendar
 import Data.List
 
-data Period = Days Integer
-            | Months Integer 
-            | Years Integer 
-              deriving (Show, Read, Eq)
-
--- addPeriod :: Period -> Day -> Day
-addPeriod (Days   dd) d = addDays dd d
-addPeriod (Months mm) d = addGregorianMonthsClip mm d
-addPeriod (Years  yy) d = addGregorianYearsClip yy d
-
--- infinite schedule
-createSchedule first inc =
-    let s = first : map (addPeriod inc) s
-    in s
+import Elves.Date
 
 type Schedule = [Day]
 
