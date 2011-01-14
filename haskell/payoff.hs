@@ -2,6 +2,7 @@ import Data.Time.Calendar
 import Data.List
 
 import Elves.Date
+import Elves.FPF
 
 type Schedule = [Day]
 
@@ -120,3 +121,45 @@ jjj = regenerateSchedules jj
 f = flatten (Val jjj)
 
 main = putStrLn (showLinear f)
+
+perf :: Day -> Day -> FPFAsset -> FPFDouble
+perf t1 t2 asset = observe asset t2 / observe asset t1 - 1
+
+bestOf :: (FPFList FPFAsset, Day, Day) -> FPFDouble
+bestOf (assets', startDate', endDate') = foldl1 Elves.FPF.max perfs where
+    assets    = name "Assets" assets'
+    startDate = name "Starting date" startDate'
+    endDate   = name "End date" endDate'
+    perfs     = map (perf startDate endDate) assets
+
+cliquet :: (FPFAsset, FPFDouble, FPFDouble, Day, FPFList Day) -> FPFDouble
+cliquet (asset', gf', gc', initDate', dates') = Elves.FPF.max gf $ Elves.FPF.min gc val where
+    asset    = name "Asset" asset'
+    gc       = name "Global cap" gc'
+    gf       = name "Global floor" gf'
+    initDate = name "Initial date" initDate'
+    dates    = name "Observations" dates'
+    cliquetPerf (prevDate, prevSum) currDate' = (currDate, prevSum + currPerf) where
+        currDate = name "Observation date" currDate'
+        currPerf = Elves.FPF.max gf $ Elves.FPF.min gc $ perf prevDate currDate asset
+    (_, val) = foldl cliquetPerf (initDate, 0) dates
+
+napoleon :: (FPFAsset, FPFDouble, Day, FPFList Day) -> FPFDouble
+napoleon (asset', coupon', initDate', dates') = Elves.FPF.max 0 $ worst + coupon where
+    asset      = name "Asset" asset'
+    coupon     = name "Fixed coupon" coupon'
+    initDate   = name "Initial date" initDate'
+    dates      = name "Observations" dates'
+    napCliquet prevDate currDate = (currDate, perf prevDate currDate asset)
+    (_, perfs) = mapAccumL napCliquet initDate dates
+    worst      = foldl1 Elves.FPF.min perfs
+
+ass = ".STOXX50E" :: FPFAsset
+gf  = 1 :: FPFDouble
+gc  = 2 :: FPFDouble
+dd  = today
+ld  = dates
+
+cl = cliquet (ass, gf, gc, dd , ld)
+
+np = napoleon (ass, gc, today, dates)
