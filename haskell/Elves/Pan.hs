@@ -7,6 +7,7 @@ module Elves.Pan
  ifE,
  notE,
  varFloatE,
+ value,
  (>*),
  (&&*)
 )
@@ -41,6 +42,8 @@ where
 
   type BoolE  = Exp Bool
   type FloatE = Exp Float
+
+  get (E a) = a
 
   type1 :: (DExp -> DExp) -> (Exp a -> Exp b)
   type2 :: (DExp -> DExp -> DExp) -> (Exp a -> Exp b -> Exp c)
@@ -78,6 +81,11 @@ where
       asinh                         = error "Not Yet"
       acosh                         = error "Not Yet"
       atanh                         = error "Not Yet"
+
+  instance Ord FloatE where
+      compare                       = error "Cannot"
+      min a b                       = ifE (a >* b) b a
+      max a b                       = ifE (a >* b) a b
 
   recD (LitFloat a)                 = LitFloat (1 / a)
   recD (Rec a)                      = a
@@ -183,3 +191,25 @@ where
   instance Synctactic (Exp a) where
        ifE   = type3 ifD
        (>*)  = type2 gD
+
+  -- simple direct valuation of the AST
+
+  value ctx a = valueFloat ctx (get a)
+
+  valueBool  _ (LitBool a)         = a
+  valueBool  ctx (If c a b)        = if (valueBool ctx c) then (valueBool ctx a) else (valueBool ctx b)
+  valueBool  ctx (And a b)         = (valueBool ctx a) && (valueBool ctx b)
+  valueBool  ctx (Not a)           = not (valueBool ctx a)
+  valueBool  ctx (Positive a)      = (valueFloat ctx a) > 0.0
+
+  valueFloat _ (LitFloat a)        = a
+  valueFloat ctx (Var a Float)     = ctx a
+  valueFloat ctx (If c a b)        = if (valueBool ctx c) then (valueFloat ctx a) else (valueFloat ctx b)
+  valueFloat ctx (Add a b)         = (valueFloat ctx a) + (valueFloat ctx b)
+  valueFloat ctx (Mul a b)         = (valueFloat ctx a) * (valueFloat ctx b)
+  valueFloat ctx (Rec a)           = 1 / (valueFloat ctx a)
+  valueFloat ctx (Negate a)        = 0 - (valueFloat ctx a)
+  valueFloat ctx (Exponential a)   = exp (valueFloat ctx a)
+  valueFloat ctx (Logarithm a)     = log (valueFloat ctx a)
+  valueFloat ctx (Sin a)           = sin (valueFloat ctx a)
+  valueFloat ctx (Cos a)           = cos (valueFloat ctx a)
