@@ -1,13 +1,17 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 module Elves.Pan
 (
+ Id,
  FloatE,
  BoolE,
+ IntE,
  litBoolE,
  ifE,
  notE,
  varFloatE,
  value,
+ mkArray,
+ readArr,
  (>*),
  (&&*)
 )
@@ -17,6 +21,7 @@ where
 
   data DExp = LitFloat Float 
             | LitBool Bool
+            | LitInt Int
             | Var Id Type
             | If DExp DExp DExp
             | Add DExp DExp
@@ -30,20 +35,27 @@ where
             | Logarithm DExp
             | Sin DExp
             | Cos DExp
+            | MkArray Id DExp DExp        -- dummy size expr
+            | ReadArr DExp DExp           -- array pos
               deriving (Show, Eq)
 
   data Exp a = E DExp
         deriving (Show, Eq)
+
+  data ArrayE a = EE DExp
+        deriving (Show, Eq)
      
-  data Type = Bool | Float
+  data Type = Bool | Float | Int
         deriving (Show, Eq)
 
   type Id = String
 
   type BoolE  = Exp Bool
   type FloatE = Exp Float
+  type IntE   = Exp Int
 
   get (E a) = a
+  gett (EE a) = a
 
   type1 :: (DExp -> DExp) -> (Exp a -> Exp b)
   type2 :: (DExp -> DExp -> DExp) -> (Exp a -> Exp b -> Exp c)
@@ -61,6 +73,15 @@ where
       abs a                         = ifE (a >* 0.0) a (negate a)
       signum                        = type1 signumD
       fromInteger                   = E . LitFloat . fromInteger
+
+  instance Num IntE where
+      (+)                           = error "Not Yet"
+      (*)                           = type2 mulD
+      (-) a b                       = error "Not Yet"
+      negate                        = error "Not Yet"
+      abs a                         = error "Not Yet"
+      signum                        = error "Not Yet"
+      fromInteger                   = E . LitInt . fromInteger
 
   instance Fractional FloatE where
       (/) a b                       = a * (recip b)
@@ -86,6 +107,42 @@ where
       compare                       = error "Cannot"
       min a b                       = ifE (a >* b) b a
       max a b                       = ifE (a >* b) a b
+
+-- E funcions
+
+  class Synctactic a where
+       ifE   :: BoolE -> a -> a -> a
+       (>*)  :: a -> a -> BoolE
+
+  instance Synctactic (Exp a) where
+       ifE   = type3 ifD
+       (>*)  = type2 gD
+
+  litBoolE :: Bool -> BoolE
+  litBoolE = E . LitBool
+
+  varFloatE :: String -> FloatE
+  varFloatE n = E (Var n Float)
+
+  varIntE :: String -> IntE
+  varIntE n = E (Var n Int)
+
+  notE  :: BoolE -> BoolE
+  notE  = type1 notD
+
+  (&&*) :: BoolE -> BoolE -> BoolE
+  (&&*) = type2 andD
+
+  mkArray :: IntE -> (IntE -> Exp a) -> ArrayE a
+  mkArray size func = let id = "dummy"
+                          dummy = varIntE id
+                          expr  = func dummy
+                      in EE (MkArray id (get size) (get expr))
+
+  readArr :: ArrayE a -> IntE -> Exp a
+  readArr arr pos = E (ReadArr (gett arr) (get pos))
+
+-- D functions
 
   recD (LitFloat a)                 = LitFloat (1 / a)
   recD (Rec a)                      = a
@@ -170,28 +227,6 @@ where
   logD (Exponential a)              = a
   logD a                            = Logarithm a 
 
--- E funcions
-
-  litBoolE :: Bool -> BoolE
-  litBoolE = E . LitBool
-
-  varFloatE :: String -> FloatE
-  varFloatE n = E (Var n Float)
-
-  notE  :: BoolE -> BoolE
-  notE  = type1 notD
-
-  (&&*) :: BoolE -> BoolE -> BoolE
-  (&&*) = type2 andD
-
-  class Synctactic a where
-       ifE   :: BoolE -> a -> a -> a
-       (>*)  :: a -> a -> BoolE
-
-  instance Synctactic (Exp a) where
-       ifE   = type3 ifD
-       (>*)  = type2 gD
-
   -- simple direct valuation of the AST
 
   value ctx a = valueFloat ctx (get a)
@@ -202,8 +237,13 @@ where
   valueBool  ctx (Not a)           = not (valueBool ctx a)
   valueBool  ctx (Positive a)      = (valueFloat ctx a) > 0.0
 
+  valueInt _ (LitInt a)            = a
+  valueInt ctx (Var a Int)         = truncate (ctx a)
+
   valueFloat _ (LitFloat a)        = a
+  valueFloat _ (LitInt a)          = fromInteger (toInteger a)
   valueFloat ctx (Var a Float)     = ctx a
+  valueFloat ctx (Var a Int)       = ctx a
   valueFloat ctx (If c a b)        = if (valueBool ctx c) then (valueFloat ctx a) else (valueFloat ctx b)
   valueFloat ctx (Add a b)         = (valueFloat ctx a) + (valueFloat ctx b)
   valueFloat ctx (Mul a b)         = (valueFloat ctx a) * (valueFloat ctx b)
@@ -213,3 +253,12 @@ where
   valueFloat ctx (Logarithm a)     = log (valueFloat ctx a)
   valueFloat ctx (Sin a)           = sin (valueFloat ctx a)
   valueFloat ctx (Cos a)           = cos (valueFloat ctx a)
+  valueFloat ctx (ReadArr arr pos) = let a = valueArray ctx arr
+                                         p = valueInt   ctx pos
+                                     in a !! p
+  valueFloat ctx x                 = error (show x)
+
+  valueArray ctx (MkArray id s e) = let size = valueFloat ctx s
+                                        newCtx val name = if name == id then val else ctx name
+                                        arr = map (\x -> valueFloat (newCtx x) e) [0 .. size - 1]
+                                    in arr
