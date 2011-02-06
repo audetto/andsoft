@@ -6,4 +6,5 @@ ctx x = if x == "x" then 5 else error x
 
 f x = x * x
 arr = mkArray 5 f
-ele = readArr arr 1
+pos = ifE (x >* 5) (1 :: IntE) 2
+ele = readArr arr pos

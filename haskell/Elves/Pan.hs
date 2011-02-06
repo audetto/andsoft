@@ -42,9 +42,6 @@ where
   data Exp a = E DExp
         deriving (Show, Eq)
 
-  data ArrayE a = EE DExp
-        deriving (Show, Eq)
-     
   data Type = Bool | Float | Int
         deriving (Show, Eq)
 
@@ -53,9 +50,7 @@ where
   type BoolE  = Exp Bool
   type FloatE = Exp Float
   type IntE   = Exp Int
-
-  get (E a) = a
-  gett (EE a) = a
+  type ArrayE a = Exp [a]
 
   type1 :: (DExp -> DExp) -> (Exp a -> Exp b)
   type2 :: (DExp -> DExp -> DExp) -> (Exp a -> Exp b -> Exp c)
@@ -134,13 +129,13 @@ where
   (&&*) = type2 andD
 
   mkArray :: IntE -> (IntE -> Exp a) -> ArrayE a
-  mkArray size func = let id = "dummy"
-                          dummy = varIntE id
-                          expr  = func dummy
-                      in EE (MkArray id (get size) (get expr))
+  mkArray (E size) item = let id = "dummy"
+                              dummy = varIntE id
+                              (E expr)  = item dummy
+                          in E (MkArray id size expr)
 
   readArr :: ArrayE a -> IntE -> Exp a
-  readArr arr pos = E (ReadArr (gett arr) (get pos))
+  readArr = type2 readArrD
 
 -- D functions
 
@@ -227,9 +222,12 @@ where
   logD (Exponential a)              = a
   logD a                            = Logarithm a 
 
+  readArrD arr (If c a b)           = ifD c (readArrD arr a) (readArrD arr b)
+  readArrD arr pos                  = ReadArr arr pos
+
   -- simple direct valuation of the AST
 
-  value ctx a = valueFloat ctx (get a)
+  value ctx (E a) = valueFloat ctx a
 
   valueBool  _ (LitBool a)         = a
   valueBool  ctx (If c a b)        = if (valueBool ctx c) then (valueBool ctx a) else (valueBool ctx b)
