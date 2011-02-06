@@ -8,8 +8,12 @@ module Elves.Pan
  litBoolE,
  ifE,
  notE,
+ castFloatE,
+ castIntE,
  varFloatE,
- value,
+ valueE,
+ applyE,
+ freeE,
  mkArray,
  readArr,
  (>*),
@@ -18,10 +22,13 @@ module Elves.Pan
 where
 
   import Data.Ratio
+  import Data.Set
 
   data DExp = LitFloat Float 
             | LitBool Bool
             | LitInt Int
+            | CastFloat DExp
+            | CastInt DExp
             | Var Id Type
             | If DExp DExp DExp
             | Add DExp DExp
@@ -122,6 +129,12 @@ where
   varIntE :: String -> IntE
   varIntE n = E (Var n Int)
 
+  castFloatE :: IntE -> FloatE
+  castFloatE (E x) = E (castFloatD x)
+
+  castIntE :: FloatE -> IntE
+  castIntE (E x) = E (castIntD x)
+
   notE  :: BoolE -> BoolE
   notE  = type1 notD
 
@@ -136,6 +149,10 @@ where
 
   readArr :: ArrayE a -> IntE -> Exp a
   readArr = type2 readArrD
+
+  freeE (E a) = freeD empty a
+
+  intToFloat = fromInteger . toInteger
 
 -- D functions
 
@@ -222,12 +239,27 @@ where
   logD (Exponential a)              = a
   logD a                            = Logarithm a 
 
+-- we should check the size
+  readArrD (MkArray id _ expr) (LitInt a) = applyD [(id, intToFloat a)] expr
   readArrD arr (If c a b)           = ifD c (readArrD arr a) (readArrD arr b)
   readArrD arr pos                  = ReadArr arr pos
 
+  castFloatD (LitInt a)             = LitFloat (intToFloat a)
+  castFloatD (If c a b)             = ifD c (castFloatD a) (castFloatD b)
+  castFloatD a                      = CastFloat a
+
+  castIntD (LitFloat a)             = LitInt (truncate a)
+  castIntD (If c a b)               = ifD c (castIntD a) (castIntD b)
+  castIntD a                        = CastInt a
+
+
   -- simple direct valuation of the AST
 
-  value ctx (E a) = valueFloat ctx a
+  -- we only value FloatE!!!!!
+  valueE :: [(Id, Float)] -> FloatE -> Float
+  valueE ctx (E a) = valueFloat ctx a
+
+  applyE ctx (E a) = E (applyD ctx a)
 
   valueBool  _ (LitBool a)         = a
   valueBool  ctx (If c a b)        = if (valueBool ctx c) then (valueBool ctx a) else (valueBool ctx b)
@@ -236,12 +268,16 @@ where
   valueBool  ctx (Positive a)      = (valueFloat ctx a) > 0.0
 
   valueInt _ (LitInt a)            = a
-  valueInt ctx (Var a Int)         = truncate (ctx a)
+  valueInt ctx (CastInt a)         = truncate (valueFloat ctx a)
+  valueInt ctx (Var a Int)         = let v = lookup a ctx
+                                     in case v of Nothing -> error ("Missing " ++ a)
+                                                  Just val -> truncate val
 
   valueFloat _ (LitFloat a)        = a
-  valueFloat _ (LitInt a)          = fromInteger (toInteger a)
-  valueFloat ctx (Var a Float)     = ctx a
-  valueFloat ctx (Var a Int)       = ctx a
+  valueFloat ctx (CastFloat a)     = intToFloat (valueInt ctx a)
+  valueFloat ctx (Var a Float)     = let v = lookup a ctx
+                                     in case v of Nothing -> error ("Missing " ++ a)
+                                                  Just val -> val
   valueFloat ctx (If c a b)        = if (valueBool ctx c) then (valueFloat ctx a) else (valueFloat ctx b)
   valueFloat ctx (Add a b)         = (valueFloat ctx a) + (valueFloat ctx b)
   valueFloat ctx (Mul a b)         = (valueFloat ctx a) * (valueFloat ctx b)
@@ -254,9 +290,63 @@ where
   valueFloat ctx (ReadArr arr pos) = let a = valueArray ctx arr
                                          p = valueInt   ctx pos
                                      in a !! p
-  valueFloat ctx x                 = error (show x)
 
-  valueArray ctx (MkArray id s e) = let size = valueFloat ctx s
-                                        newCtx val name = if name == id then val else ctx name
-                                        arr = map (\x -> valueFloat (newCtx x) e) [0 .. size - 1]
+  valueArray ctx (MkArray id s e) = let size = valueInt ctx s
+                                        newCtx x = (id, x) : ctx
+                                        arr = Prelude.map (\x -> valueFloat (newCtx (intToFloat x)) e) [0 .. size - 1]
                                     in arr
+
+
+-- apply the context to an expression
+
+  applyD _ a@(LitFloat _)        = a
+  applyD _ a@(LitBool _)         = a
+  applyD _ a@(LitInt _)          = a
+  applyD ctx a@(Var id Float)    = let v = lookup id ctx
+                                   in case v of Nothing -> a
+                                                Just val -> (LitFloat val)
+  applyD ctx a@(Var id Int)      = let v = lookup id ctx
+                                   in case v of Nothing -> a
+                                                Just val -> (LitInt (truncate val))
+  applyD ctx (If c a b)          = ifD (applyD ctx c) (applyD ctx a) (applyD ctx b)
+  applyD ctx (Add a b)           = addD (applyD ctx a) (applyD ctx b)
+  applyD ctx (Mul a b)           = mulD (applyD ctx a) (applyD ctx b)
+  applyD ctx (Rec a)             = recD (applyD ctx a)
+  applyD ctx (Negate a)          = negD (applyD ctx a)
+  applyD ctx (Positive a)        = posD (applyD ctx a)
+  applyD ctx (And a b)           = andD (applyD ctx a) (applyD ctx b)
+  applyD ctx (Not a)             = notD (applyD ctx a)
+  applyD ctx (Exponential a)     = notD (applyD ctx a)
+  applyD ctx (Logarithm a)       = notD (applyD ctx a)
+  applyD ctx (Sin a)             = notD (applyD ctx a)
+  applyD ctx (Cos a)             = notD (applyD ctx a)
+  applyD ctx (CastFloat a)       = castFloatD (applyD ctx a)
+  applyD ctx (CastInt a)         = castIntD (applyD ctx a)
+  applyD ctx (MkArray id a b)    = MkArray id (applyD ctx a) (applyD ctx b)
+  applyD ctx (ReadArr a b)       = readArrD (applyD ctx a) (applyD ctx b)
+
+
+-- free variables
+
+  addFree fv e = foldl freeD fv e
+
+  freeD fv (LitFloat _)        = fv
+  freeD fv (LitBool _)         = fv
+  freeD fv (LitInt _)          = fv
+  freeD fv (Var id _)          = insert id fv
+  freeD fv (CastFloat a)       = addFree fv [a]
+  freeD fv (CastInt a)         = addFree fv [a]
+  freeD fv (If c a b)          = addFree fv [c, a, b]
+  freeD fv (Add a b)           = addFree fv [a, b]
+  freeD fv (Mul a b)           = addFree fv [a, b]
+  freeD fv (Rec a)             = addFree fv [a]
+  freeD fv (Negate a)          = addFree fv [a]
+  freeD fv (Positive a)        = addFree fv [a]
+  freeD fv (And a b)           = addFree fv [a, b]
+  freeD fv (Not a)             = addFree fv [a]
+  freeD fv (Exponential a)     = addFree fv [a]
+  freeD fv (Logarithm a)       = addFree fv [a]
+  freeD fv (Sin a)             = addFree fv [a]
+  freeD fv (Cos a)             = addFree fv [a]
+  freeD fv (ReadArr a b)       = addFree fv [a, b]
+  freeD fv (MkArray id a b)    = union fv (delete id (addFree empty [a, b]))
