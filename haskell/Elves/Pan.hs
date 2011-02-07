@@ -14,6 +14,7 @@ module Elves.Pan
  valueE,
  applyE,
  freeE,
+ forcedE,
  mkArray,
  readArr,
  (>*),
@@ -46,13 +47,13 @@ where
             | Cos DExp
             | MkArray Id DExp DExp        -- dummy size expr
             | ReadArr DExp DExp           -- array pos
-              deriving (Show, Eq)
+              deriving (Show, Eq, Ord)
 
   data Exp a = E DExp
         deriving (Show, Eq)
 
   data Type = Bool | Float | Int
-        deriving (Show, Eq)
+        deriving (Show, Eq, Ord)
 
   type Id = String
 
@@ -266,6 +267,8 @@ where
   valueE :: Map Id Float -> FloatE -> Float
   valueE ctx (E a) = valueFloat ctx a
 
+  forcedE (E a) = forcedSubD Data.Set.empty a
+
   applyE ctx (E a) = E (applyD ctx a)
 
   valueBool  _ (LitBool a)         = a
@@ -358,3 +361,27 @@ where
   freeD fv (Cos a)             = addFree fv [a]
   freeD fv (ReadArr a b)       = addFree fv [a, b]
   freeD fv (MkArray id a b)    = Data.Set.union fv (Data.Set.delete id (addFree Data.Set.empty [a, b]))
+
+  addForced soFar e = foldl forcedSubD soFar e
+
+  forcedSubD soFar (LitFloat _)         = soFar
+  forcedSubD soFar (LitBool _)          = soFar
+  forcedSubD soFar (LitInt _)           = soFar
+  forcedSubD soFar (Dummy)              = soFar
+  forcedSubD soFar (Var _ _)            = soFar
+  forcedSubD soFar e@(CastFloat b)      = addForced (Data.Set.insert e soFar) [b]
+  forcedSubD soFar e@(CastInt b)        = addForced (Data.Set.insert e soFar) [b]
+  forcedSubD soFar e@(If c a b)         = addForced (Data.Set.insert e soFar) [c]
+  forcedSubD soFar e@(Add a b)          = addForced (Data.Set.insert e soFar) [a, b]
+  forcedSubD soFar e@(Mul a b)          = addForced (Data.Set.insert e soFar) [a, b]
+  forcedSubD soFar e@(Rec a)            = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Negate a)         = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Positive a)       = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(And a _)          = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Not a)            = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Exponential a)    = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Logarithm a)      = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Sin a)            = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(Cos a)            = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(ReadArr a b)      = addForced (Data.Set.insert e soFar) [a, b]
+  forcedSubD soFar e@(MkArray _ a _)    = addForced (Data.Set.insert e soFar) [a]
