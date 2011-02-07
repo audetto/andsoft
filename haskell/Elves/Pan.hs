@@ -23,6 +23,7 @@ where
 
   import Data.Ratio
   import Data.Set
+  import Data.Map
 
   data DExp = LitFloat Float 
             | LitBool Bool
@@ -143,7 +144,7 @@ where
   (&&*) = type2 andD
 
   freshVariable set name = let freshVar id = let try = name ++ (show id)
-                                             in if member try set then freshVar (id + 1) else try
+                                             in if Data.Set.member try set then freshVar (id + 1) else try
                            in freshVar 0
 
   mkArray :: IntE -> (IntE -> Exp a) -> ArrayE a
@@ -156,7 +157,7 @@ where
   readArr :: ArrayE a -> IntE -> Exp a
   readArr = type2 readArrD
 
-  freeE (E a) = freeD empty a
+  freeE (E a) = freeD Data.Set.empty a
 
   intToFloat = fromInteger . toInteger
 
@@ -246,7 +247,7 @@ where
   logD a                            = Logarithm a 
 
 -- we should check the size
-  readArrD (MkArray id _ expr) (LitInt a) = applyD [(id, intToFloat a)] expr
+  readArrD (MkArray id _ expr) (LitInt a) = applyD (Data.Map.singleton id (intToFloat a)) expr
   readArrD arr (If c a b)           = ifD c (readArrD arr a) (readArrD arr b)
   readArrD arr pos                  = ReadArr arr pos
 
@@ -262,7 +263,7 @@ where
   -- simple direct valuation of the AST
 
   -- we only value FloatE!!!!!
-  valueE :: [(Id, Float)] -> FloatE -> Float
+  valueE :: Map Id Float -> FloatE -> Float
   valueE ctx (E a) = valueFloat ctx a
 
   applyE ctx (E a) = E (applyD ctx a)
@@ -275,13 +276,13 @@ where
 
   valueInt _ (LitInt a)            = a
   valueInt ctx (CastInt a)         = truncate (valueFloat ctx a)
-  valueInt ctx (Var a Int)         = let v = lookup a ctx
+  valueInt ctx (Var a Int)         = let v = Data.Map.lookup a ctx
                                      in case v of Nothing -> error ("Missing " ++ a)
                                                   Just val -> truncate val
 
   valueFloat _ (LitFloat a)        = a
   valueFloat ctx (CastFloat a)     = intToFloat (valueInt ctx a)
-  valueFloat ctx (Var a Float)     = let v = lookup a ctx
+  valueFloat ctx (Var a Float)     = let v = Data.Map.lookup a ctx
                                      in case v of Nothing -> error ("Missing " ++ a)
                                                   Just val -> val
   valueFloat ctx (If c a b)        = if (valueBool ctx c) then (valueFloat ctx a) else (valueFloat ctx b)
@@ -298,7 +299,7 @@ where
                                      in a !! p
 
   valueArray ctx (MkArray id s e) = let size = valueInt ctx s
-                                        newCtx x = (id, x) : ctx
+                                        newCtx x = Data.Map.insert id x ctx
                                         arr = Prelude.map (\x -> valueFloat (newCtx (intToFloat x)) e) [0 .. size - 1]
                                     in arr
 
@@ -308,10 +309,10 @@ where
   applyD _ a@(LitFloat _)        = a
   applyD _ a@(LitBool _)         = a
   applyD _ a@(LitInt _)          = a
-  applyD ctx a@(Var id Float)    = let v = lookup id ctx
+  applyD ctx a@(Var id Float)    = let v = Data.Map.lookup id ctx
                                    in case v of Nothing -> a
                                                 Just val -> (LitFloat val)
-  applyD ctx a@(Var id Int)      = let v = lookup id ctx
+  applyD ctx a@(Var id Int)      = let v = Data.Map.lookup id ctx
                                    in case v of Nothing -> a
                                                 Just val -> (LitInt (truncate val))
   applyD ctx (If c a b)          = ifD (applyD ctx c) (applyD ctx a) (applyD ctx b)
@@ -340,7 +341,7 @@ where
   freeD fv (LitBool _)         = fv
   freeD fv (LitInt _)          = fv
   freeD fv (Dummy)             = fv
-  freeD fv (Var id _)          = insert id fv
+  freeD fv (Var id _)          = Data.Set.insert id fv
   freeD fv (CastFloat a)       = addFree fv [a]
   freeD fv (CastInt a)         = addFree fv [a]
   freeD fv (If c a b)          = addFree fv [c, a, b]
@@ -356,4 +357,4 @@ where
   freeD fv (Sin a)             = addFree fv [a]
   freeD fv (Cos a)             = addFree fv [a]
   freeD fv (ReadArr a b)       = addFree fv [a, b]
-  freeD fv (MkArray id a b)    = union fv (delete id (addFree empty [a, b]))
+  freeD fv (MkArray id a b)    = Data.Set.union fv (Data.Set.delete id (addFree Data.Set.empty [a, b]))

@@ -1,9 +1,11 @@
 import Elves.Pan
+import Data.Map
+import Data.Set
 
 one = 1 :: FloatE
 var = "x"
 x = varFloatE var
-ctx = [(var, 4 :: Float)]
+ctx = Data.Map.fromList [(var, 4 :: Float)]
 
 f y = (castFloatE y) * x
 arr = mkArray 5 f
