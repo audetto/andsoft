@@ -27,6 +27,7 @@ where
   data DExp = LitFloat Float 
             | LitBool Bool
             | LitInt Int
+            | Dummy                            -- used ONLY to as a placeholder to get the free variables
             | CastFloat DExp
             | CastInt DExp
             | Var Id Type
@@ -141,9 +142,14 @@ where
   (&&*) :: BoolE -> BoolE -> BoolE
   (&&*) = type2 andD
 
+  freshVariable set name = let freshVar id = let try = name ++ (show id)
+                                             in if member try set then freshVar (id + 1) else try
+                           in freshVar 0
+
   mkArray :: IntE -> (IntE -> Exp a) -> ArrayE a
-  mkArray (E size) item = let id = "dummy"
-                              dummy = varIntE id
+  mkArray (E size) item = let usedVars  = freeE (item (E Dummy))  -- apply item to dummy to get the free variables of item
+                              id        = freshVariable usedVars "it"
+                              dummy     = varIntE id
                               (E expr)  = item dummy
                           in E (MkArray id size expr)
 
@@ -333,6 +339,7 @@ where
   freeD fv (LitFloat _)        = fv
   freeD fv (LitBool _)         = fv
   freeD fv (LitInt _)          = fv
+  freeD fv (Dummy)             = fv
   freeD fv (Var id _)          = insert id fv
   freeD fv (CastFloat a)       = addFree fv [a]
   freeD fv (CastInt a)         = addFree fv [a]

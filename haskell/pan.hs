@@ -1,8 +1,9 @@
 import Elves.Pan
 
 one = 1 :: FloatE
-x = varFloatE "x"
-ctx = [("x", 4 :: Float)]
+var = "x"
+x = varFloatE var
+ctx = [(var, 4 :: Float)]
 
 f y = (castFloatE y) * x
 arr = mkArray 5 f
