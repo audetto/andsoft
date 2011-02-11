@@ -272,7 +272,7 @@ where
 
 -- free variables
 
-  forcedE (E a) = forcedSubD Data.Set.empty a
+  forcedE (E a) = forcedSubD Data.Map.empty a
 
   addFree fv e = foldl freeD fv e
 
@@ -299,25 +299,29 @@ where
   freeD fv (MkArray id a b)    = Data.Set.union fv (Data.Set.delete id (addFree Data.Set.empty [a, b]))
 
   addForced soFar e = foldl forcedSubD soFar e
+  
+  addSingle soFar e = let v = case Data.Map.lookup e soFar of Nothing -> 0
+                                                              Just a -> a
+                      in Data.Map.insert e (v + 1) soFar
 
   forcedSubD soFar (LitFloat _)         = soFar
   forcedSubD soFar (LitBool _)          = soFar
   forcedSubD soFar (LitInt _)           = soFar
   forcedSubD soFar (Dummy)              = soFar
   forcedSubD soFar (Var _ _)            = soFar
-  forcedSubD soFar e@(CastFloat b)      = addForced (Data.Set.insert e soFar) [b]
-  forcedSubD soFar e@(CastInt b)        = addForced (Data.Set.insert e soFar) [b]
-  forcedSubD soFar e@(If c a b)         = addForced (Data.Set.insert e soFar) [c]
-  forcedSubD soFar e@(Add a b)          = addForced (Data.Set.insert e soFar) [a, b]
-  forcedSubD soFar e@(Mul a b)          = addForced (Data.Set.insert e soFar) [a, b]
-  forcedSubD soFar e@(Rec a)            = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Negate a)         = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Positive a)       = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(And a _)          = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Not a)            = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Exponential a)    = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Logarithm a)      = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Sin a)            = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(Cos a)            = addForced (Data.Set.insert e soFar) [a]
-  forcedSubD soFar e@(ReadArr a b)      = addForced (Data.Set.insert e soFar) [a, b]
-  forcedSubD soFar e@(MkArray _ a _)    = addForced (Data.Set.insert e soFar) [a]
+  forcedSubD soFar e@(CastFloat b)      = addForced (addSingle soFar e) [b]
+  forcedSubD soFar e@(CastInt b)        = addForced (addSingle soFar e) [b]
+  forcedSubD soFar e@(If c a b)         = addForced (addSingle soFar e) [c]
+  forcedSubD soFar e@(Add a b)          = addForced (addSingle soFar e) [a, b]
+  forcedSubD soFar e@(Mul a b)          = addForced (addSingle soFar e) [a, b]
+  forcedSubD soFar e@(Rec a)            = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Negate a)         = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Positive a)       = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(And a _)          = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Not a)            = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Exponential a)    = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Logarithm a)      = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Sin a)            = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(Cos a)            = addForced (addSingle soFar e) [a]
+  forcedSubD soFar e@(ReadArr a b)      = addForced (addSingle soFar e) [a, b]
+  forcedSubD soFar e@(MkArray _ a _)    = addForced (addSingle soFar e) [a]
