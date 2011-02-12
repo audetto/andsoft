@@ -300,18 +300,22 @@ where
 
   addForced soFar e = foldl forcedSubD soFar e
   
-  addSingle soFar e = let v = case Data.Map.lookup e soFar of Nothing -> 0
-                                                              Just a -> a
-                      in Data.Map.insert e (v + 1) soFar
+  addSingle soFar e = Data.Map.insertWith' (+) e 1 soFar
+
+  intersectMaps a b = Data.Map.intersectionWith min a b 
 
   forcedSubD soFar (LitFloat _)         = soFar
   forcedSubD soFar (LitBool _)          = soFar
   forcedSubD soFar (LitInt _)           = soFar
   forcedSubD soFar (Dummy)              = soFar
-  forcedSubD soFar (Var _ _)            = soFar
+  forcedSubD soFar e@(Var _ _)          = addSingle soFar e
   forcedSubD soFar e@(CastFloat b)      = addForced (addSingle soFar e) [b]
   forcedSubD soFar e@(CastInt b)        = addForced (addSingle soFar e) [b]
-  forcedSubD soFar e@(If c a b)         = addForced (addSingle soFar e) [c]
+  forcedSubD soFar e@(If c a b)         = let forcedA = forcedSubD Data.Map.empty a
+                                              forcedB = forcedSubD Data.Map.empty b
+                                              minAB = intersectMaps forcedA forcedB
+                                              normal = addForced (addSingle soFar e) [c]
+                                          in Data.Map.unionWith (+) minAB normal
   forcedSubD soFar e@(Add a b)          = addForced (addSingle soFar e) [a, b]
   forcedSubD soFar e@(Mul a b)          = addForced (addSingle soFar e) [a, b]
   forcedSubD soFar e@(Rec a)            = addForced (addSingle soFar e) [a]
