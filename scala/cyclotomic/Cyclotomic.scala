@@ -1,9 +1,12 @@
+import scala.collection.mutable.StringBuilder
+
 package asi.algebra
 {
   class Cyclotomic(d: Int, c: Array[Int])
   {
+    require(Primes.isPrime(d))
     val dim: Int = d
-    
+
     val coeffs: Array[Int] = new Array[Int](dim)
     for (i <- 0 until c.length)
       {
@@ -13,6 +16,10 @@ package asi.algebra
     
     private def normalise
     {
+      /*
+       * We adopt the convention that the highest power has always a zero coefficient
+       */
+
       for (i <- 0 until dim)
 	{
 	  coeffs(i) -= coeffs(dim - 1)
@@ -21,12 +28,16 @@ package asi.algebra
     
     override def toString =
       {
-	var s = ""
+	var buf = new StringBuilder
 	for (i <- 0 until dim)
 	  {
-	    s = s + coeffs(i) + "[" + i + "] "
+	    buf ++= coeffs(i).toString
+	    buf += '['
+	    buf ++= i.toString
+	    buf ++= "] "
 	  }
-	s
+	buf.drop(1)
+	buf.toString
       }
     
     def + (that: Cyclotomic) =
@@ -180,6 +191,18 @@ package asi.algebra
       {
 	integer(dim, 0)
       }
+    
+    def binomial(dim: Int, x: Int, y: Int)
+      {
+	new Cyclotomic(dim, Array(x, y))
+      }
 
+    def biNorm(dim: Int, x: Int, y: Int)
+      {
+	if (x + y == 0)
+	  dim * math.abs(x) * (dim - 1)
+	else
+	  (x * dim + y * dim) / (x + y)
+      }
   }
 }
