@@ -56,5 +56,22 @@ package asi.algebra
 
 	return true
       }
+
+    /* Exponentiation by squaring
+     */
+    def ipow(base: Int, exp: Int) =
+      {
+	var res = 1
+	var b = base
+	var e = exp
+	while (e != 0)
+	  {
+	    if ((e & 1) != 0)
+	      res *= b
+	    e >>= 1
+	    b *= b
+	  }
+	res
+      }
   }
 }

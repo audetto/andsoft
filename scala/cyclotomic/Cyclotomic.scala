@@ -192,17 +192,17 @@ package asi.algebra
 	integer(dim, 0)
       }
     
-    def binomial(dim: Int, x: Int, y: Int)
+    def binomial(dim: Int, x: Int, y: Int) =
       {
 	new Cyclotomic(dim, Array(x, y))
       }
 
-    def biNorm(dim: Int, x: Int, y: Int)
+    def biNorm(dim: Int, x: Int, y: Int) =
       {
 	if (x + y == 0)
-	  dim * math.abs(x) * (dim - 1)
+	  dim * Primes.ipow(math.abs(x), dim - 1)
 	else
-	  (x * dim + y * dim) / (x + y)
+	  (Primes.ipow(x, dim) + Primes.ipow(y, dim)) / (x + y)
       }
   }
 }
