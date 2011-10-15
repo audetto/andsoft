@@ -4,9 +4,9 @@ package asi.algebra
 {
   object Primes
   {
-    def primeFactors(num: Int) = 
+    def primeFactors(num: BigInt) = 
       { 
-	val factors = new ListBuffer[Int]
+	val factors = new ListBuffer[BigInt]
 	var n = num
 
 	while (n % 2 == 0)
@@ -33,7 +33,7 @@ package asi.algebra
 	factors.toList
       }
 
-    def isPrime(n: Int): Boolean =
+    def isPrime(n: BigInt): Boolean =
       {
 	if (n == 1)
 	  return false
@@ -59,9 +59,9 @@ package asi.algebra
 
     /* Exponentiation by squaring
      */
-    def ipow(base: Int, exp: Int) =
+    def ipow(base: BigInt, exp: BigInt) =
       {
-	var res = 1
+	var res: BigInt = 1
 	var b = base
 	var e = exp
 	while (e != 0)

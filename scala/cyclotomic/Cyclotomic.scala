@@ -2,12 +2,13 @@ import scala.collection.mutable.StringBuilder
 
 package asi.algebra
 {
-  class Cyclotomic(d: Int, c: Array[Int])
+  class Cyclotomic(d: Int, c: Array[BigInt])
   {
     require(Primes.isPrime(d))
     val dim: Int = d
 
-    val coeffs: Array[Int] = new Array[Int](dim)
+    val coeffs: Array[BigInt] = createArray(dim)
+
     for (i <- 0 until c.length)
       {
 	coeffs(i % dim) += c(i)
@@ -25,6 +26,8 @@ package asi.algebra
 	  coeffs(i) -= coeffs(dim - 1)
 	}
     }
+
+    private def createArray(size: Int) = Array.fill(size) { BigInt(0) }
     
     override def toString =
       {
@@ -43,7 +46,7 @@ package asi.algebra
     def + (that: Cyclotomic) =
       {
 	require(that.dim == dim)
-	val c = new Array[Int](dim)
+	val c = new Array[BigInt](dim)
 	
 	for (i <- 0 until dim)
 	  {
@@ -56,7 +59,7 @@ package asi.algebra
     def * (that: Cyclotomic) = 
       {
 	require(that.dim == dim)
-	val c = new Array[Int](2 * dim - 1)
+	val c = createArray(2 * dim - 1)
 	
 	for (i <- 0 until dim)
 	  {
@@ -69,9 +72,9 @@ package asi.algebra
 	new Cyclotomic(dim, c)
       }
 
-    def * (that: Int) = 
+    def * (that: BigInt) = 
       {
-	val c = new Array[Int](dim)
+	val c = createArray(dim)
 	
 	for (i <- 0 until dim)
 	  {
@@ -102,7 +105,7 @@ package asi.algebra
 	  }
       }
 
-    def / (that: Int): Option[Cyclotomic] =
+    def / (that: BigInt): Option[Cyclotomic] =
       {
 	/*
 	 * Since they are always normalised,
@@ -111,7 +114,7 @@ package asi.algebra
 
 	val rem = coeffs(0) % that;
 
-	val c = new Array[Int](dim)
+	val c =  Array.fill(dim) { BigInt(0) }
 
 	for (i <- 0 until dim)
 	  {
@@ -125,7 +128,7 @@ package asi.algebra
 
     def rotate(pos: Int) =
       {
-	val c = new Array[Int](pos * dim)
+	val c = createArray(pos * dim)
 	for (i <- 0 until dim)
 	  {
 	    c(i * pos) = coeffs(i)
@@ -177,7 +180,7 @@ package asi.algebra
   object Cyclotomic
   {
 
-    def integer(dim: Int, n: Int) =
+    def integer(dim: Int, n: BigInt) =
       {
 	new Cyclotomic(dim, Array(n))
       }
@@ -192,15 +195,15 @@ package asi.algebra
 	integer(dim, 0)
       }
     
-    def binomial(dim: Int, x: Int, y: Int) =
+    def binomial(dim: Int, x: BigInt, y: BigInt) =
       {
 	new Cyclotomic(dim, Array(x, y))
       }
 
-    def biNorm(dim: Int, x: Int, y: Int) =
+    def biNorm(dim: Int, x: BigInt, y: BigInt) =
       {
 	if (x + y == 0)
-	  dim * Primes.ipow(math.abs(x), dim - 1)
+	  dim * Primes.ipow(x.abs, dim - 1)
 	else
 	  (Primes.ipow(x, dim) + Primes.ipow(y, dim)) / (x + y)
       }
