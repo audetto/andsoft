@@ -203,9 +203,9 @@ package asi.algebra
     def biNorm(dim: Int, x: BigInt, y: BigInt) =
       {
 	if (x + y == 0)
-	  dim * Primes.ipow(x.abs, dim - 1)
+	  dim * x.abs.pow(dim - 1)
 	else
-	  (Primes.ipow(x, dim) + Primes.ipow(y, dim)) / (x + y)
+	  (x.pow(dim) + y.pow(dim)) / (x + y)
       }
   }
 }

@@ -6,31 +6,34 @@ package asi.algebra
   {
     def primeFactors(num: BigInt) = 
       { 
-	val factors = new ListBuffer[BigInt]
-	var n = num
-
-	while (n % 2 == 0)
-	{
-	  factors += 2
-	  n /= 2
-	}
-
-	var i = 3
-	while (i * i <= n)
-	{
-	  while (n % i == 0)
+	def nextFactor(n: BigInt, soFar: List[BigInt]): List[BigInt] =
 	  {
-	    factors += i
-	    n /= i
+	    if (n == 1)
+	      {
+		return soFar;
+	      }
+	    
+	    if (n % 2 == 0)
+	      {
+		return nextFactor(n / 2, 2 :: soFar)
+	      }
+	    
+	    var i = 3
+	    while (i * i <= n)
+	    {
+	      if (n % i == 0)
+		{
+		  return nextFactor(n / i, i :: soFar)
+		}
+	      /* only check odd numbers */
+	      i += 2
+	    }
+	    
+	    return n :: soFar;
 	  }
-	  /* only check odd numbers */
-	  i += 2
-	}
-	
-	if (n > 1)
-	  factors += n
 
-	factors.toList
+	val soFar = Nil
+	nextFactor(num, soFar)
       }
 
     def isPrime(n: BigInt): Boolean =
@@ -57,21 +60,110 @@ package asi.algebra
 	return true
       }
 
-    /* Exponentiation by squaring
-     */
-    def ipow(base: BigInt, exp: BigInt) =
+    def sqrt(num: BigInt) =
       {
-	var res: BigInt = 1
-	var b = base
-	var e = exp
-	while (e != 0)
+	def next(n: BigInt, i: BigInt) : BigInt = (n + i / n) >> 1
+	
+	val one = BigInt(1)
+	
+	var n = one
+	var n1 = next(n, num)
+	
+	while ((n1 - n).abs > one)
 	  {
-	    if ((e & 1) != 0)
-	      res *= b
-	    e >>= 1
-	    b *= b
+	    n = n1
+	    n1 = next(n, num)
 	  }
-	res
+	
+	while (n1 * n1 > num)
+	  {
+	    n1 -= one
+	  }
+	
+	n1
       }
+
+    def algoB(num: BigInt): List[BigInt] =
+      {
+	// Step B1
+	var x:  BigInt = 5
+	var xp: BigInt = 2
+	var k:  BigInt = 1
+	var l:  BigInt = 1
+	var n:  BigInt = num
+	
+	var factors: List[BigInt] = Nil
+
+	while (true)
+	  {
+	    // Step B2
+	    if (n.isProbablePrime(8))
+	      {
+		factors = n :: factors
+		return factors
+	      }
+	    
+	    // Step B3
+	    var g = n.gcd(xp - x)
+	    while (g == 1)
+	    {
+	      // Step B4
+	      k -= 1
+	      if (k == 0)
+		{
+		  xp = x
+		  l *= 2
+		  k = l
+		}
+	      x = (x * x + 1) % n
+	      g = n.gcd(xp - x)
+	    }
+	    
+	    // Step B3
+	    factors = g :: factors
+	    if (g == n)
+	      return factors
+
+	    n = n / g
+	    x = x % n
+	    xp = xp % n
+	  }
+	Nil
+      }
+
+    def algoC(num: BigInt) =
+      {
+	require(num % 2 == 1)
+
+	// Step C1
+	val s: BigInt = sqrt(num)
+
+	var a: BigInt = 2 * sqrt(num) + 1
+	var b: BigInt = 1
+	var r = s * s - num
+	
+	// Step C2
+	while (r != 0)
+	  {
+	    // Step C3
+	    r += a
+	    a += 2
+
+	    do
+	      {
+		// Step C4
+		r -= b
+		b += 2
+	      }
+	    // Step C5
+	    while (r > 0)
+	    
+	  }
+
+	// success
+	// Step C2
+	(a - b) / 2
+      }
+
   }
 }
