@@ -1,39 +1,66 @@
 import scala.collection.mutable.ListBuffer
+import java.math.BigInteger
 
 package asi.algebra
 {
   object Primes
   {
-    def primeFactors(num: BigInt) = 
+    // This is Algorithm A
+    def primeFactors(num: BigInt): List[BigInt] = 
       { 
-	def nextFactor(n: BigInt, soFar: List[BigInt]): List[BigInt] =
+	def nextFactor(d: BigInt): BigInt =
 	  {
-	    if (n == 1)
-	      {
-		return soFar;
-	      }
-	    
-	    if (n % 2 == 0)
-	      {
-		return nextFactor(n / 2, 2 :: soFar)
-	      }
-	    
-	    var i = 3
-	    while (i * i <= n)
-	    {
-	      if (n % i == 0)
-		{
-		  return nextFactor(n / i, i :: soFar)
-		}
-	      /* only check odd numbers */
-	      i += 2
-	    }
-	    
-	    return n :: soFar;
+	    if (d == 2)
+	      3
+	    else if (d == 3)
+	      5
+	    else if (d % 4 == 1) 
+	      d + 2 
+	    else d + 4
 	  }
 
-	val soFar = Nil
-	nextFactor(num, soFar)
+	var factors: List[BigInt] = Nil
+	var d: BigInt = 2
+
+	// Step A1
+	var n = num
+
+	if (n == 1)
+	  return List(1)
+
+	// Step A3
+	do
+	  {
+	    var rem: Array[BigInteger] = n.underlying().divideAndRemainder(d.underlying())
+	    // Step A4
+	    while (rem(1).compareTo(BigInteger.ZERO) == 0)
+	    {
+	      // Step A5
+	      factors = d :: factors
+	      n = new BigInt(rem(0))
+
+	      // Step A2
+	      if (n == 1)
+		return factors
+
+	      // Step A6
+	      if (n < d)
+		return n :: factors
+
+	      rem = n.underlying().divideAndRemainder(d.underlying())
+	    }
+
+	    // Step A6
+	    if (rem(0).compareTo(d.underlying()) < 0)
+	    // Step A7
+	      return n :: factors
+	    
+	    // Step A6
+	    d = nextFactor(d)
+	  }
+	while (true)
+
+	factors
       }
 
     def isPrime(n: BigInt): Boolean =
