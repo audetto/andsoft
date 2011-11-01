@@ -16,75 +16,38 @@ package asi.algebra
 	      5
 	    else if (d % 4 == 1) 
 	      d + 2 
-	    else d + 4
+	    else
+	      d + 4
 	  }
 
-	var factors: List[BigInt] = Nil
-	var d: BigInt = 2
-
-	// Step A1
-	var n = num
-
-	if (n == 1)
-	  return List(1)
-
-	// Step A3
-	do
+	// try to facgtor n, with factors at least d
+	def addFactor(n: BigInt, d: BigInt, sofar: List[BigInt]): List[BigInt] =
 	  {
-	    var rem: Array[BigInteger] = n.underlying().divideAndRemainder(d.underlying())
-	    // Step A4
-	    while (rem(1).compareTo(BigInteger.ZERO) == 0)
-	    {
-	      // Step A5
-	      factors = d :: factors
-	      n = new BigInt(rem(0))
+	    if (n == 1)
+	      return sofar
 
-	      // Step A2
-	      if (n == 1)
-		return factors
+	    if (n <= d || n.isProbablePrime(10))
+	      return n :: sofar
 
-	      // Step A6
-	      if (n < d)
-		return n :: factors
+	    var div = d
 
-	      rem = n.underlying().divideAndRemainder(d.underlying())
-	    }
+	    do
+	      {
+		var rem: Array[BigInteger] = n.underlying().divideAndRemainder(div.underlying())
+		if (rem(1).compareTo(BigInteger.ZERO) == 0)
+		  {
+		    // new n, start from the beginning
+		    return addFactor(new BigInt(rem(0)), div, div :: sofar);
+		  }
+		// just a new factor, don't check n again
+		div = nextFactor(div)
+	      }
+	    while (div < n)
 
-	    // Step A6
-	    if (rem(0).compareTo(d.underlying()) < 0)
-	    // Step A7
-	      return n :: factors
-	    
-	    // Step A6
-	    d = nextFactor(d)
+	    return n :: sofar
 	  }
-	while (true)
 
-	factors
-      }
-
-    def isPrime(n: BigInt): Boolean =
-      {
-	if (n == 1)
-	  return false
-
-	if (n == 2)
-	  return true
-
-	if (n % 2 == 0)
-	  return false
-
-	var i = 3
-	while (i * i <= n)
-	{
-	  if (n % i == 0)
-	    return false
-
-	  /* only check odd numbers */
-	  i += 2
-	}
-
-	return true
+	addFactor(num, 2, Nil)
       }
 
     def sqrt(num: BigInt) =
@@ -190,6 +153,32 @@ package asi.algebra
 	// success
 	// Step C2
 	(a - b) / 2
+      }
+
+    def factorC(num: BigInt) =
+      {
+	def addFactor(n: BigInt, sofar: List[BigInt]): List[BigInt] =
+	  {
+	    if (num % 2 == 0)
+	      {
+		addFactor(num / 2, 2 :: sofar)
+	      }
+	    else if (n.isProbablePrime(10))
+	      {
+		n :: sofar
+	      }
+	    else if (n == 1)
+	      {
+		sofar
+	      }
+	    else
+	      {
+		val f = algoC(n)
+		addFactor(n / f, addFactor(f, sofar))
+	      }
+	  }
+	  
+	addFactor(num, Nil).sortWith(_ > _)
       }
 
   }

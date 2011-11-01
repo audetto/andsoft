@@ -4,7 +4,8 @@ package asi.algebra
 {
   class Cyclotomic(d: Int, c: Array[BigInt])
   {
-    require(Primes.isPrime(d))
+    require(BigInt(d).isProbablePrime(5))
+
     val dim: Int = d
 
     val coeffs: Array[BigInt] = createArray(dim)
