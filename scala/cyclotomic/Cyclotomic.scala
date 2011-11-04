@@ -196,6 +196,7 @@ package asi.algebra
 	// k: should we check k.modPow(dim, p) == 1?
 	//    which is automatic if we loop over a
 	//    in that case, are we checking a lot of useless numbers?
+	// moreover: is the smallest such a number the correct one?
 	for (a <- BigInt(2) to p)
 	  {
 	    val k = a.modPow(expo, p)
