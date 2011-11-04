@@ -176,6 +176,54 @@ package asi.algebra
 	Primes.primeFactors(n)
       }
 
+    /*
+     * I am not 100% sure here
+     * We look for the smallest integer (< norm)
+     * such that intMod() == 0
+     * This is the theorem at page 90
+     */
+    def findK: BigInt =
+      {
+	val p = norm
+	require(p.isProbablePrime(10))
+	require((p mod dim) == BigInt(1))
+
+	val expo = (p - 1) / dim
+
+	// should we loop over a or k
+	// a: is it enough to loop up to p?
+	//    we know (?) k < p, what about a
+	// k: should we check k.modPow(dim, p) == 1?
+	//    which is automatic if we loop over a
+	//    in that case, are we checking a lot of useless numbers?
+	for (a <- BigInt(2) to p)
+	  {
+	    val k = a.modPow(expo, p)
+	    if (intMod(k, p) == BigInt(0))
+	      return k
+	  }
+
+	throw new AssertionError("Internal algorithm failure")
+      }
+
+    def intMod(k: BigInt, p: BigInt): BigInt =
+      {
+	var sum: BigInt = 0
+	for (i <- (dim - 1).to(0, -1))
+	  {
+	    sum *= k
+	    sum += coeffs(i)
+	    sum = sum.mod(p)
+	  }
+	sum
+      }
+
+    def intMod(c: Cyclotomic): BigInt =
+      {
+	val k = c.findK
+	val p = c.norm
+	intMod(k, p)
+      }
   }
   
   object Cyclotomic
