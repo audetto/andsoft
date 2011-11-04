@@ -155,6 +155,7 @@ package asi.algebra
 	(a - b) / 2
       }
 
+    // call algoC to find factors
     def factorC(num: BigInt) =
       {
 	def addFactor(n: BigInt, sofar: List[BigInt]): List[BigInt] =
