@@ -56,6 +56,11 @@ package asi.algebra
 	
 	new Cyclotomic(dim, c);
       }
+
+    def - (that: Cyclotomic) =
+      {
+	this + (that * -1)
+      }
     
     def * (that: Cyclotomic) = 
       {
@@ -197,6 +202,7 @@ package asi.algebra
 	//    which is automatic if we loop over a
 	//    in that case, are we checking a lot of useless numbers?
 	// moreover: is the smallest such a number the correct one?
+	// I think so. Each solution is for a different conjugate.
 	for (a <- BigInt(2) to p)
 	  {
 	    val k = a.modPow(expo, p)
@@ -224,6 +230,14 @@ package asi.algebra
 	val k = c.findK
 	val p = c.norm
 	intMod(k, p)
+      }
+
+    // we have many ways of achieving this
+    // here, we simple adjust the constant
+    def makeDivisible(c: Cyclotomic) =
+      {
+	val r = intMod(c)
+	this - Cyclotomic.integer(dim, r)
       }
   }
   
