@@ -182,10 +182,12 @@ package asi.algebra
       }
 
     /*
-     * I am not 100% sure here
-     * We look for the smallest integer (< norm)
-     * such that intMod() == 0
      * This is the theorem at page 90
+     * 
+     * k such that intMod() == 0
+     *
+     * k is such that it "divides" 0 and this
+     * Read the top of page 94
      */
     def findK: BigInt =
       {
@@ -193,22 +195,24 @@ package asi.algebra
 	require(p.isProbablePrime(10))
 	require((p mod dim) == BigInt(1))
 
-	val expo = (p - 1) / dim
+	val mu = (p - 1) / dim
 
-	// should we loop over a or k
-	// a: is it enough to loop up to p?
-	//    we know (?) k < p, what about a
-	// k: should we check k.modPow(dim, p) == 1?
-	//    which is automatic if we loop over a
-	//    in that case, are we checking a lot of useless numbers?
-	// moreover: is the smallest such a number the correct one?
-	// I think so. Each solution is for a different conjugate.
-	for (a <- BigInt(2) to p)
+	val first = BigInt(2).modPow(mu, p)
+
+	// First is always a solution (Fermat's little theorem)
+	// We loop through all other solutions
+	// until we find the only one that divides this
+	// all the other solutions "divide" this->conjugates
+
+	var k = first
+
+	do
 	  {
-	    val k = a.modPow(expo, p)
 	    if (intMod(k, p) == BigInt(0))
 	      return k
+	    k = (k * first) mod p
 	  }
+	while (k != 1)
 
 	throw new AssertionError("Internal algorithm failure")
       }
@@ -270,6 +274,29 @@ package asi.algebra
 	  dim * x.abs.pow(dim - 1)
 	else
 	  (x.pow(dim) + y.pow(dim)) / (x + y)
+      }
+
+    // find al ks relative to this prime norm
+    def ks(dim: Int, p: BigInt) =
+      {
+	require(p.isProbablePrime(10))
+	require((p mod dim) == BigInt(1))
+
+	val mu = (p - 1) / dim
+
+	val first = BigInt(2).modPow(mu, p)
+
+	var ks: List[BigInt] = Nil
+	var k = first
+
+	do
+	  {
+	    ks = k :: ks
+	    k = (k * first) mod p
+	  }
+	while (k != 1)
+
+	ks
       }
   }
 }
