@@ -182,33 +182,27 @@ package asi.algebra
 	addFactor(num, Nil).sortWith(_ > _)
       }
 
-    def primitiveRoot(n: BigInt): BigInt =
+    // find the smallest primitive root modulo n
+    def primitiveRoot(n: BigInt) =
       {
 	require(n.isProbablePrime(10))
 
 	val factors = primeFactors(n - 1).distinct
 	
-	def check(r: BigInt): Boolean =
+	// check if r is a primitive root
+	def check(r: BigInt) =
 	  {
 	    if (r.modPow(n - 1, n) != BigInt(1))
-	      return false
-
-	    for (e <- factors)
-	      {
-		if (r.modPow((n - 1) / e, n) == BigInt(1))
-		  return false
-	      }
-	    return true
+	      false
+	    else
+	      !factors.exists(e => r.modPow((n - 1) / e, n) == BigInt(1))
 	  }
 	
-	for (r <- BigInt(2) to n - 2)
-	  {
-	    if (check(r))
-	      return r
-	  }
+	// we are looking for the smallest
+	val root = (BigInt(2) to n - 1).find(check(_))
 	
-	// there is at least a primitive root
-	n - 1
+	// it cant fail
+	root.get
       }
   }
 }
