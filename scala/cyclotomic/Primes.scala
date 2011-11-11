@@ -182,5 +182,33 @@ package asi.algebra
 	addFactor(num, Nil).sortWith(_ > _)
       }
 
+    def primitiveRoot(n: BigInt): BigInt =
+      {
+	require(n.isProbablePrime(10))
+
+	val factors = primeFactors(n - 1).distinct
+	
+	def check(r: BigInt): Boolean =
+	  {
+	    if (r.modPow(n - 1, n) != BigInt(1))
+	      return false
+
+	    for (e <- factors)
+	      {
+		if (r.modPow((n - 1) / e, n) == BigInt(1))
+		  return false
+	      }
+	    return true
+	  }
+	
+	for (r <- BigInt(2) to n - 2)
+	  {
+	    if (check(r))
+	      return r
+	  }
+	
+	// there is at least a primitive root
+	n - 1
+      }
   }
 }

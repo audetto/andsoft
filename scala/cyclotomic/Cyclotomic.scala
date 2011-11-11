@@ -249,10 +249,11 @@ package asi.algebra
       }
 
     // calculate the norm by successive factorizations
-    // h must be a primitive root modulo dim
     // This is the algorithm at the bottom of page 103
-    def quickNorm(h: Int) =
+    def quickNorm =
       {
+	val h = Primes.primitiveRoot(dim)
+
 	def job(g: Cyclotomic, total: Int, d: Int, factors: List[BigInt]): Cyclotomic =
 	  {
 	    val step = total / d
@@ -260,7 +261,7 @@ package asi.algebra
 
 	    for (i <- 1 to d - 1)
 	      {
-		val r = BigInt(h).modPow(step * i, dim).intValue
+		val r = h.modPow(step * i, dim).intValue
 		m *= g.rotate(r)
 	      }
 
@@ -269,7 +270,7 @@ package asi.algebra
 	    else
 	      job(m, step, factors.head.intValue, factors.tail)
 	  }
-	
+
 	val factors = Primes.primeFactors(dim - 1)
 
 	val nrm = job(this, dim - 1, factors.head.intValue, factors.tail)
