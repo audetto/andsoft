@@ -1,3 +1,7 @@
+// References are from
+// Harold M. Edwards
+// Fermat's Last Theorem
+
 import scala.collection.mutable.StringBuilder
 
 package asi.algebra
@@ -242,6 +246,34 @@ package asi.algebra
       {
 	val r = intMod(c)
 	this - Cyclotomic.integer(dim, r)
+      }
+
+    // calculate the norm by successive factorizations
+    // h must be a primitive root modulo dim
+    // This is the algorithm at the bottom of page 103
+    def quickNorm(h: Int) =
+      {
+	def job(g: Cyclotomic, total: Int, d: Int, factors: List[BigInt]): Cyclotomic =
+	  {
+	    val step = total / d
+	    var m = g
+
+	    for (i <- 1 to d - 1)
+	      {
+		val r = BigInt(h).modPow(step * i, dim).intValue
+		m *= g.rotate(r)
+	      }
+
+	    if (factors.isEmpty)
+	      m
+	    else
+	      job(m, step, factors.head.intValue, factors.tail)
+	  }
+	
+	val factors = Primes.primeFactors(dim - 1)
+
+	val nrm = job(this, dim - 1, factors.head.intValue, factors.tail)
+	nrm.asInteger
       }
   }
   
