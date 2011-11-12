@@ -192,10 +192,9 @@ package asi.algebra
 	// check if r is a primitive root
 	def check(r: BigInt) =
 	  {
-	    if (r.modPow(n - 1, n) != BigInt(1))
-	      false
-	    else
-	      !factors.exists(e => r.modPow((n - 1) / e, n) == BigInt(1))
+	    // since n is prime
+	    // r.modPow(n - 1, n) == 1
+	    !factors.exists(e => r.modPow((n - 1) / e, n) == BigInt(1))
 	  }
 	
 	// we are looking for the smallest
