@@ -221,6 +221,23 @@ package asi.algebra
 	throw new AssertionError("Internal algorithm failure")
       }
 
+    def square: Cyclotomic =
+      {
+	this * this
+      }
+
+    // exponentiation by squaring
+    def pow(k: Int): Cyclotomic =
+      {
+	require(k >= 0)
+	k match
+	{
+	  case 0                 => Cyclotomic.one(dim)
+	  case n if (n % 2 == 0) => pow(n / 2).square
+	  case n                 => this * pow((n - 1) / 2).square
+	}
+      }
+
     def intMod(k: BigInt, p: BigInt): BigInt =
       {
 	var sum: BigInt = 0
