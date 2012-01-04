@@ -348,5 +348,69 @@ package asi.algebra
 
 	ks
       }
+
+    // we return a stream of all possible norms
+    def norms(dim: Int): Stream[BigInt] =
+      {
+	def norm1(): Stream[BigInt] =
+	  {
+	    def n(A: Int, B: Int): Stream[BigInt] =
+	      {
+		val q = A * A - dim * B * B
+		if (q < 0)
+		  {
+		    // start from the beginning with B = 0 or 1
+		    n(A + 1, (A + 1) % 2)
+		  }
+		else if (q % 4 != 0)
+		  {
+		    // skip this one
+		    n(A, B + 2)
+		  }
+		else
+		  {
+		    // accept and go to next
+		    val w = q / 4
+		    w #:: n(A, B + 2)
+		  }
+	      }
+	    n(0, 0)
+	  }
+	def norm3(): Stream[BigInt] =
+	  {
+	    def n(A: Int, B: Int): Stream[BigInt] =
+	      {
+		val q = A * A + dim * B * B
+		if (B > A)
+		  {
+		    // start from the beginning with B = 0 or 1
+		    n(A + 1, (A + 1) % 2)
+		  }
+		else if (q % 4 != 0)
+		  {
+		    // skip this one
+		    n(A, B + 2)
+		  }
+		else
+		  {
+		    // accept and go to next
+		    val w = q / 4
+		    w #:: n(A, B + 2)
+		  }
+	      }
+	    n(0, 0)
+	  }
+	if (dim % 4 == 1)
+	  {
+	    // The norm is 1/4 (A^2 - lambda B^2)
+	    norm1
+	  }
+	else
+	  {
+	    // The norm is 1/4 (A^2 + lambda B^2)
+	    norm3
+	  }
+	// with A & B of the same parity
+      }
   }
 }
