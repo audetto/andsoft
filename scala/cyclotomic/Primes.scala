@@ -1,6 +1,7 @@
 import scala.collection.mutable.ListBuffer
 import scala.collection.BitSet
 import java.math.BigInteger
+import java.io.PrintStream;
 
 package asi.algebra
 {
@@ -9,10 +10,19 @@ package asi.algebra
     // we skip all multiples of the first 8 primes
     val sieve = Sieves.wheel(Array(2, 3, 5, 7, 11, 13, 17, 19))
 
+    val ecm = new ECMFactorisation(new PrintStream(new NullStream));
+
     def primeFactors(num: BigInt): List[BigInt] =
       {
 	// our best algorithm
-	algoB(num)
+	algoECM(num)
+      }
+
+    def algoECM(num: BigInt): List[BigInt] =
+      {
+	val a = ecm.getFactors(num.underlying)
+
+	a.toList.map(new BigInt(_))
       }
 
     def algoA(num: BigInt): List[BigInt] =

@@ -463,19 +463,27 @@ public class ECMFactorisation implements Runnable, factorApplet
     this.logging = logging;
   }
 
-  public ArrayList<BigInteger> getFactors(
+  public BigInteger[] getFactors(
     final BigInteger NbrToFactor)
   {
     textNumber = NbrToFactor;
     startNewFactorization(true);       // Request complete factorization
 
-    ArrayList<BigInteger> primes = new ArrayList<BigInteger>(NbrFactors);
+    int size = 0;
+    for (int i = 0; i < NbrFactors; ++i)
+    {
+      size += Exp[i];
+    }
 
+    BigInteger[] primes = new BigInteger[size];
+
+    int counter = 0;
     for (int i = 0; i < NbrFactors; ++i)
     {
       for (int j = 0; j < Exp[i]; ++j)
       {
-        primes.add(PD[i]);
+        primes[counter] = PD[i];
+	++counter;
       }
     }
 
