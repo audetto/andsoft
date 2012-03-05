@@ -1,7 +1,8 @@
 import scala.collection.mutable.ListBuffer
 import scala.collection.BitSet
+import scala.collection.LinearSeq
 import java.math.BigInteger
-import java.io.PrintStream;
+import java.io.PrintStream
 
 package asi.algebra
 {
@@ -31,10 +32,10 @@ package asi.algebra
       }
 
     // This is Algorithm A
-    def algoA(num: BigInt, sieve: Stream[BigInt]): List[BigInt] = 
+    def algoA(num: BigInt, sieve: LinearSeq[BigInt]): List[BigInt] = 
       { 
 	// try to facgtor n, with factors at least s.head
-	def addFactor(n: BigInt, s: Stream[BigInt], sofar: List[BigInt]): List[BigInt] =
+	def addFactor(n: BigInt, s: LinearSeq[BigInt], sofar: List[BigInt]): List[BigInt] =
 	  {
 	    if (n == 1)
 	      return sofar
@@ -107,6 +108,7 @@ package asi.algebra
 	    
 	    // this algorithm cannot factor perfect squares
 	    // call into naive algorithm
+	    // make sure you dont call back into this very function
 	    factors = algoA(g) ++ factors
 	    if (g == n)
 	      return factors.sortWith(_ > _)

@@ -8,7 +8,7 @@ package asi.algebra
 {
   class Cyclotomic(d: Int, c: Array[BigInt])
   {
-    require(BigInt(d).isProbablePrime(5))
+    require(BigInt(d).isProbablePrime(10))
 
     val dim: Int = d
 
@@ -400,6 +400,8 @@ package asi.algebra
 	      }
 	    n(0, 0)
 	  }
+
+	require(BigInt(dim).isProbablePrime(10))
 	if (dim % 4 == 1)
 	  {
 	    // The norm is 1/4 (A^2 - lambda B^2)
