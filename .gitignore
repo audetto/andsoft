@@ -8,11 +8,14 @@
 *.rdb
 *.oxt
 *.jj
+*.pyc
 moc_*.cpp
 *.d.*
 
 /c/ooASML/com/*
 /c/ooASML/org/*
+/java/ecm/*
+/java/ecm_111122*
 
 /java/jamaica/src/com/judoscript/jamaica/jjt/jamaica.jj
 /java/jamaica/src/com/judoscript/jamaica/parser/JJTJamaicaParserState.java
