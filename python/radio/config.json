@@ -1,0 +1,13 @@
+{
+    "sixpair": "/home/andrea/projects/multimedia/QtSixA-1.5.1/utils/bins/sixpair",
+    "autopair": false,
+    "detach": 16,
+    "remote": {
+	"14": "mpc play",
+	"13": "mpc stop",
+	"10": "mpc prev",
+	"11": "mpc next",
+	"4":  "mpc volume +1",
+	"6":  "mpc volume -1"
+    }
+}
