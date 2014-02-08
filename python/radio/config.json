@@ -1,6 +1,6 @@
 {
     "sixpair": "/home/andrea/projects/multimedia/QtSixA-1.5.1/utils/bins/sixpair",
-    "autopair": false,
+    "autopair": true,
     "detach": 16,
     "remote": {
 	"14": "mpc play",

@@ -37,7 +37,7 @@ def udev_usb(action, device, config, state):
         attr = device.attributes
         if "product" in attr and attr["product"] == b"PLAYSTATION(R)3 Controller":
             if config.autopair:
-                pair(config)
+                PS3Blue.pair(config)
             state["ps3"] = device
     elif action == "remove":
         if device == state["ps3"]:

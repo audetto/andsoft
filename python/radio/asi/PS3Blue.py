@@ -11,6 +11,9 @@ def pair(config):
 
 
 def detach(mac):
-    cmd = "sudo hcitool dc {0}".format(mac)
-    print(cmd)
-    raise Exception("detached")
+    cmdLine = ["sudo", "hcitool", "dc", mac]
+    code = subprocess.call(cmdLine)
+    if code == 0:
+        print("successfully detached")
+    else:
+        print("detach filed: exit code {0}".format(code))
