@@ -10,8 +10,8 @@ class Config(object):
         self.autopair   = o["autopair"]
         self.detach     = o["detach"]
 
-        self.remote = {}
+        self.mpd = {}
 
-        remote = o["remote"]
-        for k in remote:
-            self.remote[int(k)] = remote[k]
+        mpd = o["mpd"]
+        for k in mpd:
+            self.mpd[k] = mpd[k]

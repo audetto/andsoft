@@ -1,13 +1,19 @@
 {
     "sixpair": "/home/andrea/projects/multimedia/QtSixA-1.5.1/utils/bins/sixpair",
     "autopair": true,
-    "detach": 16,
-    "remote": {
-	"14": "mpc play",
-	"13": "mpc stop",
-	"10": "mpc prev",
-	"11": "mpc next",
-	"4":  "mpc volume +1",
-	"6":  "mpc volume -1"
+    "detach": "16",
+    "mpd": {
+	"host": "pi",
+	"port": 6600,
+	"remote": {
+	    "14": "PLAY",
+	    "13": "STOP",
+	    "10": "PREV",
+	    "11": "NEXT",
+	     "4": "VOLUP",
+	     "6": "VOLDOWN",
+	     "3": "RESET",
+	    "15": "MUTE"
+	}
     }
 }
