@@ -22,14 +22,10 @@ def get_mac(device):
     if not p:
         return None
     attr = p.attributes
-    if "name" in attr:
-        name = attr["name"].decode("ascii", "ignore")
-        r = re.compile("PLAYSTATION\(R\)3 Controller \((.*)\)")
-        m = r.match(name)
-        if not m:
-            return None
-        mac = m.group(1)
-        return mac
+    if "name" in attr and attr["name"] == b"PLAYSTATION(R)3 Controller":
+        if "uniq" in attr:
+            mac = attr["uniq"]
+            return mac
 
 
 def udev_usb(action, device, config, state):
@@ -50,7 +46,7 @@ def udev_input(action, device, config, state):
         attr = device.attributes
         if "uevent" in attr:
             uevent = device.attributes["uevent"]
-            r = re.compile("DEVNAME=(input/js\d+)")
+            r = re.compile(r"DEVNAME=(input/js\d+)")
             lines = uevent.splitlines()
             for line in lines:
                 m = r.match(line.decode("ascii", "ignore"))

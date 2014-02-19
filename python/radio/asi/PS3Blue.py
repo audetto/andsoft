@@ -11,6 +11,10 @@ def pair(config):
 
 
 def detach(mac):
+    if not mac:
+        print("missing MAC address")
+        return
+
     cmdLine = ["sudo", "hcitool", "dc", mac]
     code = subprocess.call(cmdLine)
     if code == 0:
