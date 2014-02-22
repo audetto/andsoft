@@ -41,20 +41,26 @@ def udev_usb(action, device, config, state):
             gone(state)
 
 
+def add_input(device, config, state):
+    attr = device.attributes
+    if "uevent" in attr:
+        uevent = device.attributes["uevent"]
+        r = re.compile(r"DEVNAME=(input/js\d+)")
+        lines = uevent.splitlines()
+        for line in lines:
+            m = r.match(line.decode("ascii", "ignore"))
+            if m:
+                filename = "/dev/{0}".format(m.group(1))
+                state["joystick"] = device
+                state["mac"] = get_mac(device)
+                Joystick.joystick(config, state, filename)
+                return True
+    return False # we did not process a Joystick
+
+
 def udev_input(action, device, config, state):
     if action == "add":
-        attr = device.attributes
-        if "uevent" in attr:
-            uevent = device.attributes["uevent"]
-            r = re.compile(r"DEVNAME=(input/js\d+)")
-            lines = uevent.splitlines()
-            for line in lines:
-                m = r.match(line.decode("ascii", "ignore"))
-                if m:
-                    filename = "/dev/{0}".format(m.group(1))
-                    state["joystick"] = device
-                    state["mac"] = get_mac(device)
-                    Joystick.joystick(config, state, filename)
+        add_input(device, config, state)
     elif action == "remove":
         if device == state["joystick"]:
             state["joystick"] = None
@@ -65,11 +71,17 @@ def run():
     config = Config.Config("config.json")
 
     context = pyudev.Context()
-    monitor = pyudev.Monitor.from_netlink(context)
 
     state = {}
     init_state(state)
 
+    # first we check if there is already a joystick connected
+    for device in pyudev.Enumerator(context).match_subsystem("input"):
+        if add_input(device, config, state):
+            break # should we break? it only matters if we have 2 connected
+
+    # then we wait for a joystick to be connected
+    monitor = pyudev.Monitor.from_netlink(context)
     for action, device in monitor:
         subsystem = device.subsystem
         if subsystem == "usb":
