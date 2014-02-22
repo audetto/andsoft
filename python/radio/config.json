@@ -1,6 +1,4 @@
 {
-    "sixpair": "/home/andrea/projects/multimedia/QtSixA-1.5.1/utils/bins/sixpair",
-    "autopair": true,
     "detach": "16",
     "mpd": {
 	"host": "pi",

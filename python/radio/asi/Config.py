@@ -6,9 +6,7 @@ class Config(object):
         f = open(filename)
         o = json.load(f)
 
-        self.sixpair    = o["sixpair"]
-        self.autopair   = o["autopair"]
-        self.detach     = o["detach"]
+        self.detach = o["detach"]
 
         self.mpd = {}
 

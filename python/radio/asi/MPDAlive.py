@@ -23,21 +23,21 @@ class MPDAlive(object):
 
 
     def get_volume(self):
-        mpc = self.client;
+        mpc = self.client
         s = mpc.status()
         vol = int(s["volume"])
         return vol
 
 
     def volume(self, change):
-        mpc = self.client;
+        mpc = self.client
         vol = self.get_volume()
         newvol = min(100, max(0, vol + change))
         mpc.setvol(newvol)
 
 
     def mute(self):
-        mpc = self.client;
+        mpc = self.client
         newvol = self.oldvol
         self.oldvol = self.get_volume()
         mpc.setvol(newvol)

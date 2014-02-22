@@ -2,7 +2,6 @@ import pyudev
 import re
 
 from asi import Config
-from asi import PS3Blue
 from asi import Joystick
 
 
@@ -24,21 +23,8 @@ def get_mac(device):
     attr = p.attributes
     if "name" in attr and attr["name"] == b"PLAYSTATION(R)3 Controller":
         if "uniq" in attr:
-            mac = attr["uniq"]
+            mac = attr["uniq"].decode().upper()
             return mac
-
-
-def udev_usb(action, device, config, state):
-    if action == "add":
-        attr = device.attributes
-        if "product" in attr and attr["product"] == b"PLAYSTATION(R)3 Controller":
-            if config.autopair:
-                PS3Blue.pair(config)
-            state["ps3"] = device
-    elif action == "remove":
-        if device == state["ps3"]:
-            state["ps3"] = None
-            gone(state)
 
 
 def add_input(device, config, state):
@@ -82,11 +68,8 @@ def run():
 
     # then we wait for a joystick to be connected
     monitor = pyudev.Monitor.from_netlink(context)
+    monitor.filter_by("input")
     for action, device in monitor:
-        subsystem = device.subsystem
-        if subsystem == "usb":
-            udev_usb(action, device, config, state)
-        elif subsystem == "input":
-            udev_input(action, device, config, state)
+        udev_input(action, device, config, state)
 
 run()

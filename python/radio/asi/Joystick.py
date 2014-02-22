@@ -10,12 +10,11 @@ def execute(config, state, mpd, value):
         cmd = remote[value]
         mpd.execute(cmd)
     elif value == config.detach:
-        print("Detaching joystick ({0}).".format(state["mac"]))
         PS3Blue.detach(state["mac"])
 
 
 def joystick(config, state, filename):
-    print("New joystick ({0}) @ {1}.".format(state["mac"], filename))
+    print("New joystick ({0}) @ {1}".format(state["mac"], filename))
 
     event = struct.Struct('IhBB')
 
@@ -33,4 +32,4 @@ def joystick(config, state, filename):
     except Exception as e:
         print(e)
 
-    print("Done joystick ({0}) @ {1}.".format(state["mac"], filename))
+    print("Done joystick ({0}) @ {1}".format(state["mac"], filename))
