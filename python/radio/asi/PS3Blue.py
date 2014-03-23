@@ -15,6 +15,7 @@ def detach(mac):
         if "org.bluez.Device1" in ob:
             device = ob["org.bluez.Device1"]
             if device["Name"] == 'PLAYSTATION(R)3 Controller' and device["Address"].upper() == mac.upper():
+                # k = "/org/bluez/hci0/dev_00_1B_FB_63_F2_64"
                 device_bus = bus.get_object("org.bluez", k)
                 idev = dbus.Interface(device_bus, dbus_interface = "org.bluez.Device1")
                 print("Detaching joystick ({0})".format(mac))
