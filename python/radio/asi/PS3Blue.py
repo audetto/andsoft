@@ -41,7 +41,7 @@ class PS3Blue:
             ob = objects[k]
             if "org.bluez.Device1" in ob:
                 device = ob["org.bluez.Device1"]
-                if device["Name"] == 'PLAYSTATION(R)3 Controller' and device["Address"].upper() == self.mac.upper():
+                if device["Address"].upper() == self.mac:
                     # k = "/org/bluez/hci0/dev_00_1B_FB_63_F2_64"
                     device_bus = bus.get_object("org.bluez", k)
                     idev = dbus.Interface(device_bus, dbus_interface = "org.bluez.Device1")

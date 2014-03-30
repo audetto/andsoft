@@ -17,35 +17,34 @@ def gone(state):
     print("PS3 detached")
 
 
-def get_mac(device):
-    p = device.parent
-    if not p:
-        return None
-    attr = p.attributes
-    if "name" in attr and attr["name"] == b"PLAYSTATION(R)3 Controller":
-        if "uniq" in attr:
-            mac = attr["uniq"].decode().upper()
-            return mac
+# logic copied from https://github.com/chrippa/ds4drv
+# ds4drv/backends/hidraw.py
+def add_input(hidraw_device, config, state):
+    hid_device = hidraw_device.parent
+    if hid_device.subsystem != "hid":
+        return False
 
+    name = hid_device.get("HID_NAME")
+    if name != "PLAYSTATION(R)3 Controller":
+        return False
 
-def add_input(device, config, state):
-    attr = device.attributes
-    if "uevent" in attr:
-        uevent = device.attributes["uevent"]
-        r = re.compile(r"DEVNAME=(input/js\d+)")
-        lines = uevent.splitlines()
-        for line in lines:
-            m = r.match(line.decode("ascii", "ignore"))
-            if m:
-                print("Using {0}".format(device))
-                filename = "/dev/{0}".format(m.group(1))
-                state["joystick"] = device
-                state["mac"] = get_mac(device)
-                # temporary
-                state["hidraw"] = "/dev/hidraw0"
-                Joystick.joystick(config, state, filename)
-                return True
-    return False # we did not process a Joystick
+    ps3 = None
+    for child in hid_device.parent.children:
+        js_device = child.get("DEVNAME", "")
+        if js_device.startswith("/dev/input/js"):
+            ps3 = child
+            break
+    else:
+        return False
+
+    print("Using {0}".format(ps3))
+    filename = ps3.get("DEVNAME")
+    state["joystick"] = ps3
+    state["mac"] = hid_device.get("HID_UNIQ", "").upper()
+    # temporary
+    state["hidraw"] = hidraw_device.get("DEVNAME", "")
+    Joystick.joystick(config, state, filename)
+    return True
 
 
 def udev_input(action, device, config, state):
@@ -66,13 +65,13 @@ def run():
     init_state(state)
 
     # first we check if there is already a joystick connected
-    for device in pyudev.Enumerator(context).match_subsystem("input"):
+    for device in pyudev.Enumerator(context).match_subsystem("hidraw"):
         if add_input(device, config, state):
             break # should we break? it only matters if we have 2 connected
 
     # then we wait for a joystick to be connected
     monitor = pyudev.Monitor.from_netlink(context)
-    monitor.filter_by("input")
+    monitor.filter_by("hidraw")
     for action, device in monitor:
         udev_input(action, device, config, state)
 
