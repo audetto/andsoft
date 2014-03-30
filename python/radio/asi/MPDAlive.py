@@ -2,11 +2,15 @@ import mpd
 
 class MPDAlive(object):
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, ps3):
         self.host = host
         self.port = port
         self.client = mpd.MPDClient()
         self.oldvol = 0
+        self.ps3 = ps3
+
+        # do not synchronize now
+        # /dev/hidra0 does not seem to be ready
 
 
     def connect(self):
@@ -43,6 +47,14 @@ class MPDAlive(object):
         mpc.setvol(newvol)
 
 
+    def get_song(self):
+        mpc = self.client
+        st = mpc.status()
+        if "song" in st:
+            song = int(st["song"])
+            return song
+
+
     def execute(self, cmd):
         mpc = self.mpc()
         if cmd == "PLAY":
@@ -61,3 +73,11 @@ class MPDAlive(object):
             mpc.play(0)
         elif cmd == "MUTE":
             self.mute()
+
+        self.synchronize()
+
+
+    def synchronize(self):
+        song = self.get_song()
+        if not song is None:
+            self.ps3.set_leds(1 + song) # as they start from 0

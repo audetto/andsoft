@@ -9,6 +9,7 @@ def init_state(state):
     state["ps3"] = None
     state["joystick"] = None
     state["mac"] = None
+    state["hidraw"] = None
 
 
 def gone(state):
@@ -36,9 +37,12 @@ def add_input(device, config, state):
         for line in lines:
             m = r.match(line.decode("ascii", "ignore"))
             if m:
+                print("Using {0}".format(device))
                 filename = "/dev/{0}".format(m.group(1))
                 state["joystick"] = device
                 state["mac"] = get_mac(device)
+                # temporary
+                state["hidraw"] = "/dev/hidraw0"
                 Joystick.joystick(config, state, filename)
                 return True
     return False # we did not process a Joystick
