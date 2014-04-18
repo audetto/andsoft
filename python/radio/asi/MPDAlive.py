@@ -79,5 +79,7 @@ class MPDAlive(object):
 
     def synchronize(self):
         song = self.get_song()
-        if not song is None:
+        if song is None:
+            self.ps3.set_flash()
+        else:
             self.ps3.set_leds(1 + song) # as they start from 0
