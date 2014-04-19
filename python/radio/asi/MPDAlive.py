@@ -2,10 +2,11 @@ import mpd
 
 class MPDAlive(object):
 
-    def __init__(self, host, port, ps3):
+    def __init__(self, host, port, timeout, ps3):
         self.host = host
         self.port = port
         self.client = mpd.MPDClient()
+        self.client.timeout = timeout
         self.oldvol = 0
         self.ps3 = ps3
 

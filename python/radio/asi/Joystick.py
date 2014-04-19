@@ -21,7 +21,7 @@ def joystick(config, state, filename):
     js = open(filename, 'rb')
 
     ps3 = PS3Blue.PS3Blue(state["mac"], state["hidraw"])
-    mpd = MPDAlive.MPDAlive(config.mpd["host"], config.mpd["port"], ps3)
+    mpd = MPDAlive.MPDAlive(config.mpd["host"], config.mpd["port"], config.mpd["timeout"], ps3)
 
     try:
         while True:

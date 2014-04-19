@@ -1,8 +1,9 @@
 {
     "detach": "16",
     "mpd": {
-	"host": "pi",
+	"host": "localhost",
 	"port": 6600,
+	"timeout": 10,
 	"remote": {
 	    "14": "PLAY",
 	    "13": "STOP",
