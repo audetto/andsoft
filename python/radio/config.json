@@ -12,7 +12,9 @@
 	     "4": "VOLUP",
 	     "6": "VOLDOWN",
 	     "3": "RESET",
-	    "15": "MUTE"
+	     "0": "LAST",
+	    "15": "MUTE",
+	     "9": "SWAP"
 	}
     }
 }

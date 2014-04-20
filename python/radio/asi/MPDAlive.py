@@ -9,6 +9,7 @@ class MPDAlive(object):
         self.client.timeout = timeout
         self.oldvol = 0
         self.ps3 = ps3
+        self.stored = None
 
         # do not synchronize now
         # /dev/hidra0 does not seem to be ready
@@ -34,6 +35,14 @@ class MPDAlive(object):
         return vol
 
 
+    def last(self):
+        mpc = self.client
+        s = mpc.status()
+        if "playlistlength" in s:
+            song = int(s["playlistlength"])
+            mpc.play(song - 1)
+
+
     def volume(self, change):
         mpc = self.client
         vol = self.get_volume()
@@ -56,8 +65,23 @@ class MPDAlive(object):
             return song
 
 
+    def store(self):
+        song = self.get_song()
+        if not song is None:
+            self.stored = song
+
+
+    def swap(self):
+        new_song = self.stored
+        self.store()
+        if not new_song is None:
+            mpc = self.client
+            mpc.play(new_song)
+
+
     def execute(self, cmd):
         mpc = self.mpc()
+
         if cmd == "PLAY":
             mpc.play()
         elif cmd == "STOP":
@@ -72,8 +96,12 @@ class MPDAlive(object):
             self.volume(-2)
         elif cmd == "RESET":
             mpc.play(0)
+        elif cmd == "LAST":
+            self.last()
         elif cmd == "MUTE":
             self.mute()
+        elif cmd == "SWAP":
+            self.swap()
 
         self.synchronize()
 
