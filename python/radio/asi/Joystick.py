@@ -11,6 +11,8 @@ def execute(config, ps3, mpd, value):
         mpd.execute(cmd)
     elif value == config.detach:
         ps3.detach()
+#    else:
+#        print(value)
 
 
 def joystick(config, state, filename):
