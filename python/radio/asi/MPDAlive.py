@@ -1,4 +1,6 @@
 import mpd
+import socket
+
 
 class MPDAlive(object):
 
@@ -80,30 +82,36 @@ class MPDAlive(object):
 
 
     def execute(self, cmd):
-        mpc = self.mpc()
+        try:
+            mpc = self.mpc()
 
-        if cmd == "PLAY":
-            mpc.play()
-        elif cmd == "STOP":
-            mpc.stop()
-        elif cmd == "PREV":
-            mpc.previous()
-        elif cmd == "NEXT":
-            mpc.next()
-        elif cmd == "VOLUP":
-            self.volume(2)
-        elif cmd == "VOLDOWN":
-            self.volume(-2)
-        elif cmd == "RESET":
-            mpc.play(0)
-        elif cmd == "LAST":
-            self.last()
-        elif cmd == "MUTE":
-            self.mute()
-        elif cmd == "SWAP":
-            self.swap()
+            if cmd == "PLAY":
+                mpc.play()
+            elif cmd == "STOP":
+                mpc.stop()
+            elif cmd == "PREV":
+                mpc.previous()
+            elif cmd == "NEXT":
+                mpc.next()
+            elif cmd == "VOLUP":
+                self.volume(2)
+            elif cmd == "VOLDOWN":
+                self.volume(-2)
+            elif cmd == "RESET":
+                mpc.play(0)
+            elif cmd == "LAST":
+                self.last()
+            elif cmd == "MUTE":
+                self.mute()
+            elif cmd == "SWAP":
+                self.swap()
 
-        self.synchronize()
+            self.synchronize()
+
+        except socket.timeout as e:
+            # socket is not a disaster
+            # maybe it works next time
+            print("Warning: got {0}".format(e))
 
 
     def synchronize(self):
