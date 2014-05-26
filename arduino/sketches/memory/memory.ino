@@ -256,7 +256,7 @@ void enter_error()
   //  Serial.println("error");
 
   playSong(failSong);
-  timer.start(2000);
+  timer.start(4000);
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
