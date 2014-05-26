@@ -45,7 +45,8 @@ State state = STATE_IDLE;
 
 void randomize()
 {
-  random(millis());
+  const unsigned long m = millis();
+  randomSeed(m);
 }
 
 bool isPressed()
@@ -91,8 +92,6 @@ void enter_idle()
 {
   //  Serial.println("idle");
 
-  randomize();
-
   playSong(greetSong);
 
   for (uint8_t i = 0; i < numberOfButtons; ++i)
@@ -120,6 +119,7 @@ void state_idle()
 
   if (start)
   {
+    randomize();
     length = 1;
     return enter_output();
   }
