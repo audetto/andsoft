@@ -335,7 +335,6 @@ void setup()
 
 void loop()
 {
-
   // this is cooperative multitasking
   for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
@@ -368,7 +367,6 @@ void loop()
       state_win();
       break;
   }
-
 }
 
 // Local Variables:
