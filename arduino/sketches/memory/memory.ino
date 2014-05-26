@@ -16,7 +16,7 @@ AndSoft::Timer timer;
 ProgmemPlayer tonePlayer(A2);
 bool sound = false;
 
-const int numberOfButtons = 4;
+const uint8_t numberOfButtons = 4;
 AndSoft::Button * buttons[] = {&buttonBlue, &buttonGreen, &buttonRed, &buttonOrange};
 AndSoft::LED * leds[] = {&ledBlue, &ledGreen, &ledRed, &ledOrange};
 
@@ -26,9 +26,9 @@ const char failSong[]  PROGMEM = "Fail:b=80:16d,8p,16c#,8p,16c,8p,4b4";
 const char winSong[]   PROGMEM = "Hymne:d=4,o=4,b=84:8c.,16d,e.,8f,8g.,16a,2g,8a.,16b,c.5,8b,8a.,16g,2a,8g.,16f,e.,8d,8e.,16g,2d";
 
 #define MAXSEQUENCE 10
-int sequence[MAXSEQUENCE];
-int length;
-int correct;
+uint8_t sequence[MAXSEQUENCE];
+uint8_t length;
+uint8_t correct;
 bool easy = false;
 
 enum State
@@ -50,7 +50,7 @@ void randomize()
 
 bool isPressed()
 {
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     if (buttons[i]->pressed())
     {
@@ -95,7 +95,7 @@ void enter_idle()
 
   playSong(greetSong);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->flash(intervals, 2, HIGH);
   }
@@ -132,7 +132,7 @@ void enter_output()
   stopSong();
 
   // all LEDs off
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->off();
   }
@@ -142,7 +142,7 @@ void enter_output()
 
   // generate random path
   int last = -1;
-  for (int i = 0; i < length;)
+  for (uint8_t i = 0; i < length;)
   {
     int next = random(0, 4);
     if (next != last)
@@ -160,7 +160,7 @@ void enter_output()
 void state_output()
 {
   // display once the correct sequence
-  for (int i = 0; i < length; ++i)
+  for (uint8_t i = 0; i < length; ++i)
   {
     leds[sequence[i]]->on();
     delay(500);
@@ -180,7 +180,7 @@ void enter_input()
   correct = 0;
 
   // reset buttons
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     buttons[i]->pressed();
     leds[i]->on();
@@ -188,7 +188,7 @@ void enter_input()
 
   delay(200);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->off();
   }
@@ -207,7 +207,7 @@ void state_input()
 {
   bool ok = false;
   // we always check all buttons to enforce symmetry
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     if (buttons[i]->pressed())
     {
@@ -258,7 +258,7 @@ void enter_error()
   playSong(failSong);
   timer.start(2000);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->flash(intervals, 2, i < 2 ? HIGH : LOW);
   }
@@ -281,7 +281,7 @@ void enter_next()
   playSong(levelSong);
   timer.start(2000);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->flash(intervals, 2, i & 1 ? HIGH : LOW);
   }
@@ -303,7 +303,7 @@ void enter_win()
 
   playSong(winSong);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->flash(intervals, 2, (i == 0 || i == 3) ? HIGH : LOW);
   }
@@ -323,7 +323,7 @@ void setup()
 {
   //  Serial.begin(9600);
 
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     leds[i]->setup();
     buttons[i]->setup();
@@ -337,7 +337,7 @@ void loop()
 {
 
   // this is cooperative multitasking
-  for (int i = 0; i < numberOfButtons; ++i)
+  for (uint8_t i = 0; i < numberOfButtons; ++i)
   {
     buttons[i]->loop();
     leds[i]->loop();
